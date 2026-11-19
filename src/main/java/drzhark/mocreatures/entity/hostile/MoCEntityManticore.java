@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.entity.MoCEntityMob;
@@ -21,7 +23,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityManticore extends MoCEntityMob {
 
@@ -76,7 +77,7 @@ public class MoCEntityManticore extends MoCEntityMob {
             double dist = (-0.1D);
             double newPosX = this.getX() + (dist * Math.sin(this.getYRot() / 57.29578F));
             double newPosZ = this.getZ() - (dist * Math.cos(this.getYRot() / 57.29578F));
-            double newPosY = this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset();
+            double newPosY = this.getY() + this.getPassengersRidingOffset() + (-passenger.getVehicleAttachmentPoint(this).y);
             
             moveFunction.accept(passenger, newPosX, newPosY, newPosZ);
             passenger.setYRot(this.getYRot());
@@ -179,7 +180,7 @@ public class MoCEntityManticore extends MoCEntityMob {
         if (this.isFlyer() && this.wingFlapCounter == 0) {
             this.wingFlapCounter = 1;
             if (!this.level().isClientSide()) {
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 3));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 3));
             }
         }
     }
@@ -201,7 +202,7 @@ public class MoCEntityManticore extends MoCEntityMob {
 
     public void setPoisoning(boolean flag) {
         if (flag && !this.level().isClientSide()) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 0));
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 0));
         }
 
         this.isPoisoning = flag;
@@ -235,8 +236,9 @@ public class MoCEntityManticore extends MoCEntityMob {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.945F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.945F));
     }
 
     static class AIManticoreAttack extends MeleeAttackGoal {
@@ -257,8 +259,9 @@ public class MoCEntityManticore extends MoCEntityMob {
         }
 
         @Override
-        protected double getAttackReachSqr(LivingEntity attackTarget) {
-            return 4.0F + attackTarget.getBbWidth();
+        protected boolean canPerformAttack(LivingEntity attackTarget) {
+            // 1.20 attack reach: 4.0F + attackTarget.getBbWidth()
+            return this.isTimeToAttack() && this.mob.distanceToSqr(attackTarget) <= (4.0F + attackTarget.getBbWidth()) && this.mob.getSensing().hasLineOfSight(attackTarget);
         }
     }
 

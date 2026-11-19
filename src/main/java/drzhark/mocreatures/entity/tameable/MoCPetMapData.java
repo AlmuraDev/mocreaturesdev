@@ -1,9 +1,10 @@
 package drzhark.mocreatures.entity.tameable;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.MoCreatures;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
@@ -20,6 +21,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MoCPetMapData extends SavedData {
 
+    /** How 26.3 stores the pet map: one compound per owner UUID, as before. */
+    public static final SavedDataType<MoCPetMapData> TYPE = new SavedDataType<>(
+            Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "pets"),
+            () -> new MoCPetMapData(MoCConstants.MOD_ID),
+            CompoundTag.CODEC.xmap(MoCPetMapData::load, data -> data.save(new CompoundTag())));
+
     private final Object2ObjectOpenHashMap<UUID, MoCPetData> petMap = new Object2ObjectOpenHashMap<>();
     private final String name;
     // Counter to track changes and force saves periodically even if not marked dirty
@@ -34,10 +41,10 @@ public class MoCPetMapData extends SavedData {
     // Static load method for DimensionDataStorage
     public static MoCPetMapData load(CompoundTag tag) {
         MoCPetMapData data = new MoCPetMapData(MoCConstants.MOD_ID);
-        for (String key : tag.getAllKeys()) {
+        for (String key : tag.keySet()) {
             try {
                 UUID ownerUUID = UUID.fromString(key);
-                CompoundTag nbt = tag.getCompound(key);
+                CompoundTag nbt = tag.getCompoundOrEmpty(key);
                 if (!data.petMap.containsKey(ownerUUID)) {
                     data.petMap.put(ownerUUID, new MoCPetData(nbt, ownerUUID));
                     MoCreatures.LOGGER.debug("Loaded pet data for owner: {}", ownerUUID);
@@ -84,7 +91,7 @@ public class MoCPetMapData extends SavedData {
 
     public void updateOwnerPet(IMoCTameable pet) {
         if (pet.getOwnerPetId() == -1 || this.petMap.get(pet.getOwnerId()) == null) {
-            UUID owner = MoCreatures.isServer(((Entity) pet).level()) ? pet.getOwnerId() : Minecraft.getInstance().player.getUUID();
+            UUID owner = MoCreatures.isServer(((Entity) pet).level()) ? pet.getOwnerId() : MoCreatures.proxy.getPlayer().getUUID();
             MoCPetData petData;
             int id;
             if (this.petMap.containsKey(owner)) {
@@ -102,17 +109,17 @@ public class MoCPetMapData extends SavedData {
             UUID owner = pet.getOwnerId();
             MoCPetData petData = this.getPetData(owner);
             CompoundTag rootNBT = petData.getOwnerRootNBT();
-            ListTag tag = rootNBT.getList("TamedList", 10);
+            ListTag tag = rootNBT.getListOrEmpty("TamedList");
             int id = pet.getOwnerPetId();
 
             for (int i = 0; i < tag.size(); i++) {
-                CompoundTag nbt = tag.getCompound(i);
+                CompoundTag nbt = tag.getCompoundOrEmpty(i);
                 if (nbt.getIntOr("PetId", 0) == id) {
                     nbt.put("Pos", newDoubleNBTList(((Entity) pet).getX(), ((Entity) pet).getY(), ((Entity) pet).getZ()));
-                    nbt.putInt("ChunkX", ((Entity) pet).chunkPosition().x);
+                    nbt.putInt("ChunkX", ((Entity) pet).chunkPosition().x());
                     nbt.putInt("ChunkY", ((Entity) pet).chunkPosition().getWorldPosition().getY());
-                    nbt.putInt("ChunkZ", ((Entity) pet).chunkPosition().z);
-                    nbt.putString("Dimension", ((Entity) pet).level().dimension().location().toString());
+                    nbt.putInt("ChunkZ", ((Entity) pet).chunkPosition().z());
+                    nbt.putString("Dimension", ((Entity) pet).level().dimension().identifier().toString());
                     nbt.putInt("PetId", pet.getOwnerPetId());
                     MoCreatures.LOGGER.debug("Updated position data for pet ID {} owned by {}", id, owner);
                     break;
@@ -132,7 +139,7 @@ public class MoCPetMapData extends SavedData {
             // Try to get the server level to force a save
             MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
             if (server != null && server.overworld() != null) {
-                server.overworld().getDataStorage().save();
+                server.overworld().getDataStorage().scheduleSave();
                 MoCreatures.LOGGER.debug("Forced save of pet data after {} changes", FORCE_SAVE_THRESHOLD);
             }
             
@@ -154,7 +161,7 @@ public class MoCPetMapData extends SavedData {
         if (petData != null) {
             ListTag tag = petData.getTamedList();
             for (int i = 0; i < tag.size(); i++) {
-                CompoundTag nbt = tag.getCompound(i);
+                CompoundTag nbt = tag.getCompoundOrEmpty(i);
                 if (nbt.getIntOr("PetId", 0) == pet.getOwnerPetId()) {
                     return true;
                 }
@@ -163,7 +170,6 @@ public class MoCPetMapData extends SavedData {
         return false;
     }
 
-    @Override
     public CompoundTag save(CompoundTag tag) {
         int count = 0;
         for (Map.Entry<UUID, MoCPetData> entry : this.petMap.entrySet()) {

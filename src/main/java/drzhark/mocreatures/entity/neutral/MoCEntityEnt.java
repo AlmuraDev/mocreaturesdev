@@ -2,6 +2,10 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.neutral;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
@@ -20,7 +24,6 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -39,7 +42,7 @@ import java.util.List;
 
 public class MoCEntityEnt extends MoCEntityAnimal {
 
-    private static final Block[] tallgrass = new Block[]{Blocks.GRASS, Blocks.FERN};
+    private static final Block[] tallgrass = new Block[]{Blocks.SHORT_GRASS, Blocks.FERN};
     private static final Block[] double_plant = new Block[]{Blocks.SUNFLOWER, Blocks.LILAC, Blocks.ROSE_BUSH, Blocks.PEONY, Blocks.TALL_GRASS, Blocks.LARGE_FERN};
     private static final Block[] red_flower = new Block[]{Blocks.POPPY, Blocks.BLUE_ORCHID, Blocks.ALLIUM, Blocks.AZURE_BLUET, Blocks.RED_TULIP, Blocks.ORANGE_TULIP, Blocks.WHITE_TULIP, Blocks.PINK_TULIP, Blocks.OXEYE_DAISY};
     
@@ -91,9 +94,9 @@ public class MoCEntityEnt extends MoCEntityAnimal {
     public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         if (damagesource.getEntity() != null && damagesource.getEntity() instanceof Player) {
             Player ep = (Player) damagesource.getEntity();
-            ItemStack currentItem = ep.getInventory().getSelected();
+            ItemStack currentItem = ep.getInventory().getSelectedItem();
             Item itemheld = currentItem.getItem();
-            if (itemheld instanceof AxeItem) {
+            if (currentItem.is(ItemTags.AXES)) {
                 this.level().getDifficulty();
                 if (super.shouldAttackPlayers()) {
                     setTarget(ep);
@@ -195,9 +198,9 @@ public class MoCEntityEnt extends MoCEntityAnimal {
 
         if (Blocks.DIRT.defaultBlockState().is(blockUnderFeet)) {
             Block block = Blocks.GRASS_BLOCK;
-            BlockEvent.BreakEvent event = null;
+            BreakBlockEvent event = null;
             if (!this.level().isClientSide()) {
-                event = new BlockEvent.BreakEvent(this.level(), pos, block.defaultBlockState(), 
+                event = new BreakBlockEvent(this.level(), pos, block.defaultBlockState(), 
                         FakePlayerFactory.get((ServerLevel) this.level(), MoCreatures.MOCFAKEPLAYER));
             }
             if (event != null && !event.isCanceled()) {
@@ -264,7 +267,7 @@ public class MoCEntityEnt extends MoCEntityAnimal {
             case 19:
                 return Blocks.ACACIA_SAPLING.defaultBlockState();
             default:
-                return Blocks.GRASS.defaultBlockState();
+                return Blocks.SHORT_GRASS.defaultBlockState();
         }
     }
 
@@ -296,7 +299,8 @@ public class MoCEntityEnt extends MoCEntityAnimal {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.9F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.9F));
     }
 }

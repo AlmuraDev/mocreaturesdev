@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.aquatic;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIFleeFromEntityMoC;
@@ -54,27 +55,27 @@ public class MoCEntitySmallFish extends MoCEntityTameableAquatic {
 
     public static MoCEntitySmallFish createEntity(Level world, int type) {
         if (type == 1) {
-            return (MoCEntitySmallFish) MoCEntities.ANCHOVY.get().create(world);
+            return (MoCEntitySmallFish) MoCEntities.ANCHOVY.get().create(world, EntitySpawnReason.BREEDING);
         }
         if (type == 2) {
-            return (MoCEntitySmallFish) MoCEntities.ANGELFISH.get().create(world);
+            return (MoCEntitySmallFish) MoCEntities.ANGELFISH.get().create(world, EntitySpawnReason.BREEDING);
         }
         if (type == 3) {
-            return (MoCEntitySmallFish) MoCEntities.ANGLER.get().create(world);
+            return (MoCEntitySmallFish) MoCEntities.ANGLER.get().create(world, EntitySpawnReason.BREEDING);
         }
         if (type == 4) {
-            return (MoCEntitySmallFish) MoCEntities.CLOWNFISH.get().create(world);
+            return (MoCEntitySmallFish) MoCEntities.CLOWNFISH.get().create(world, EntitySpawnReason.BREEDING);
         }
         if (type == 5) {
-            return (MoCEntitySmallFish) MoCEntities.GOLDFISH.get().create(world);
+            return (MoCEntitySmallFish) MoCEntities.GOLDFISH.get().create(world, EntitySpawnReason.BREEDING);
         }
         if (type == 6) {
-            return (MoCEntitySmallFish) MoCEntities.HIPPOTANG.get().create(world);
+            return (MoCEntitySmallFish) MoCEntities.HIPPOTANG.get().create(world, EntitySpawnReason.BREEDING);
         }
         if (type == 7) {
-            return (MoCEntitySmallFish) MoCEntities.MANDERIN.get().create(world);
+            return (MoCEntitySmallFish) MoCEntities.MANDERIN.get().create(world, EntitySpawnReason.BREEDING);
         }
-        return (MoCEntitySmallFish) MoCEntities.CLOWNFISH.get().create(world);
+        return (MoCEntitySmallFish) MoCEntities.CLOWNFISH.get().create(world, EntitySpawnReason.BREEDING);
     }
 
     @Override
@@ -233,8 +234,9 @@ public class MoCEntitySmallFish extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.45F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.45F));
     }
 
     static class FishMoveControl extends MoveControl {

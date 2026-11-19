@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCreatures;
@@ -27,7 +29,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityWraith extends MoCEntityMob//MoCEntityFlyerMob
 {
@@ -95,10 +96,6 @@ public class MoCEntityWraith extends MoCEntityMob//MoCEntityFlyerMob
         return MoCLootTables.WRAITH;
     }
 
-    @Override
-    public MobType getMobType() {
-        return MobType.UNDEAD;
-    }
 
     @Override
     public boolean isFlyer() {
@@ -132,7 +129,7 @@ public class MoCEntityWraith extends MoCEntityMob//MoCEntityFlyerMob
     @Override
     public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         startArmSwingAttack();
-        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
+        return super.doHurtTarget(serverLevel, entityIn);
     }
 
     /**
@@ -141,7 +138,7 @@ public class MoCEntityWraith extends MoCEntityMob//MoCEntityFlyerMob
     private void startArmSwingAttack() {
         if (!this.level().isClientSide()) {
             this.attackCounter = 1;
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 1));
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 1));
         }
     }
 
@@ -168,7 +165,8 @@ public class MoCEntityWraith extends MoCEntityMob//MoCEntityFlyerMob
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.86F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.86F));
     }
 }

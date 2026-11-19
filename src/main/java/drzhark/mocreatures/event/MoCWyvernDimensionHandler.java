@@ -54,7 +54,7 @@ public class MoCWyvernDimensionHandler {
         
         // Check if we're in the Wyvern dimension
         if (entity.level() != null && 
-            entity.level().dimension().location().toString().equals("mocreatures:wyvernlairworld")) {
+            entity.level().dimension().identifier().toString().equals("mocreatures:wyvernlairworld")) {
             
             if (MoCreatures.proxy.debug) {
                 MoCreatures.LOGGER.info("MoCWyvernDimensionHandler: Checking spawn for {} in Wyvern dimension", 
@@ -100,12 +100,12 @@ public class MoCWyvernDimensionHandler {
     //     };
         
     //     for (ResourceKey<?> biomeKey : biomeKeys) {
-    //         MoCreatures.LOGGER.info("Attempting to add wyvern islands to biome: {}", biomeKey.location());
+    //         MoCreatures.LOGGER.info("Attempting to add wyvern islands to biome: {}", biomeKey.identifier());
             
-    //         if (biomeRegistry.containsKey(ResourceKey.create(Registries.BIOME, biomeKey.location()))) {
-    //             MoCreatures.LOGGER.info("Found biome {} in registry", biomeKey.location());
+    //         if (biomeRegistry.containsKey(ResourceKey.create(Registries.BIOME, biomeKey.identifier()))) {
+    //             MoCreatures.LOGGER.info("Found biome {} in registry", biomeKey.identifier());
     //         } else {
-    //             MoCreatures.LOGGER.error("Could not find biome {} in registry", biomeKey.location());
+    //             MoCreatures.LOGGER.error("Could not find biome {} in registry", biomeKey.identifier());
     //         }
     //     }
         

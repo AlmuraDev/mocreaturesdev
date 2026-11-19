@@ -2,6 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.server.level.ServerLevel;
@@ -69,7 +72,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
 
     @Override
     public void selectType() {
-        if (this.level().dimensionType().ultraWarm()) {
+        if (this.level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) {
             setTypeMoC(38);
             this.isImmuneToFire = true;
         } else {
@@ -297,7 +300,8 @@ public class MoCEntityHorseMob extends MoCEntityMob {
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
-        super.dropCustomDeathLoot(serverLevel, serverLevel, recentlyHitIn);
+        int looting = MoCTools.lootingLevel(serverLevel, source);
+        super.dropCustomDeathLoot(serverLevel, source, recentlyHitIn);
         boolean flag = (this.random.nextInt(100) < MoCreatures.proxy.rareItemDropChance);
         if (this.getTypeMoC() == 32 && MoCreatures.proxy.rareItemDropChance < 25) {
             flag = (this.random.nextInt(100) < 25);
@@ -310,7 +314,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
             drop = MoCItems.UNICORNHORN.get();
         }
 
-        if (this.getTypeMoC() == 38 && flag && this.level().dimensionType().ultraWarm()) //nightmare
+        if (this.getTypeMoC() == 38 && flag && this.level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) //nightmare
         {
             drop = MoCItems.HEARTFIRE.get();
         }
@@ -342,7 +346,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
             i += this.random.nextInt(looting + 1);
         }
 
-        this.spawnAtLocation(new ItemStack(drop, i));
+        this.spawnAtLocation((ServerLevel) this.level(), new ItemStack(drop, i));
     }
 
     @Override
@@ -355,7 +359,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
         }
         openMouth();
         MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_HORSE_ANGRY_UNDEAD.get());
-        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
+        return super.doHurtTarget(serverLevel, entityIn);
     }
 
     @Override
@@ -373,7 +377,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
     }
 
     public boolean checkSpawnRules(LevelAccessor worldIn, EntitySpawnReason spawnReasonIn) {
-        if (this.getY() < 50D && !level().dimensionType().ultraWarm()) {
+        if (this.getY() < 50D && !level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) {
             setTypeMoC(32);
         }
         return super.checkSpawnRules(worldIn, spawnReasonIn);
@@ -387,15 +391,10 @@ public class MoCEntityHorseMob extends MoCEntityMob {
         MoCreatures.proxy.LavaFX(this);
     }
 
-    /**
-     * Get this Entity's MobType
-     */
+    /** These variants are undead: healing harms them and harming heals them, as with vanilla undead. */
     @Override
-    public MobType getMobType() {
-        if (getTypeMoC() == 23 || getTypeMoC() == 24 || getTypeMoC() == 25) {
-            return MobType.UNDEAD;
-        }
-        return super.getMobType();
+    public boolean isInvertedHealAndHarm() {
+        return getTypeMoC() == 23 || getTypeMoC() == 24 || getTypeMoC() == 25 || super.isInvertedHealAndHarm();
     }
 
     @Override
@@ -414,7 +413,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
             double dist = (0.4D);
             double newPosX = this.getX() + (dist * Math.sin(this.getYRot() / 57.29578F));
             double newPosZ = this.getZ() - (dist * Math.cos(this.getYRot() / 57.29578F));
-            double newPosY = this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset();
+            double newPosY = this.getY() + this.getPassengersRidingOffset() + (-passenger.getVehicleAttachmentPoint(this).y);
             
             moveFunction.accept(passenger, newPosX, newPosY, newPosZ);
             passenger.setYRot(this.getYRot());
@@ -423,8 +422,9 @@ public class MoCEntityHorseMob extends MoCEntityMob {
 
     // Adjusted to avoid most of the roof suffocation for now
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.9F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.9F));
     }
 
     @Override

@@ -3,14 +3,29 @@
  */
 package drzhark.mocreatures.network.message;
 
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import drzhark.mocreatures.MoCConstants;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class MoCMessageInstaSpawn {
+public class MoCMessageInstaSpawn implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<MoCMessageInstaSpawn> TYPE =
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "insta_spawn"));
+    public static final StreamCodec<FriendlyByteBuf, MoCMessageInstaSpawn> STREAM_CODEC = StreamCodec.ofMember(MoCMessageInstaSpawn::encode, MoCMessageInstaSpawn::new);
+
+    @Override
+    public CustomPacketPayload.Type<MoCMessageInstaSpawn> type() {
+        return TYPE;
+    }
+
 
     public int entityId;
     public int numberToSpawn;
@@ -30,23 +45,22 @@ public class MoCMessageInstaSpawn {
         this.numberToSpawn = buffer.readInt();
     }
 
-    public static void onMessage(MoCMessageInstaSpawn message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void onMessage(MoCMessageInstaSpawn message, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
             if ((MoCreatures.proxy.getProxyMode() == 1 && MoCreatures.proxy.allowInstaSpawn) || MoCreatures.proxy.getProxyMode() == 2) { // make sure the client has admin rights on server!
-                MoCTools.spawnNearPlayer(ctx.get().getSender(), message.entityId, message.numberToSpawn);
+                MoCTools.spawnNearPlayer(((ServerPlayer) ctx.player()), message.entityId, message.numberToSpawn);
                 if (MoCreatures.proxy.debug) {
-                    MoCreatures.LOGGER.info("Player " + ctx.get().getSender().getName() + " used MoC instaspawner and got "
+                    MoCreatures.LOGGER.info("Player " + ((ServerPlayer) ctx.player()).getName() + " used MoC instaspawner and got "
                             + message.numberToSpawn + " creatures spawned");
                 }
             } else {
                 if (MoCreatures.proxy.debug) {
-                    MoCreatures.LOGGER.info("Player " + ctx.get().getSender().getName()
+                    MoCreatures.LOGGER.info("Player " + ((ServerPlayer) ctx.player()).getName()
                             + " tried to use MoC instaspawner, but the allowInstaSpawn setting is set to " + MoCreatures.proxy.allowInstaSpawn);
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
-    }
+            }
 
     @Override
     public String toString() {

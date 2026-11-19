@@ -1,4 +1,5 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.MoCTools;
@@ -26,7 +27,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -76,11 +76,11 @@ public class MoCItemHorseAmulet extends MoCItem {
                 this.spawnClass = this.spawnClass.replace(MoCConstants.MOD_PREFIX, "").toLowerCase();
 
                 if (this.spawnClass.equalsIgnoreCase("Wyvern")) {
-                    storedCreature = MoCEntities.WYVERN.get().create(level);
+                    storedCreature = MoCEntities.WYVERN.get().create(level, EntitySpawnReason.SPAWN_ITEM_USE);
                     ((MoCEntityWyvern) storedCreature).setIsGhost(true);
                     this.isGhost = true;
                 } else if (this.spawnClass.equalsIgnoreCase("WildHorse")) {
-                    storedCreature = MoCEntities.WILDHORSE.get().create(level);
+                    storedCreature = MoCEntities.WILDHORSE.get().create(level, EntitySpawnReason.SPAWN_ITEM_USE);
                 } else {
                     Identifier res = Identifier.parse(MoCConstants.MOD_PREFIX + this.spawnClass.toLowerCase());
                     storedCreature = (MoCEntityTameableAnimal) BuiltInRegistries.ENTITY_TYPE.get(res).create(level);
@@ -112,11 +112,7 @@ public class MoCItemHorseAmulet extends MoCItem {
 //                }
 
                 if (level.addFreshEntity(storedCreature)) {
-                    MoCMessageHandler.INSTANCE.send(
-                            PacketDistributor.NEAR.with(() ->
-                                    new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(), 64, level.dimension())),
-                            new MoCMessageAppear(storedCreature.getId())
-                    );
+                    MoCMessageHandler.sendToNear(level, player.getX(), player.getY(), player.getZ(), 64, new MoCMessageAppear(storedCreature.getId()));
 
                     MoCTools.playCustomSound(storedCreature, MoCSoundEvents.ENTITY_GENERIC_MAGIC_APPEAR.get());
 

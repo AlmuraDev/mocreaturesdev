@@ -58,7 +58,7 @@ public class MoCWorldRegistry {
 
 
     private static Identifier getBiomeName(Holder<Biome> biome) {
-        return biome.unwrap().map((resourceKey) -> resourceKey.location(), (noKey) -> null);
+        return biome.unwrap().map((resourceKey) -> resourceKey.identifier(), (noKey) -> null);
     }
 
     public static boolean testBiome(Pair<String, SpawnBiomeData> entry, Holder<Biome> biome) {

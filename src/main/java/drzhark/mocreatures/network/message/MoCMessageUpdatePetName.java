@@ -3,6 +3,11 @@
  */
 package drzhark.mocreatures.network.message;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import drzhark.mocreatures.MoCConstants;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.IMoCEntity;
 import drzhark.mocreatures.entity.tameable.IMoCTameable;
@@ -12,13 +17,22 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class MoCMessageUpdatePetName {
+public class MoCMessageUpdatePetName implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<MoCMessageUpdatePetName> TYPE =
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "update_pet_name"));
+    public static final StreamCodec<FriendlyByteBuf, MoCMessageUpdatePetName> STREAM_CODEC = StreamCodec.ofMember(MoCMessageUpdatePetName::encode, MoCMessageUpdatePetName::new);
+
+    @Override
+    public CustomPacketPayload.Type<MoCMessageUpdatePetName> type() {
+        return TYPE;
+    }
+
 
     public String name;
     public int entityId;
@@ -39,10 +53,10 @@ public class MoCMessageUpdatePetName {
         this.entityId = buffer.readInt();
     }
 
-    public static void onMessage(MoCMessageUpdatePetName message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void onMessage(MoCMessageUpdatePetName message, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
             // This is a server-side message handler
-            ServerPlayer sender = ctx.get().getSender();
+            ServerPlayer sender = ((ServerPlayer) ctx.player());
             if (sender != null && sender.level() != null) {
                 Entity pet = null;
                 UUID ownerUniqueId = null;
@@ -59,9 +73,9 @@ public class MoCMessageUpdatePetName {
                     MoCPetData petData = MoCreatures.instance.mapData.getPetData(ownerUniqueId);
                     if (petData != null && pet != null && ((IMoCTameable) pet).getOwnerPetId() != -1) {
                         int id = ((IMoCTameable) pet).getOwnerPetId();
-                        ListTag tag = petData.getOwnerRootNBT().getList("TamedList", 10);
+                        ListTag tag = petData.getOwnerRootNBT().getListOrEmpty("TamedList");
                         for (int i = 0; i < tag.size(); i++) {
-                            CompoundTag nbt = tag.getCompound(i);
+                            CompoundTag nbt = tag.getCompoundOrEmpty(i);
                             if (nbt.getIntOr("PetId", 0) == id) {
                                 nbt.putString("Name", message.name);
                                 ((IMoCTameable) pet).setPetName(message.name);
@@ -71,8 +85,7 @@ public class MoCMessageUpdatePetName {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
-    }
+            }
 
     @Override
     public String toString() {

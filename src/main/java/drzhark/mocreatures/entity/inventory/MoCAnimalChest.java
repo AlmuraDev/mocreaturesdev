@@ -4,7 +4,8 @@
 package drzhark.mocreatures.entity.inventory;
 
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.LockCode;
 
@@ -27,11 +28,11 @@ public class MoCAnimalChest extends SimpleContainer {
         return this.name;
     }
 
-    public void write(CompoundTag nbttagcompound) {
+    public void write(ValueOutput nbttagcompound) {
         this.lockCode.addToTag(nbttagcompound);
     }
     
-    public void read(CompoundTag nbttagcompound) {
+    public void read(ValueInput nbttagcompound) {
         this.lockCode = LockCode.fromTag(nbttagcompound);
     }
 

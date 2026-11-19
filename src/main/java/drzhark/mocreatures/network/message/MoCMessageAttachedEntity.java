@@ -3,14 +3,28 @@
  */
 package drzhark.mocreatures.network.message;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import drzhark.mocreatures.MoCConstants;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class MoCMessageAttachedEntity {
+public class MoCMessageAttachedEntity implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<MoCMessageAttachedEntity> TYPE =
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "attached_entity"));
+    public static final StreamCodec<FriendlyByteBuf, MoCMessageAttachedEntity> STREAM_CODEC = StreamCodec.ofMember(MoCMessageAttachedEntity::encode, MoCMessageAttachedEntity::new);
+
+    @Override
+    public CustomPacketPayload.Type<MoCMessageAttachedEntity> type() {
+        return TYPE;
+    }
+
 
     public int sourceEntityId;
     public int targetEntityId;
@@ -30,8 +44,8 @@ public class MoCMessageAttachedEntity {
         this.targetEntityId = buffer.readInt();
     }
 
-    public static void onMessage(MoCMessageAttachedEntity message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void onMessage(MoCMessageAttachedEntity message, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
             Minecraft minecraft = Minecraft.getInstance();
             if (minecraft.level != null) {
                 Entity sourceEntity = minecraft.level.getEntity(message.sourceEntityId);
@@ -42,8 +56,7 @@ public class MoCMessageAttachedEntity {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
-    }
+            }
 
     @Override
     public String toString() {

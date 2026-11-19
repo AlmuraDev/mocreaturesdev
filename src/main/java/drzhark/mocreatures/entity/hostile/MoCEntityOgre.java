@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
@@ -21,7 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityOgre extends MoCEntityMob {
 
@@ -117,7 +118,7 @@ public class MoCEntityOgre extends MoCEntityMob {
             if (this.smashCounter > 0 && ++this.smashCounter > 10) {
                 this.smashCounter = 0;
                 performDestroyBlastAttack();
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageExplode(this.getId()));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageExplode(this.getId()));
             }
 
             if ((this.getTarget() != null) && (this.random.nextInt(40) == 0) && this.smashCounter == 0 && this.attackCounter == 0) {
@@ -145,7 +146,7 @@ public class MoCEntityOgre extends MoCEntityMob {
      */
     protected void startDestroyBlast() {
         this.smashCounter = 1;
-        MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 3));
+        MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 3));
     }
 
     /**
@@ -171,10 +172,10 @@ public class MoCEntityOgre extends MoCEntityMob {
             this.attackCounter = 1;
             if (leftArmW) {
                 this.armToAnimate = 1;
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 1));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 1));
             } else {
                 this.armToAnimate = 2;
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 2));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 2));
             }
         }
     }
@@ -203,12 +204,13 @@ public class MoCEntityOgre extends MoCEntityMob {
     @Override
     public boolean doHurtTarget(ServerLevel serverLevel, Entity target) {
         startArmSwingAttack();
-        return super.doHurtTarget(serverLevel, serverLevel, target);
+        return super.doHurtTarget(serverLevel, target);
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions dimensions) {
-        return this.getBbHeight() * 0.91F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions dimensions = super.getDefaultDimensions(poseIn);
+        return dimensions.withEyeHeight((float) (dimensions.height() * 0.91F));
     }
 
     static class AIOgreAttack extends MeleeAttackGoal {
@@ -229,8 +231,9 @@ public class MoCEntityOgre extends MoCEntityMob {
         }
 
         @Override
-        protected double getAttackReachSqr(LivingEntity attackTarget) {
-            return 4.0F + attackTarget.getBbWidth();
+        protected boolean canPerformAttack(LivingEntity attackTarget) {
+            // 1.20 attack reach: 4.0F + attackTarget.getBbWidth()
+            return this.isTimeToAttack() && this.mob.distanceToSqr(attackTarget) <= (4.0F + attackTarget.getBbWidth()) && this.mob.getSensing().hasLineOfSight(attackTarget);
         }
     }
 

@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client;
 
+import drzhark.mocreatures.client.MoCClientPackets;
 import net.neoforged.fml.common.EventBusSubscriber;
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.entity.IMoCEntity;
@@ -29,13 +30,13 @@ public class MoCInputHandler {
         if (kbJump && e.player.getVehicle() != null && e.player.getVehicle() instanceof IMoCEntity) {
             // jump code needs to be executed client/server simultaneously to take
             ((IMoCEntity) e.player.getVehicle()).makeEntityJump();
-            MoCMessageHandler.INSTANCE.sendToServer(new MoCMessageEntityJump());
+            MoCClientPackets.sendToServer(new MoCMessageEntityJump());
         }
 
         if (kbDive && e.player.getVehicle() != null && e.player.getVehicle() instanceof IMoCEntity) {
             // dive code needs to be executed client/server simultaneously to take
             ((IMoCEntity) e.player.getVehicle()).makeEntityDive();
-            MoCMessageHandler.INSTANCE.sendToServer(new MoCMessageEntityDive());
+            MoCClientPackets.sendToServer(new MoCMessageEntityDive());
         }
     }
 } 

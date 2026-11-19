@@ -17,7 +17,7 @@ public class PathNavigateFlyer extends FlyingPathNavigation {
         super(mob, level);
         this.setCanOpenDoors(false);
         this.setCanFloat(true);
-        this.setCanPassDoors(true);
+        this.getNodeEvaluator().setCanPassDoors(true);
     }
 
     @Override

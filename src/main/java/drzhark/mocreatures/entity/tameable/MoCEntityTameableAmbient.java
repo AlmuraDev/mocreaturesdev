@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.tameable;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityReference;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ValueInput;
@@ -37,7 +39,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -49,7 +50,7 @@ import java.util.UUID;
 
 public class MoCEntityTameableAmbient extends MoCEntityAmbient implements IMoCTameable {
 
-    protected static final EntityDataAccessor<Optional<UUID>> OWNER_UNIQUE_ID = SynchedEntityData.defineId(MoCEntityTameableAmbient.class, EntityDataSerializers.OPTIONAL_UUID);
+    protected static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> OWNER_UNIQUE_ID = SynchedEntityData.defineId(MoCEntityTameableAmbient.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
     protected static final EntityDataAccessor<Integer> PET_ID = SynchedEntityData.defineId(MoCEntityTameableAmbient.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Boolean> TAMED = SynchedEntityData.defineId(MoCEntityTameableAmbient.class, EntityDataSerializers.BOOLEAN);
     private boolean hasEaten;
@@ -79,11 +80,11 @@ public class MoCEntityTameableAmbient extends MoCEntityAmbient implements IMoCTa
 
     @Nullable
     public UUID getOwnerId() {
-        return this.entityData.get(OWNER_UNIQUE_ID).orElse(null);
+        return this.entityData.get(OWNER_UNIQUE_ID).map(EntityReference::getUUID).orElse(null);
     }
 
     public void setOwnerId(@Nullable UUID uniqueId) {
-        this.entityData.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId));
+        this.entityData.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId).map(EntityReference::<LivingEntity>of));
     }
 
     @Override
@@ -129,7 +130,7 @@ public class MoCEntityTameableAmbient extends MoCEntityAmbient implements IMoCTa
         }
 
         if (!this.level().isClientSide() && getIsTamed()) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new MoCMessageHealth(this.getId(), this.getHealth()));
+            MoCMessageHandler.sendToTracking(this, new MoCMessageHealth(this.getId(), this.getHealth()));
         }
         return super.hurtServer(serverLevel, damagesource, i);
     }
@@ -334,21 +335,21 @@ public class MoCEntityTameableAmbient extends MoCEntityAmbient implements IMoCTa
         super.readAdditionalSaveData(nbttagcompound);
         setTamed(nbttagcompound.getBooleanOr("Tamed", false));
         String s = "";
-        if (nbttagcompound.contains("OwnerUUID", 8)) {
+        if (MoCTools.has(nbttagcompound, "OwnerUUID")) {
             s = nbttagcompound.getStringOr("OwnerUUID", "");
         }
         if (!s.isEmpty()) {
             this.setOwnerId(UUID.fromString(s));
         }
-        if (nbttagcompound.contains("PetId")) {
+        if (MoCTools.has(nbttagcompound, "PetId")) {
             setOwnerPetId(nbttagcompound.getIntOr("PetId", 0));
         }
-        if (this.getIsTamed() && nbttagcompound.contains("PetId")) {
+        if (this.getIsTamed() && MoCTools.has(nbttagcompound, "PetId")) {
             MoCPetData petData = MoCreatures.instance.mapData.getPetData(this.getOwnerId());
             if (petData != null) {
-                ListTag tag = petData.getOwnerRootNBT().getList("TamedList", 10);
+                ListTag tag = petData.getOwnerRootNBT().getListOrEmpty("TamedList");
                 for (int i = 0; i < tag.size(); i++) {
-                    CompoundTag nbt = tag.getCompound(i);
+                    CompoundTag nbt = tag.getCompoundOrEmpty(i);
                     if (nbt.getIntOr("PetId", 0) == nbttagcompound.getIntOr("PetId", 0)) {
                         // update amulet flag
                         nbt.putBoolean("InAmulet", false);
@@ -460,11 +461,7 @@ public class MoCEntityTameableAmbient extends MoCEntityAmbient implements IMoCTa
 
             setGestationTime(getGestationTime() + 1);
             if (!this.level().isClientSide()) {
-                MoCMessageHandler.INSTANCE.send(
-                    PacketDistributor.NEAR.with(() -> 
-                        new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                    new MoCMessageHeart(this.getId())
-                );
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageHeart(this.getId()));
             }
 
             if (getGestationTime() <= 50) {
@@ -474,7 +471,7 @@ public class MoCEntityTameableAmbient extends MoCEntityAmbient implements IMoCTa
             try {
                 String offspringName = this.getOffspringClazz((IMoCTameable) mate);
 
-                Mob offspring = (Mob) BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(MoCConstants.MOD_PREFIX + offspringName.toLowerCase())).create(this.level());
+                Mob offspring = (Mob) BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(MoCConstants.MOD_PREFIX + offspringName.toLowerCase())).create(this.level(), EntitySpawnReason.BREEDING);
                 if (offspring instanceof IMoCTameable) {
                     IMoCTameable baby = (IMoCTameable) offspring;
                     ((Mob) baby).setPos(this.getX(), this.getY(), this.getZ());

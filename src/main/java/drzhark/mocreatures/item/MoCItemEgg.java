@@ -1,4 +1,6 @@
 package drzhark.mocreatures.item;
+import drzhark.mocreatures.init.MoCDataComponents;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import drzhark.mocreatures.entity.item.MoCEntityEgg;
 import drzhark.mocreatures.init.MoCEntities;
@@ -33,11 +35,10 @@ public class MoCItemEgg extends MoCItem {
         }
 
         if (!level.isClientSide() && player.onGround()) {
-            CompoundTag tag = stack.getOrCreateTag();
-            int eggType = tag.getIntOr("EggType", 0);
+            int eggType = stack.getOrDefault(MoCDataComponents.EGG_TYPE.get(), 0);
             if (eggType == 30) eggType = 31; // Ostrich => Stolen Ostrich
 
-            MoCEntityEgg entityEgg = MoCEntities.EGG.get().create(level);
+            MoCEntityEgg entityEgg = MoCEntities.EGG.get().create(level, EntitySpawnReason.SPAWN_ITEM_USE);
             if (entityEgg != null) {
                 entityEgg.setEggType(eggType);
                 entityEgg.setPos(player.getX(), player.getY(), player.getZ());
@@ -71,7 +72,7 @@ public class MoCItemEgg extends MoCItem {
 
     private void addSingle(CreativeModeTab.Output list, int type) {
         ItemStack stack = new ItemStack(this);
-        stack.getOrCreateTag().putInt("EggType", type);
+        stack.set(MoCDataComponents.EGG_TYPE.get(), type);
         list.accept(stack);
     }
 
@@ -89,7 +90,7 @@ public class MoCItemEgg extends MoCItem {
 
     @Override
     public String getDescriptionId(ItemStack stack) {
-        int eggType = stack.getOrCreateTag().getInt("EggType");
+        int eggType = stack.getOrDefault(MoCDataComponents.EGG_TYPE.get(), 0);
         return super.getDescriptionId(stack) + "." + eggType;
     }
 }

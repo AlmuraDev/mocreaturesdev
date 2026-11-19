@@ -16,7 +16,7 @@ public class EntityAIHunt<T extends LivingEntity> extends NearestAttackableTarge
     private final Class<T> targetClass;
 
     public EntityAIHunt(PathfinderMob entity, Class<T> classTarget, int chance, boolean checkSight, boolean onlyNearby, Predicate<LivingEntity> predicate) {
-        super(entity, classTarget, chance, checkSight, onlyNearby, predicate);
+        super(entity, classTarget, chance, checkSight, onlyNearby, predicate == null ? null : (target, level) -> predicate.test(target));
         this.hunter = entity;
         this.targetClass = classTarget;
     }

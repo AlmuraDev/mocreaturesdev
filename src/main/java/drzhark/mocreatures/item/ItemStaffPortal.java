@@ -290,7 +290,7 @@ public class ItemStaffPortal extends MoCItem {
         nbt.putInt("portalPosX", this.portalPosX);
         nbt.putInt("portalPosY", this.portalPosY);
         nbt.putInt("portalPosZ", this.portalPosZ);
-        nbt.putString("portalDimension", this.portalDimension.location().toString());
+        nbt.putString("portalDimension", this.portalDimension.identifier().toString());
     }
 
     @Override

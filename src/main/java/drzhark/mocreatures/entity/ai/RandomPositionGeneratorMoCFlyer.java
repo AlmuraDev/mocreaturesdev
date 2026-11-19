@@ -72,12 +72,12 @@ public class RandomPositionGeneratorMoCFlyer {
         float f = -99999.0F;
         boolean flag1;
 
-        if (entitycreatureIn.hasRestriction()) {
-            double d0 = entitycreatureIn.getRestrictCenter().distToCenterSqr(
+        if (entitycreatureIn.hasHome()) {
+            double d0 = entitycreatureIn.getHomePosition().distToCenterSqr(
                     Mth.floor(entitycreatureIn.getX()), 
                     Mth.floor(entitycreatureIn.getY()), 
                     Mth.floor(entitycreatureIn.getZ())) + 4.0D;
-            double d1 = entitycreatureIn.getRestrictRadius() + (float) xz;
+            double d1 = entitycreatureIn.getHomeRadius() + (float) xz;
             flag1 = d0 < d1 * d1;
         } else {
             flag1 = false;
@@ -89,8 +89,8 @@ public class RandomPositionGeneratorMoCFlyer {
             int i1 = random.nextInt(2 * xz + 1) - xz;
 
             if (targetVec3 == null || (double) l * targetVec3.x + (double) i1 * targetVec3.z >= 0.0D) {
-                if (entitycreatureIn.hasRestriction() && xz > 1) {
-                    BlockPos blockpos = entitycreatureIn.getRestrictCenter();
+                if (entitycreatureIn.hasHome() && xz > 1) {
+                    BlockPos blockpos = entitycreatureIn.getHomePosition();
 
                     if (entitycreatureIn.getX() > (double) blockpos.getX()) {
                         l -= random.nextInt(xz / 2);
@@ -107,7 +107,7 @@ public class RandomPositionGeneratorMoCFlyer {
 
                 BlockPos blockpos1 = new BlockPos(Mth.floor((double) l + entitycreatureIn.getX()), Mth.floor((double) k1 + entitycreatureIn.getY()), Mth.floor((double) i1 + entitycreatureIn.getZ()));
 
-                if ((!flag1 || entitycreatureIn.isWithinRestriction(blockpos1)))// && pathnavigate.canEntityStandOnPos(blockpos1))
+                if ((!flag1 || entitycreatureIn.isWithinHome(blockpos1)))// && pathnavigate.canEntityStandOnPos(blockpos1))
                 {
                     float f1 = entitycreatureIn.getWalkTargetValue(blockpos1);
 

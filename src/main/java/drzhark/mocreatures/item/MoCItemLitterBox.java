@@ -1,4 +1,5 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.entity.item.MoCEntityLitterBox;
@@ -24,7 +25,7 @@ public class MoCItemLitterBox extends MoCItem {
             if (!player.isCreative()) {
                 stack.shrink(1);
             }
-            MoCEntityLitterBox litterBox = MoCEntities.LITTERBOX.get().create(level);
+            MoCEntityLitterBox litterBox = MoCEntities.LITTERBOX.get().create(level, EntitySpawnReason.SPAWN_ITEM_USE);
             if (litterBox != null) {
                 litterBox.setPos(player.getX(), player.getY(), player.getZ());
                 level.addFreshEntity(litterBox);

@@ -3,15 +3,29 @@
  */
 package drzhark.mocreatures.network.message;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import drzhark.mocreatures.MoCConstants;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import drzhark.mocreatures.entity.tameable.IMoCTameable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class MoCMessageHeart {
+public class MoCMessageHeart implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<MoCMessageHeart> TYPE =
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "heart"));
+    public static final StreamCodec<FriendlyByteBuf, MoCMessageHeart> STREAM_CODEC = StreamCodec.ofMember(MoCMessageHeart::encode, MoCMessageHeart::new);
+
+    @Override
+    public CustomPacketPayload.Type<MoCMessageHeart> type() {
+        return TYPE;
+    }
+
 
     public int entityId;
 
@@ -30,15 +44,14 @@ public class MoCMessageHeart {
         this.entityId = buffer.readInt();
     }
 
-    public static void onMessage(MoCMessageHeart message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void onMessage(MoCMessageHeart message, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
             Entity ent = Minecraft.getInstance().player.level().getEntity(message.entityId);
             if (ent instanceof IMoCTameable) {
                 ((IMoCTameable) ent).spawnHeart();
             }
         });
-        ctx.get().setPacketHandled(true);
-    }
+            }
 
     @Override
     public String toString() {

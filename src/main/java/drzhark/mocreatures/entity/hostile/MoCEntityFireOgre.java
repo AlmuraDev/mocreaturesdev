@@ -50,7 +50,7 @@ public class MoCEntityFireOgre extends MoCEntityOgre {
     public void aiStep() {
         super.aiStep();
 
-        if (this.isInWaterRainOrBubble()) {
+        if (this.isInWaterOrRain()) {
             this.hurtOrSimulate(this.damageSources().drown(), 1.0F);
         }
     }

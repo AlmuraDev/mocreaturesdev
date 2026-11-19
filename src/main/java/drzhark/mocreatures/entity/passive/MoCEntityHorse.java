@@ -2,6 +2,13 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.passive;
+import net.minecraft.core.component.DataComponents;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -49,7 +56,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionResult;
@@ -59,7 +65,6 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.UUID;
@@ -204,7 +209,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(getBoundingBox().minY), Mth.floor(this.getZ()));
         ResourceKey<net.minecraft.world.level.biome.Biome> currentbiome = MoCTools.biomeKind(this.level(), pos);
         try {
-            if (currentbiome.location().getPath().contains("savanna")) setTypeMoC(60); // zebra
+            if (currentbiome.identifier().getPath().contains("savanna")) setTypeMoC(60); // zebra
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -529,7 +534,8 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
-        super.dropCustomDeathLoot(serverLevel, serverLevel, recentlyHitIn);
+        int looting = MoCTools.lootingLevel(serverLevel, source);
+        super.dropCustomDeathLoot(serverLevel, source, recentlyHitIn);
         
         boolean flag = (this.random.nextInt(100) < MoCreatures.proxy.rareItemDropChance);
 
@@ -543,7 +549,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         {
             drop = Items.FEATHER;
         }
-        if (this.getTypeMoC() == 38 && flag && this.level().dimensionType().ultraWarm()) // nightmare
+        if (this.getTypeMoC() == 38 && flag && this.level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) // nightmare
         {
             drop = MoCItems.HEARTFIRE.get();
         }
@@ -573,7 +579,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
             i += this.random.nextInt(looting + 1);
         }
 
-        this.spawnAtLocation(new ItemStack(drop, i));
+        this.spawnAtLocation((ServerLevel) this.level(), new ItemStack(drop, i));
     }
 
     public boolean getHasReproduced() {
@@ -1262,7 +1268,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         if (this.getTypeMoC() == 60 && !getIsTamed() && isZebraRunning()) return InteractionResult.FAIL;
 
         final ItemStack stack = player.getItemInHand(hand);
-        if (!stack.isEmpty() && !getIsRideable() && (stack.getItem() instanceof SaddleItem || stack.getItem() == MoCItems.HORSE_SADDLE.get())) {
+        if (!stack.isEmpty() && !getIsRideable() && (stack.is(Items.SADDLE) || stack.getItem() == MoCItems.HORSE_SADDLE.get())) {
             if (!player.getAbilities().instabuild) stack.shrink(1);
             setRideable(true);
             return InteractionResult.SUCCESS;
@@ -1420,8 +1426,8 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
             }
         }
 
-        if (!stack.isEmpty() && (stack.getItem() instanceof DyeItem) && this.getTypeMoC() == 50) {
-            int colorInt = ((DyeItem)stack.getItem()).getDyeColor().getId();
+        if (!stack.isEmpty() && stack.has(DataComponents.DYE) && this.getTypeMoC() == 50) {
+            int colorInt = stack.get(DataComponents.DYE).getId();
             switch (colorInt) {
                 case 1: //orange
                     transform(59);
@@ -1476,7 +1482,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         }
 
         // zebra easter egg
-        if (!stack.isEmpty() && (this.getTypeMoC() == 60) && stack.getItem() instanceof RecordItem && MoCreatures.proxy.easterEggs) {
+        if (!stack.isEmpty() && (this.getTypeMoC() == 60) && stack.has(DataComponents.JUKEBOX_PLAYABLE) && MoCreatures.proxy.easterEggs) {
             player.setItemInHand(hand, ItemStack.EMPTY);
             if (!this.level().isClientSide()) {
                 ItemEntity entityitem1 = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), new ItemStack(MoCItems.RECORD_SHUFFLE.get(), 1));
@@ -1773,16 +1779,13 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         boolean flag = false;
         JukeboxBlockEntity jukebox = MoCTools.nearJukeBoxRecord(this, 6D);
         if (jukebox != null) {
-            ItemStack recordStack = jukebox.getFirstItem();
+            ItemStack recordStack = jukebox.getTheItem();
             Item shuffleRecord = MoCItems.RECORD_SHUFFLE.get();
             if (recordStack.getItem() == shuffleRecord) {
                 flag = true;
                 if (this.shuffleCounter > 1000) {
                     this.shuffleCounter = 0;
-                    MoCMessageHandler.INSTANCE.send(
-                        PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())),
-                        new MoCMessageAnimation(this.getId(), 102)
-                    );
+                    MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 102));
                     flag = false;
                 }
             }
@@ -1801,10 +1804,10 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         int k = Mth.floor(this.getZ());
         BlockPos pos = new BlockPos(i, j, k);
         BlockState blockstate = this.level().getBlockState(pos.offset(-1, 0, -1));
-        BlockEvent.BreakEvent event = null;
+        BreakBlockEvent event = null;
         if (!this.level().isClientSide()) {
             try {
-                event = new BlockEvent.BreakEvent(this.level(), pos, blockstate, FakePlayerFactory.getMinecraft((net.minecraft.server.level.ServerLevel)this.level()));
+                event = new BreakBlockEvent(this.level(), pos, blockstate, FakePlayerFactory.getMinecraft((net.minecraft.server.level.ServerLevel)this.level()));
             } catch (Throwable ignored) {
             }
         }
@@ -1824,7 +1827,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
                 MoCTools.spawnMaggots(this.level(), this);
 
             if (getIsTamed() && (isMagicHorse() || isPureBreed()) && !getIsGhost() && this.random.nextInt(4) == 0) {
-                MoCEntityHorse entityhorse1 = MoCEntities.WILDHORSE.get().create(this.level());
+                MoCEntityHorse entityhorse1 = MoCEntities.WILDHORSE.get().create(this.level(), EntitySpawnReason.BREEDING);
                 entityhorse1.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(entityhorse1);
                 MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_GENERIC_MAGIC_APPEAR.get());
@@ -1859,9 +1862,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
 
             if (!this.level().isClientSide() && !nearMusicBox()) {
                 this.shuffleCounter = 0;
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> 
-                    new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                    new MoCMessageAnimation(this.getId(), 102));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 102));
             }
         }
 
@@ -1956,9 +1957,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
              */
             if (this.getTypeMoC() == 60 && getIsTamed() && this.random.nextInt(50) == 0 && nearMusicBox() && shuffleCounter == 0) {
                 shuffleCounter = 1;
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> 
-                    new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                    new MoCMessageAnimation(this.getId(), 101));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 101));
             }
 
             if ((this.random.nextInt(300) == 0) && (this.deathTime == 0)) {
@@ -2039,9 +2038,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
                 }
 
                 if (this.gestationTime % 3 == 0) {
-                    MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> 
-                        new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                        new MoCMessageHeart(this.getId()));
+                    MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageHeart(this.getId()));
                 }
 
                 if (MoCreatures.proxy.originalHorseBreeding) {
@@ -2050,7 +2047,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
                     if (this.gestationTime <= 300) continue; // it takes ~15 seconds to breed.
                 }
 
-                MoCEntityHorse baby = MoCEntities.WILDHORSE.get().create(this.level());
+                MoCEntityHorse baby = MoCEntities.WILDHORSE.get().create(this.level(), EntitySpawnReason.BREEDING);
                 baby.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(baby);
                 MoCTools.playCustomSound(this, SoundEvents.CHICKEN_EGG);
@@ -2223,9 +2220,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
 
     public void transform(int tType) {
         if (!this.level().isClientSide()) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> 
-                new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                new MoCMessageAnimation(this.getId(), tType));
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), tType));
         }
 
         this.transformType = tType;
@@ -2256,9 +2251,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
             dropBags();
         }
         if (!this.level().isClientSide()) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> 
-                new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                new MoCMessageVanish(this.getId()));
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageVanish(this.getId()));
             setVanishC((byte) 1);
         }
         MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_GENERIC_VANISH.get());
@@ -2278,9 +2271,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         if (this.isFlyer() && this.wingFlapCounter == 0) {
             this.wingFlapCounter = 1;
             if (!this.level().isClientSide()) {
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> 
-                    new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                    new MoCMessageAnimation(this.getId(), 3));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 3));
             }
         }
     }
@@ -2303,11 +2294,11 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
                 if (!this.localStack.isEmpty()) {
                     CompoundTag nbttagcompound1 = new CompoundTag();
                     nbttagcompound1.putByte("Slot", (byte) i);
-                    this.localStack.save(nbttagcompound1);
+                    MoCTools.saveStack(this, this.localStack, nbttagcompound1);
                     nbttaglist.add(nbttagcompound1);
                 }
             }
-            nbttagcompound.put("Items", nbttaglist);
+            MoCTools.writeTag(nbttagcompound, "Items", nbttaglist);
         }
     }
 
@@ -2321,13 +2312,13 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         setReproduced(nbttagcompound.getBooleanOr("HasReproduced", false));
         setArmorType(nbttagcompound.getIntOr("ArmorType", 0));
         if (getIsChested()) {
-            ListTag nbttaglist = nbttagcompound.getList("Items", 10);
+            ListTag nbttaglist = MoCTools.readList(nbttagcompound, "Items");
             this.localChest = new MoCAnimalChest("HorseChest", getInventorySize());
             for (int i = 0; i < nbttaglist.size(); i++) {
-                CompoundTag nbttagcompound1 = nbttaglist.getCompound(i);
-                int j = nbttagcompound1.getByte("Slot") & 0xff;
+                CompoundTag nbttagcompound1 = nbttaglist.getCompoundOrEmpty(i);
+                int j = nbttagcompound1.getByteOr("Slot", (byte) 0) & 0xff;
                 if (j < this.localChest.getContainerSize()) {
-                    this.localChest.setItem(j, ItemStack.of(nbttagcompound1));
+                    this.localChest.setItem(j, MoCTools.loadStack(this, nbttagcompound1));
                 }
             }
         }
@@ -2355,10 +2346,10 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         }
     }
 
+    /** These variants are undead: healing harms them and harming heals them, as with vanilla undead. */
     @Override
-    public MobType getMobType() {
-        if (isUndead()) return MobType.UNDEAD;
-        return super.getMobType();
+    public boolean isInvertedHealAndHarm() {
+        return isUndead() || super.isInvertedHealAndHarm();
     }
 
     @Override
@@ -2379,7 +2370,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         double dist = getSizeFactor() * (0.25D);
         double newPosX = this.getX() + (dist * Math.sin(this.yBodyRot / 57.29578F));
         double newPosZ = this.getZ() - (dist * Math.cos(this.yBodyRot / 57.29578F));
-        moveFunction.accept(passenger, newPosX, this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset(), newPosZ);
+        moveFunction.accept(passenger, newPosX, this.getY() + this.getPassengersRidingOffset() + (-passenger.getVehicleAttachmentPoint(this).y), newPosZ);
     }
 
     @Override
@@ -2389,8 +2380,9 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
     }
 
     // Adjusted to avoid most of the roof suffocation for now
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.9F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.9F));
     }
 
     @Override

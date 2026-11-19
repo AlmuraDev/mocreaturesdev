@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.aquatic;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import drzhark.mocreatures.entity.ai.EntityAIFleeFromEntityMoC;
 import drzhark.mocreatures.entity.ai.EntityAIWanderMoC2;
@@ -49,15 +50,15 @@ public class MoCEntityMediumFish extends MoCEntityTameableAquatic {
 
     public static MoCEntityMediumFish createEntity(Level world, int type) {
         if (type == 1) {
-            return (MoCEntityMediumFish) MoCEntities.SALMON.get().create(world);
+            return (MoCEntityMediumFish) MoCEntities.SALMON.get().create(world, EntitySpawnReason.BREEDING);
         }
         if (type == 2) {
-            return (MoCEntityMediumFish) MoCEntities.COD.get().create(world);
+            return (MoCEntityMediumFish) MoCEntities.COD.get().create(world, EntitySpawnReason.BREEDING);
         }
         if (type == 3) {
-            return (MoCEntityMediumFish) MoCEntities.BASS.get().create(world);
+            return (MoCEntityMediumFish) MoCEntities.BASS.get().create(world, EntitySpawnReason.BREEDING);
         }
-        return (MoCEntityMediumFish) MoCEntities.SALMON.get().create(world);
+        return (MoCEntityMediumFish) MoCEntities.SALMON.get().create(world, EntitySpawnReason.BREEDING);
     }
 
     @Override
@@ -201,8 +202,9 @@ public class MoCEntityMediumFish extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.775F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.775F));
     }
 
     static class FishMoveControl extends MoveControl {

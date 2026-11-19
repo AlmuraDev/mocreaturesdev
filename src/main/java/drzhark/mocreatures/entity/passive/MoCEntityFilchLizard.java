@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.passive;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import com.google.common.collect.Sets;
@@ -120,7 +122,7 @@ public class MoCEntityFilchLizard extends MoCEntityAnimal {
         BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(getBoundingBox().minY), Mth.floor(this.getZ()));
         
         // In 1.20.1, check biome directly
-        String biomePath = this.level().getBiome(pos).unwrapKey().orElseThrow().location().getPath();
+        String biomePath = this.level().getBiome(pos).unwrapKey().orElseThrow().identifier().getPath();
         if (biomePath.contains("desert") || biomePath.contains("sand")) {
             setTypeMoC(2);
         } else if (biomePath.contains("mesa") || biomePath.contains("badlands")) {
@@ -134,12 +136,10 @@ public class MoCEntityFilchLizard extends MoCEntityAnimal {
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose poseIn) {
-        if (!this.getMainHandItem().isEmpty()) {
-            return super.getDimensions(poseIn).scale(1.0F, 2.5F);
-        } else {
-            return super.getDimensions(poseIn);
-        }
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        // taller while carrying a stolen item
+        EntityDimensions base = super.getDefaultDimensions(poseIn);
+        return this.getMainHandItem().isEmpty() ? base : base.scale(1.0F, 2.5F);
     }
 
     @Override
@@ -162,11 +162,11 @@ public class MoCEntityFilchLizard extends MoCEntityAnimal {
                 this.setItemSlot(EquipmentSlot.MAINHAND, getRandomSpawnItem());
             }
         }
-        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn);
     }
 
     public void dropItemStack(ItemStack itemIn, float offsetY) {
-        this.spawnAtLocation(itemIn, offsetY);
+        this.spawnAtLocation((ServerLevel) this.level(), itemIn, offsetY);
     }
 
     @Override

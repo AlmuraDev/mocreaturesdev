@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hunter;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
@@ -117,7 +119,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
             }
 
             this.setDeltaMovement(this.getDeltaMovement().x, 0.3D, this.getDeltaMovement().z);
-            this.hasImpulse = true;
+            this.needsSync = true;
         } else if (this.getTarget() != null || getHasCaughtPrey()) {
             super.jumpFromGround();
         }
@@ -255,7 +257,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
             return false;
         }*/
 
-        if (super.doHurtTarget(serverLevel, serverLevel, entityIn)) {
+        if (super.doHurtTarget(serverLevel, entityIn)) {
             if (!this.level().isClientSide() && !getHasCaughtPrey()) {
                 crocBite();
             }
@@ -307,7 +309,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
         double dist = getMoCAge() * 0.01F + passenger.getBbWidth() - 0.4D;
         double newPosX = this.getX() - (dist * Math.cos((MoCTools.realAngle(this.getYRot() - 90F)) / 57.29578F));
         double newPosZ = this.getZ() - (dist * Math.sin((MoCTools.realAngle(this.getYRot() - 90F)) / 57.29578F));
-        moveFunction.accept(passenger, newPosX, this.getY() + getPassengersRidingOffset() + passenger.getMyRidingOffset(), newPosZ);
+        moveFunction.accept(passenger, newPosX, this.getY() + getPassengersRidingOffset() + (-passenger.getVehicleAttachmentPoint(this).y), newPosZ);
 
         if (this.spinInt > 40) {
             direction = -1;
@@ -392,7 +394,8 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return sizeIn.height * 0.8F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.8F));
     }
 }

@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hunter;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ValueInput;
@@ -41,7 +43,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SaddleItem;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -57,7 +58,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityBigCat extends MoCEntityTameableAnimal {
 
@@ -251,7 +251,7 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
     public void spawnGhost() {
         try {
             EntityType<?> entityType = this.getType();
-            Mob templiving = (Mob)entityType.create(this.level());
+            Mob templiving = (Mob)entityType.create(this.level(), EntitySpawnReason.BREEDING);
             if (templiving instanceof MoCEntityBigCat) {
                 MoCEntityBigCat ghost = (MoCEntityBigCat) templiving;
                 ghost.setPos(this.getX(), this.getY(), this.getZ());
@@ -341,7 +341,7 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
         }
 
         if ((this.deathTime == 0) && !isMovementCeased()) {
-            ItemEntity entityitem = getClosestItem(this, 12D, Ingredient.of(Items.PORKCHOP), Ingredient.of(MoCTags.Items.RAW_FISHES));
+            ItemEntity entityitem = getClosestItem(this, 12D, Ingredient.of(Items.PORKCHOP), Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(MoCTags.Items.RAW_FISHES)));
             if (entityitem != null) {
                 float f = entityitem.distanceTo(this);
                 if (f > 2.0F) {
@@ -369,10 +369,7 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
 
         if (this.wingFlapCounter == 0) {
             this.wingFlapCounter = 1;
-            MoCMessageHandler.INSTANCE.send(
-                PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                new MoCMessageAnimation(this.getId(), 3)
-            );
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 3));
         }
     }
 
@@ -391,7 +388,7 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
         double dist = getSizeFactor() * (0.1D);
         double newPosX = this.getX() + (dist * Math.sin(this.yBodyRot / 57.29578F));
         double newPosZ = this.getZ() - (dist * Math.cos(this.yBodyRot / 57.29578F));
-        passenger.setPos(newPosX, this.getY() + getPassengersRidingOffset() + passenger.getMyRidingOffset(), newPosZ);
+        passenger.setPos(newPosX, this.getY() + getPassengersRidingOffset() + (-passenger.getVehicleAttachmentPoint(this).y), newPosZ);
     }
 
     @Override
@@ -411,11 +408,11 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
                 if (!this.localstack.isEmpty()) {
                     CompoundTag nbttagcompound1 = new CompoundTag();
                     nbttagcompound1.putByte("Slot", (byte) i);
-                    this.localstack.save(nbttagcompound1);
+                    MoCTools.saveStack(this, this.localstack, nbttagcompound1);
                     nbttaglist.add(nbttagcompound1);
                 }
             }
-            nbttagcompound.put("Items", nbttaglist);
+            MoCTools.writeTag(nbttagcompound, "Items", nbttaglist);
         }
 
     }
@@ -429,14 +426,14 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
         setIsGhost(nbttagcompound.getBooleanOr("Ghost", false));
         setHasAmulet(nbttagcompound.getBooleanOr("Amulet", false));
         if (getIsChested()) {
-            ListTag nbttaglist = nbttagcompound.getList("Items", 10);
+            ListTag nbttaglist = MoCTools.readList(nbttagcompound, "Items");
             this.localchest = new MoCAnimalChest("BigCatChest", MoCAnimalChest.Size.small);
             this.localchest.read(nbttagcompound);
             for (int i = 0; i < nbttaglist.size(); i++) {
-                CompoundTag nbttagcompound1 = nbttaglist.getCompound(i);
-                int j = nbttagcompound1.getByte("Slot") & 0xff;
+                CompoundTag nbttagcompound1 = nbttaglist.getCompoundOrEmpty(i);
+                int j = nbttagcompound1.getByteOr("Slot", (byte) 0) & 0xff;
                 if (j < this.localchest.getContainerSize()) {
-                    this.localchest.setItem(j, ItemStack.of(nbttagcompound1));
+                    this.localchest.setItem(j, MoCTools.loadStack(this, nbttagcompound1));
                 }
             }
         }
@@ -484,7 +481,7 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
             return InteractionResult.SUCCESS;
         }
         if (!stack.isEmpty() && getIsTamed() && !getIsRideable() && (getMoCAge() > 80)
-                && (stack.getItem() instanceof SaddleItem || stack.getItem() == MoCItems.HORSE_SADDLE.get())) {
+                && (stack.is(Items.SADDLE) || stack.getItem() == MoCItems.HORSE_SADDLE.get())) {
             if (!player.isCreative()) stack.shrink(1);
             setRideable(true);
             return InteractionResult.SUCCESS;
@@ -553,7 +550,7 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
             Block block = blockstate.getBlock();
 
             if (!blockstate.isAir() && !this.isSilent()) {
-                SoundType soundtype = block.getSoundType(blockstate);
+                SoundType soundtype = blockstate.getSoundType();
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundtype.getStepSound(), this.getSoundSource(), soundtype.getVolume() * 0.5F, soundtype.getPitch() * 0.75F);
             }
             return true;

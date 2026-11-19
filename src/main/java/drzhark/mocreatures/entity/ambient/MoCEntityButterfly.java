@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.ambient;
+import net.minecraft.tags.BlockItemTags;
 
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityInsect;
@@ -96,7 +97,7 @@ public class MoCEntityButterfly extends MoCEntityInsect {
 
     @Override
     public boolean isMyFavoriteFood(ItemStack stack) {
-        return !stack.isEmpty() && stack.is(ItemTags.FLOWERS);
+        return !stack.isEmpty() && stack.is(BlockItemTags.FLOWERS.item());
     }
 
     @Override
@@ -134,8 +135,9 @@ public class MoCEntityButterfly extends MoCEntityInsect {
     }
 
     @Override
-    public float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return 0.1F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (0.1F));
     }
     
     @Override

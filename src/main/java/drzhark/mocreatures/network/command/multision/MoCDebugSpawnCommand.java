@@ -1,4 +1,5 @@
 package drzhark.mocreatures.network.command.multision;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -51,7 +52,7 @@ public class MoCDebugSpawnCommand {
         // Get current biome
         Holder<Biome> biome = level.getBiome(pos);
         Identifier biomeName = biome.unwrap().map(
-            resourceKey -> resourceKey.location(),
+            resourceKey -> resourceKey.identifier(),
             biomeObj -> net.minecraft.resources.Identifier.fromNamespaceAndPath("unknown", "biome")
         );
         
@@ -121,7 +122,7 @@ public class MoCDebugSpawnCommand {
             }
             
             // Create and spawn the entity
-            Mob entity = (Mob) entityType.create(level);
+            Mob entity = (Mob) entityType.create(level, EntitySpawnReason.COMMAND);
             if (entity != null) {
                 BlockPos spawnPos = player.blockPosition().offset(2, 1, 0);
                 entity.setPos(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());

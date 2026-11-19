@@ -11,7 +11,6 @@ import drzhark.mocreatures.entity.ai.EntityAIWanderMoC2;
 import drzhark.mocreatures.entity.tameable.MoCEntityTameableAnimal;
 import drzhark.mocreatures.init.MoCLootTables;
 import drzhark.mocreatures.init.MoCSoundEvents;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -117,7 +116,7 @@ public class MoCEntityCrab extends MoCEntityTameableAnimal {
     @Override
     public boolean doHurtTarget(ServerLevel serverLevel, Entity entity) {
         this.playSound(MoCSoundEvents.ENTITY_GOAT_SMACK.get(), 1.0F, 2.0F);
-        return super.doHurtTarget(serverLevel, serverLevel, entity);
+        return super.doHurtTarget(serverLevel, entity);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -136,10 +135,6 @@ public class MoCEntityCrab extends MoCEntityTameableAnimal {
         return MoCTools.getMyMovementSpeed(this) > 0.09F;
     }
 
-    @Override
-    public MobType getMobType() {
-        return MobType.ARTHROPOD;
-    }
 
     @Override
     protected boolean canBeTrappedInNet() {

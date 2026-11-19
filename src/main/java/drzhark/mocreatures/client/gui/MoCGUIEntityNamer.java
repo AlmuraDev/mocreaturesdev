@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.gui;
 
+import drzhark.mocreatures.client.MoCClientPackets;
 import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.MoCreatures;
@@ -58,7 +59,7 @@ public class MoCGUIEntityNamer extends Screen {
         if (!petName.isEmpty()) {
             this.namedEntity.setPetName(petName);
             if (this.namedEntity instanceof Mob) {
-                MoCMessageHandler.INSTANCE.sendToServer(new MoCMessageUpdatePetName(((Mob) this.namedEntity).getId(), petName));
+                MoCClientPackets.sendToServer(new MoCMessageUpdatePetName(((Mob) this.namedEntity).getId(), petName));
             }
         }
         this.onClose();

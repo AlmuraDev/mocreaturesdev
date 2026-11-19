@@ -50,10 +50,7 @@ public class MoCEventHooks {
         if (!serverLevel.dimension().equals(Level.OVERWORLD)) return;
 
         if (!MoCreatures.proxy.worldInitDone) {
-            MoCPetMapData data = serverLevel.getDataStorage().computeIfAbsent(
-                    MoCPetMapData::load, 
-                    () -> new MoCPetMapData(MoCConstants.MOD_ID), 
-                    MoCConstants.MOD_ID);
+            MoCPetMapData data = serverLevel.getDataStorage().computeIfAbsent(MoCPetMapData.TYPE);
             MoCreatures.instance.mapData = data;
             MoCreatures.proxy.worldInitDone = true;
         }

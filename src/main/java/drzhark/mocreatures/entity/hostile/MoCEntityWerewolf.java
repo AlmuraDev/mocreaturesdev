@@ -2,6 +2,10 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.storage.ValueInput;
@@ -21,8 +25,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -166,7 +168,7 @@ public class MoCEntityWerewolf extends MoCEntityMob {
         if (this.getTypeMoC() == 4 && entityIn instanceof LivingEntity) {
             entityIn.igniteForSeconds(10);
         }
-        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
+        return super.doHurtTarget(serverLevel, entityIn);
     }
 
     @Override
@@ -178,21 +180,14 @@ public class MoCEntityWerewolf extends MoCEntityMob {
             if (!stack.isEmpty()) {
                 if (stack.getItem() == MoCItems.SILVERSWORD.get()) {
                     i = 10F;
-                } else if (stack.getItem() instanceof SwordItem) {
-                    String swordMaterial = ((SwordItem) stack.getItem()).getTier().toString();
-                    String swordName = stack.getItem().getDescriptionId();
-                    if (swordMaterial.toLowerCase().contains("silver") || swordName.toLowerCase().contains("silver")) {
-                        i = ((SwordItem) stack.getItem()).getDamage() + 6F;
+                } else if (stack.is(ItemTags.SWORDS) || stack.has(DataComponents.TOOL)) {
+                    // 1.20 used the sword's damage and the tool tier's bonus; 26.3 has no tiers, so use the weapon's attack damage.
+                    boolean silver = stack.getItem().getDescriptionId().toLowerCase().contains("silver");
+                    float weaponDamage = (float) entityplayer.getAttributeValue(Attributes.ATTACK_DAMAGE) - 1F;
+                    if (stack.is(ItemTags.SWORDS)) {
+                        i = weaponDamage + (silver ? 6F : 2F);
                     } else {
-                        i = ((SwordItem) stack.getItem()).getDamage() + 2F;
-                    }
-                } else if (stack.getItem() instanceof TieredItem) {
-                    String swordMaterial = ((TieredItem) stack.getItem()).getTier().toString();
-                    String swordName = stack.getItem().getDescriptionId();
-                    if (swordMaterial.toLowerCase().contains("silver") || swordName.toLowerCase().contains("silver")) {
-                        i = ((TieredItem) stack.getItem()).getTier().getAttackDamageBonus() * 3F;
-                    } else {
-                        i = ((TieredItem) stack.getItem()).getTier().getAttackDamageBonus() * 0.5F;
+                        i = silver ? weaponDamage : weaponDamage * 0.25F;
                     }
                 } else if (stack.getItem().getDescriptionId().toLowerCase().contains("silver")) {
                     i = 6F;
@@ -295,7 +290,7 @@ public class MoCEntityWerewolf extends MoCEntityMob {
     }
 
     public static boolean getCanSpawnHere(EntityType<? extends MoCEntityMob> type, ServerLevel world, EntitySpawnReason reason, BlockPos pos, Random randomIn) {
-        return MoCEntityMob.getCanSpawnHere(type, world, reason, pos, randomIn) && world.canSeeSky(new BlockPos(pos));
+        return MoCEntityMob.getCanSpawnHere(type, world, reason, pos, randomIn) && world.canSeeSky(pos);
     }
 
     // PATCHED Transform method:
@@ -363,17 +358,11 @@ public class MoCEntityWerewolf extends MoCEntityMob {
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose poseIn) {
-        if (getIsHumanForm()) {
-            return EntityDimensions.fixed(0.6F, 1.8F); // player size
-        } else {
-            return EntityDimensions.fixed(1.2F, 2.4F); // beast form
-        }
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return getIsHumanForm() ? 1.62F : 2.0F; // match model scale
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        // player size in human form, larger as a beast; eye height to match the model
+        return getIsHumanForm()
+                ? EntityDimensions.fixed(0.6F, 1.8F).withEyeHeight(1.62F)
+                : EntityDimensions.fixed(1.2F, 2.4F).withEyeHeight(2.0F);
     }
 
     @Override

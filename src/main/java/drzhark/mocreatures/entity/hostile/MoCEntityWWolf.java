@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import drzhark.mocreatures.MoCTools;
@@ -126,7 +128,7 @@ public class MoCEntityWWolf extends MoCEntityMob {
         ResourceKey<Biome> biome = MoCTools.biomeKind(this.level(), new BlockPos(i, j, k));
         
         // Simple check based on biome path instead of BiomeDictionary
-        String biomePath = biome.location().getPath();
+        String biomePath = biome.identifier().getPath();
         if (biomePath.contains("snow") || biomePath.contains("frozen") || biomePath.contains("ice") || biomePath.contains("cold")) {
             setTypeMoC(3);
         }
@@ -136,7 +138,7 @@ public class MoCEntityWWolf extends MoCEntityMob {
     }
 
     public static boolean getCanSpawnHere(EntityType<? extends MoCEntityMob> type, ServerLevel world, EntitySpawnReason reason, BlockPos pos, Random randomIn) {
-        return MoCEntityMob.getCanSpawnHere(type, world, reason, pos, randomIn) && world.canSeeSky(new BlockPos(pos));
+        return MoCEntityMob.getCanSpawnHere(type, world, reason, pos, randomIn) && world.canSeeSky(pos);
     }
 
     //TODO move this
@@ -192,7 +194,7 @@ public class MoCEntityWWolf extends MoCEntityMob {
             double dist = 0.1D;
             double newPosX = this.getX() + (dist * Math.sin(this.getYRot() / 57.29578F));
             double newPosZ = this.getZ() - (dist * Math.cos(this.getYRot() / 57.29578F));
-            double newPosY = this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset();
+            double newPosY = this.getY() + this.getPassengersRidingOffset() + (-passenger.getVehicleAttachmentPoint(this).y);
             
             moveFunction.accept(passenger, newPosX, newPosY, newPosZ);
             passenger.setYRot(this.getYRot());
@@ -219,8 +221,9 @@ public class MoCEntityWWolf extends MoCEntityMob {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.945F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.945F));
     }
 
     static class AIWolfAttack extends MeleeAttackGoal {
@@ -241,8 +244,9 @@ public class MoCEntityWWolf extends MoCEntityMob {
         }
 
         @Override
-        protected double getAttackReachSqr(LivingEntity attackTarget) {
-            return 4.0F + attackTarget.getBbWidth();
+        protected boolean canPerformAttack(LivingEntity attackTarget) {
+            // 1.20 attack reach: 4.0F + attackTarget.getBbWidth()
+            return this.isTimeToAttack() && this.mob.distanceToSqr(attackTarget) <= (4.0F + attackTarget.getBbWidth()) && this.mob.getSensing().hasLineOfSight(attackTarget);
         }
     }
 

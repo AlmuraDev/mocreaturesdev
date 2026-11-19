@@ -2,6 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.aquatic;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
@@ -33,7 +36,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.phys.Vec3;
 
@@ -384,7 +386,7 @@ public class MoCEntityDolphin extends MoCEntityTameableAquatic {
                     this.gestationtime++;
                 }
                 if (this.gestationtime % 3 == 0) {
-                    MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageHeart(this.getId()));
+                    MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageHeart(this.getId()));
                 }
                 if (this.gestationtime <= 50) {
                     continue;
@@ -393,10 +395,10 @@ public class MoCEntityDolphin extends MoCEntityTameableAquatic {
                 // Create a baby dolphin
                 EntityType<?> dolphinType = MoCEntities.DOLPHIN.get();
                 if (dolphinType != null) {
-                    Entity babyEntity = dolphinType.create(this.level());
+                    Entity babyEntity = dolphinType.create(this.level(), EntitySpawnReason.BREEDING);
                     if (babyEntity instanceof MoCEntityDolphin) {
                         MoCEntityDolphin babydolphin = (MoCEntityDolphin) babyEntity;
-                        babydolphin.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+                        babydolphin.snapTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
                         if (this.level().addFreshEntity(babydolphin)) {
                             MoCTools.playCustomSound(this, SoundEvents.CHICKEN_EGG);
                             setHasEaten(false);
@@ -475,7 +477,7 @@ public class MoCEntityDolphin extends MoCEntityTameableAquatic {
             double dist = (0.8D);
             double newPosX = this.getX() + (dist * Math.sin(this.yBodyRot / 57.29578F));
             double newPosZ = this.getZ() - (dist * Math.cos(this.yBodyRot / 57.29578F));
-            moveFunction.accept(passenger, newPosX, this.getY() + getMountedYOffset() + passenger.getMyRidingOffset(), newPosZ);
+            moveFunction.accept(passenger, newPosX, this.getY() + getMountedYOffset() + (-passenger.getVehicleAttachmentPoint(this).y), newPosZ);
         }
     }
 
@@ -484,8 +486,9 @@ public class MoCEntityDolphin extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.315F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.315F));
     }
 
     public boolean canBeControlledByRider() {

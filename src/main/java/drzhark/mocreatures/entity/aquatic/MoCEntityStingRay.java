@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.aquatic;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
@@ -15,7 +17,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityStingRay extends MoCEntityRay {
 
@@ -56,12 +57,7 @@ public class MoCEntityStingRay extends MoCEntityRay {
         if (!this.level().isClientSide()) {
             if (!getIsTamed() && ++this.poisoncounter > 250 && (this.level().getDifficulty().getId() > 0) && this.random.nextInt(30) == 0) {
                 if (MoCTools.findNearPlayerAndPoison(this, true)) {
-                    MoCMessageHandler.INSTANCE.send(
-                        PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
-                            this.getX(), this.getY(), this.getZ(), 64, this.level().dimension()
-                        )), 
-                        new MoCMessageAnimation(this.getId(), 1)
-                    );
+                    MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 1));
                     this.poisoncounter = 0;
                 }
             }
@@ -97,7 +93,8 @@ public class MoCEntityStingRay extends MoCEntityRay {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.86F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.86F));
     }
 }

@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.ai;
+import net.minecraft.core.BlockPos;
 
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.entity.IMoCEntity;
@@ -12,7 +13,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.util.Mth;
 
 public class EntityAIMoverHelperMoC extends MoveControl {
@@ -72,7 +74,7 @@ public class EntityAIMoverHelperMoC extends MoveControl {
             if (pathnavigate != null) {
                 NodeEvaluator nodeprocessor = pathnavigate.getNodeEvaluator();
 
-                if (nodeprocessor != null && nodeprocessor.getBlockPathType(this.mob.level(), Mth.floor(this.mob.getX() + (double) f7), Mth.floor(this.mob.getY()), Mth.floor(this.mob.getZ() + (double) f8)) != BlockPathTypes.WALKABLE) {
+                if (nodeprocessor != null && WalkNodeEvaluator.getPathTypeStatic(this.mob, BlockPos.containing(this.mob.getX() + (double) f7, this.mob.getY(), this.mob.getZ() + (double) f8)) != PathType.WALKABLE) {
                     this.strafeForwards = 1.0F;
                     this.strafeRight = 0.0F;
                     f1 = f;
@@ -99,7 +101,7 @@ public class EntityAIMoverHelperMoC extends MoveControl {
             this.mob.setYRot(this.rotlerp(this.mob.getYRot(), f9, 20.0F));
             this.mob.setSpeed((float) (this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
 
-            if (d2 > (double) this.mob.getStepHeight() && d0 * d0 + d1 * d1 < (double) Math.max(1.0F, this.mob.getBbWidth())) {
+            if (d2 > (double) this.mob.maxUpStep() && d0 * d0 + d1 * d1 < (double) Math.max(1.0F, this.mob.getBbWidth())) {
                 this.mob.getJumpControl().jump();
             }
         } else {

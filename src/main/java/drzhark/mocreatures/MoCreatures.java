@@ -1,4 +1,5 @@
 package drzhark.mocreatures;
+import drzhark.mocreatures.init.MoCDataComponents;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Codec;
@@ -71,7 +72,6 @@ public class MoCreatures {
 
         // Register for config events
         this.proxy = DistExecutor.unsafeRunForDist(() -> MoCProxyClient::new, () -> MoCProxy::new);
-        MoCMessageHandler.init();
         final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::setup);
         NeoForge.EVENT_BUS.register(new MoCEventHooks());
@@ -149,6 +149,7 @@ public class MoCreatures {
         MoCEntities.ENTITY_TYPES.register(modBus);
         MoCSpawnEggs.SPAWN_EGGS.register(modBus);
         MoCItems.ITEMS.register(modBus);
+        MoCDataComponents.COMPONENTS.register(modBus);
         MoCFeatures.FEATURES.register(modBus);
         MoCCreativeTabs.register(modBus);
         MoCPOI.POI_TYPES.register(modBus);

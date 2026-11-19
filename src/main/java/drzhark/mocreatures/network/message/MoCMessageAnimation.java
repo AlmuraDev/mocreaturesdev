@@ -3,15 +3,29 @@
  */
 package drzhark.mocreatures.network.message;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import drzhark.mocreatures.MoCConstants;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import drzhark.mocreatures.entity.IMoCEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class MoCMessageAnimation {
+public class MoCMessageAnimation implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<MoCMessageAnimation> TYPE =
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "animation"));
+    public static final StreamCodec<FriendlyByteBuf, MoCMessageAnimation> STREAM_CODEC = StreamCodec.ofMember(MoCMessageAnimation::encode, MoCMessageAnimation::new);
+
+    @Override
+    public CustomPacketPayload.Type<MoCMessageAnimation> type() {
+        return TYPE;
+    }
+
 
     public int entityId;
     public int animationType;
@@ -31,8 +45,8 @@ public class MoCMessageAnimation {
         this.animationType = buffer.readInt();
     }
 
-    public static void onMessage(MoCMessageAnimation message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void onMessage(MoCMessageAnimation message, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
             Minecraft minecraft = Minecraft.getInstance();
             if (minecraft.level != null) {
                 Entity entity = minecraft.level.getEntity(message.entityId);
@@ -41,8 +55,7 @@ public class MoCMessageAnimation {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
-    }
+            }
 
     @Override
     public String toString() {

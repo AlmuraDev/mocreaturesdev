@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.item;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ValueInput;
@@ -104,9 +105,10 @@ public class MoCEntityLitterBox extends Mob {
         return 0.0F;
     }
 
+    /** The kitty sits on the floor of the bed or box. */
     @Override
-    public double getPassengersRidingOffset() {
-        return 0.0D;
+    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
+        return Vec3.ZERO;
     }
 
     @Override

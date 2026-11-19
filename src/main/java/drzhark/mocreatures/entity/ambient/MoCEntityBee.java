@@ -6,6 +6,7 @@
 // hive block (honey, bee spawner)
 
 package drzhark.mocreatures.entity.ambient;
+import net.minecraft.tags.BlockItemTags;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
@@ -104,7 +105,7 @@ public class MoCEntityBee extends MoCEntityInsect {
 
     @Override
     public boolean isMyFavoriteFood(ItemStack stack) {
-        return !stack.isEmpty() && stack.is(ItemTags.FLOWERS);
+        return !stack.isEmpty() && stack.is(BlockItemTags.FLOWERS.item());
     }
 
     @Override

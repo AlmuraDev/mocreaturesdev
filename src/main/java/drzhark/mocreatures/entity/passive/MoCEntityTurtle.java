@@ -2,6 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.passive;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ValueInput;
@@ -38,6 +41,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 
 public class MoCEntityTurtle extends MoCEntityTameableAnimal {
+
+    /** Swing animation progress (1.20 LivingEntity.attackAnim, which 26.3 removed); client-side only. */
+    public float attackAnim;
 
     private static final EntityDataAccessor<Boolean> IS_UPSIDE_DOWN = SynchedEntityData.defineId(MoCEntityTurtle.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> IS_HIDING = SynchedEntityData.defineId(MoCEntityTurtle.class, EntityDataSerializers.BOOLEAN);
@@ -162,7 +168,7 @@ public class MoCEntityTurtle extends MoCEntityTameableAnimal {
                 float f = this.getYRot() * 0.01745329F;
                 this.setDeltaMovement(this.getDeltaMovement().add(Mth.sin(f) * -0.2F, 0.0D, Mth.cos(f) * 0.2F));
             }
-            this.hasImpulse = true;
+            this.needsSync = true;
         }
     }
 
@@ -333,38 +339,38 @@ public class MoCEntityTurtle extends MoCEntityTameableAnimal {
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
-        super.dropCustomDeathLoot(serverLevel, serverLevel, recentlyHitIn);
+        super.dropCustomDeathLoot(serverLevel, source, recentlyHitIn);
 
         // chance to drop turtle helmet
         if (!this.level().isClientSide() && !this.isBaby() && this.random.nextInt(10) == 0) {
             ItemStack helmet = new ItemStack(Items.TURTLE_HELMET);
-            this.spawnAtLocation(helmet);
+            this.spawnAtLocation((ServerLevel) this.level(), helmet);
         }
 
         // teenage mutant ninja turtles drop weapons
         if (isTMNT() && !this.level().isClientSide()) {
             if (getPetName().equalsIgnoreCase("Donatello")) {
                 ItemStack weapon = new ItemStack(MoCItems.BO.get());
-                weapon.setHoverName(Component.translatable("mocreatures.ninjaturtle.bo"));
-                this.spawnAtLocation(weapon);
+                weapon.set(DataComponents.CUSTOM_NAME, Component.translatable("mocreatures.ninjaturtle.bo"));
+                this.spawnAtLocation((ServerLevel) this.level(), weapon);
             }
 
             if (getPetName().equalsIgnoreCase("Leonardo")) {
                 ItemStack weapon = new ItemStack(MoCItems.KATANA.get());
-                weapon.setHoverName(Component.translatable("mocreatures.ninjaturtle.katana"));
-                this.spawnAtLocation(weapon);
+                weapon.set(DataComponents.CUSTOM_NAME, Component.translatable("mocreatures.ninjaturtle.katana"));
+                this.spawnAtLocation((ServerLevel) this.level(), weapon);
             }
 
             if (getPetName().equalsIgnoreCase("Raphael")) {
                 ItemStack weapon = new ItemStack(MoCItems.SAI.get());
-                weapon.setHoverName(Component.translatable("mocreatures.ninjaturtle.sai"));
-                this.spawnAtLocation(weapon);
+                weapon.set(DataComponents.CUSTOM_NAME, Component.translatable("mocreatures.ninjaturtle.sai"));
+                this.spawnAtLocation((ServerLevel) this.level(), weapon);
             }
 
             if (getPetName().equalsIgnoreCase("Michelangelo")) {
                 ItemStack weapon = new ItemStack(MoCItems.NUNCHAKU.get());
-                weapon.setHoverName(Component.translatable("mocreatures.ninjaturtle.nunchaku"));
-                this.spawnAtLocation(weapon);
+                weapon.set(DataComponents.CUSTOM_NAME, Component.translatable("mocreatures.ninjaturtle.nunchaku"));
+                this.spawnAtLocation((ServerLevel) this.level(), weapon);
             }
         }
     }
@@ -429,7 +435,8 @@ public class MoCEntityTurtle extends MoCEntityTameableAnimal {
         return true;
     }
 
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.525F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.525F));
     }
 }

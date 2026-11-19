@@ -60,7 +60,7 @@ public class CommandMoCPets {
                                     ", Name: " + mocreature.getPetName() + 
                                     ", Owner: " + player.getName().getString() + 
                                     ", PetId: " + mocreature.getOwnerPetId() + 
-                                    ", Dimension: " + entity.level().dimension().location() + 
+                                    ", Dimension: " + entity.level().dimension().identifier() + 
                                     ", Pos: " + Math.round(entity.getX()) + 
                                     ", " + Math.round(entity.getY()) + 
                                     ", " + Math.round(entity.getZ()));
@@ -73,22 +73,22 @@ public class CommandMoCPets {
             MoCPetData ownerPetData = MoCreatures.instance.mapData.getPetData(player.getUUID());
             if (ownerPetData != null) {
                 for (int i = 0; i < ownerPetData.getTamedList().size(); i++) {
-                    CompoundTag nbt = ownerPetData.getTamedList().getCompound(i);
+                    CompoundTag nbt = ownerPetData.getTamedList().getCompoundOrEmpty(i);
                     if (nbt.contains("PetId") && !foundIds.contains(nbt.getIntOr("PetId", 0))) {
                         unloadedCount++;
-                        double posX = nbt.getList("Pos", 6).getDouble(0);
-                        double posY = nbt.getList("Pos", 6).getDouble(1);
-                        double posZ = nbt.getList("Pos", 6).getDouble(2);
+                        double posX = nbt.getListOrEmpty("Pos").getDouble(0);
+                        double posY = nbt.getListOrEmpty("Pos").getDouble(1);
+                        double posZ = nbt.getListOrEmpty("Pos").getDouble(2);
                         
                         if (nbt.getBooleanOr("InAmulet", false)) {
                             tamedList.add("Found unloaded pet in AMULET with Type: " + 
-                                    nbt.getString("id").replace("MoCreatures.", "") + 
+                                    nbt.getStringOr("id", "").replace("MoCreatures.", "") + 
                                     ", Name: " + nbt.getStringOr("Name", "") + 
                                     ", Owner: " + nbt.getStringOr("Owner", "") + 
                                     ", PetId: " + nbt.getIntOr("PetId", 0));
                         } else {
                             tamedList.add("Found unloaded pet with Type: " + 
-                                    nbt.getString("id").replace("MoCreatures.", "") + 
+                                    nbt.getStringOr("id", "").replace("MoCreatures.", "") + 
                                     ", Name: " + nbt.getStringOr("Name", "") + 
                                     ", Owner: " + nbt.getStringOr("Owner", "") + 
                                     ", PetId: " + nbt.getIntOr("PetId", 0) + 

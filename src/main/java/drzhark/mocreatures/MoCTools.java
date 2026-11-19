@@ -2,7 +2,18 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.world.entity.EntitySpawnReason;
 
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
 import drzhark.mocreatures.entity.IMoCEntity;
 import drzhark.mocreatures.entity.MoCEntityAnimal;
 import drzhark.mocreatures.entity.ambient.MoCEntityMaggot;
@@ -19,7 +30,6 @@ import drzhark.mocreatures.init.MoCSoundEvents;
 import drzhark.mocreatures.network.MoCMessageHandler;
 import drzhark.mocreatures.network.message.MoCMessageNameGUI;
 import drzhark.mocreatures.util.MoCTags;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -78,7 +88,6 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nullable;
@@ -105,7 +114,7 @@ public class MoCTools {
                 Slime slime = EntityType.SLIME.create(level);
                 if (slime == null) continue;
 
-                slime.moveTo(
+                slime.snapTo(
                         entity.getX() + offsetX,
                         entity.getY() + 0.5D,
                         entity.getZ() + offsetZ,
@@ -239,7 +248,7 @@ public class MoCTools {
             }
 
             if (entity != null) {
-                entity.moveTo(
+                entity.snapTo(
                         player.getX() - 1, player.getY(), player.getZ() - 1,
                         player.getYRot(), player.getXRot()
                 );
@@ -486,7 +495,7 @@ public class MoCTools {
 
     public static String biomeName(Level level, BlockPos pos) {
         return level.getBiome(pos).unwrapKey()
-                .map(key -> key.location().toString())
+                .map(key -> key.identifier().toString())
                 .orElse("unknown");
     }
 
@@ -787,10 +796,7 @@ public class MoCTools {
             Entity entity = (Entity) storedCreature;
 
             MoCTools.runLater(() -> {
-                MoCMessageHandler.INSTANCE.send(
-                        PacketDistributor.PLAYER.with(() -> serverPlayer),
-                        new MoCMessageNameGUI(entity.getId())
-                );
+                MoCMessageHandler.sendToPlayer(serverPlayer, new MoCMessageNameGUI(entity.getId()));
             }, 3);
         }
 
@@ -1026,9 +1032,9 @@ public class MoCTools {
                 float offsetX = (i % 2 - 0.5F) * 0.25F;
                 float offsetZ = ((float) i / 2 - 0.5F) * 0.25F;
 
-                MoCEntityMaggot maggot = MoCEntities.MAGGOT.get().create(level);
+                MoCEntityMaggot maggot = MoCEntities.MAGGOT.get().create(level, EntitySpawnReason.BREEDING);
                 if (maggot != null) {
-                    maggot.moveTo(entity.getX() + offsetX, entity.getY() + 0.5D, entity.getZ() + offsetZ,
+                    maggot.snapTo(entity.getX() + offsetX, entity.getY() + 0.5D, entity.getZ() + offsetZ,
                             rand.nextFloat() * 360.0F, 0.0F);
                     level.addFreshEntity(maggot);
                 }
@@ -1108,7 +1114,7 @@ public class MoCTools {
         }
 
         CompoundTag tag = entity.serializeNBT();
-        if (tag.contains("Owner") && !tag.getString("Owner").isEmpty()) {
+        if (tag.contains("Owner") && !tag.getStringOr("Owner", "").isEmpty()) {
             return true;
         }
 
@@ -1204,7 +1210,57 @@ public class MoCTools {
         if (!entity.getPersistentData().contains(MoCConstants.MOD_ID)) {
             entity.getPersistentData().put(MoCConstants.MOD_ID, new CompoundTag());
         }
-        return entity.getPersistentData().getCompound(MoCConstants.MOD_ID);
+        return entity.getPersistentData().getCompoundOrEmpty(MoCConstants.MOD_ID);
+    }
+
+    // ---- 26.3 save data helpers: entities save through ValueOutput / ValueInput instead of a CompoundTag ----
+
+    /** Writes any NBT tag (compound or list) under {@code key}, as the 1.20 {@code CompoundTag.put} did. */
+    public static void writeTag(ValueOutput output, String key, Tag tag) {
+        output.store(key, ExtraCodecs.NBT, tag);
+    }
+
+    /** Reads a compound written by {@link #writeTag}; empty if it isn't there. */
+    public static CompoundTag readCompound(ValueInput input, String key) {
+        return input.read(key, CompoundTag.CODEC).orElseGet(CompoundTag::new);
+    }
+
+    /** Reads a list written by {@link #writeTag}; empty if it isn't there. */
+    public static ListTag readList(ValueInput input, String key) {
+        return input.read(key, ExtraCodecs.NBT).filter(t -> t instanceof ListTag).map(t -> (ListTag) t).orElseGet(ListTag::new);
+    }
+
+    /** Writes an item stack into {@code target} (alongside keys such as "Slot"), as 1.20's {@code ItemStack.save} did. */
+    public static void saveStack(Entity holder, ItemStack stack, CompoundTag target) {
+        if (stack.isEmpty()) {
+            return;
+        }
+        ItemStack.CODEC.encodeStart(holder.registryAccess().createSerializationContext(NbtOps.INSTANCE), stack)
+                .result()
+                .filter(tag -> tag instanceof CompoundTag)
+                .ifPresent(tag -> target.merge((CompoundTag) tag));
+    }
+
+    /** Reads an item stack written by {@link #saveStack}; empty if it can't be read. */
+    public static ItemStack loadStack(Entity holder, CompoundTag source) {
+        return ItemStack.CODEC.parse(holder.registryAccess().createSerializationContext(NbtOps.INSTANCE), source)
+                .result()
+                .orElse(ItemStack.EMPTY);
+    }
+
+    /** Looting level of whoever caused {@code source}; 26.3 no longer passes it to dropCustomDeathLoot. */
+    public static int lootingLevel(ServerLevel level, DamageSource source) {
+        if (source.getEntity() instanceof LivingEntity attacker) {
+            return level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(Enchantments.LOOTING)
+                    .map(looting -> EnchantmentHelper.getEnchantmentLevel(looting, attacker))
+                    .orElse(0);
+        }
+        return 0;
+    }
+
+    /** Whether anything was saved under {@code key}. */
+    public static boolean has(ValueInput input, String key) {
+        return input.read(key, ExtraCodecs.NBT).isPresent();
     }
 
     public static void findMobRider(Entity mountEntity) {
@@ -1271,9 +1327,9 @@ public class MoCTools {
         if (ServerLifecycleHooks.getCurrentServer() != null) {
             // Server-side
             return ServerLifecycleHooks.getCurrentServer().registryAccess();
-        } else if (Minecraft.getInstance().level != null) {
-            // Client-side
-            return Minecraft.getInstance().level.registryAccess();
+        } else if (MoCreatures.proxy.getPlayer() != null) {
+            // Client-side (the client proxy returns the local player)
+            return MoCreatures.proxy.getPlayer().level().registryAccess();
         }
         return null; // Fallback
     }
@@ -1327,7 +1383,7 @@ public class MoCTools {
         }
         
         ResourceKey<Level> dimension = entity.level().dimension();
-        Identifier dimensionLocation = dimension.location();
+        Identifier dimensionLocation = dimension.identifier();
         
         // Check if this is the Wyvern Lair dimension
         return dimensionLocation.toString().equals("mocreatures:wyvernlairworld");

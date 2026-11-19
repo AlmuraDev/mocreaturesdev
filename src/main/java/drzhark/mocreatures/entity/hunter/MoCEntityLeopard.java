@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hunter;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
@@ -52,7 +54,7 @@ public class MoCEntityLeopard extends MoCEntityBigCat {
         ResourceKey<Biome> currentbiome = MoCTools.biomeKind(this.level(), pos);
         try {
             // In 1.20.1, BiomeDictionary is deprecated, use biome path instead
-            String biomePath = currentbiome.location().getPath();
+            String biomePath = currentbiome.identifier().getPath();
             if (biomePath.contains("snow") || biomePath.contains("frozen")) {
                 setTypeMoC(2); //snow leopard
                 return true;
@@ -155,7 +157,8 @@ public class MoCEntityLeopard extends MoCEntityBigCat {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.92F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.92F));
     }
 }

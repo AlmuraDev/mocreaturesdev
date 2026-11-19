@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
@@ -109,13 +111,13 @@ public class MoCEntityRat extends MoCEntityMob {
         try {
             // Simple check based on biome ID - to be updated when BiomeDictionary is
             // resolved
-            if (currentbiome.location().getPath().contains("desert")
-                    || currentbiome.location().getPath().contains("mesa")) {
+            if (currentbiome.identifier().getPath().contains("desert")
+                    || currentbiome.identifier().getPath().contains("mesa")) {
                 setTypeMoC(1); // only brown rats
             }
 
-            if (currentbiome.location().getPath().contains("snow")
-                    || currentbiome.location().getPath().contains("frozen")) {
+            if (currentbiome.identifier().getPath().contains("snow")
+                    || currentbiome.identifier().getPath().contains("frozen")) {
                 setTypeMoC(3); // only white rats
             }
         } catch (Exception ignored) {
@@ -205,8 +207,9 @@ public class MoCEntityRat extends MoCEntityMob {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.5F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.5F));
     }
 
     static class AIRatAttack extends MeleeAttackGoal {
@@ -227,8 +230,9 @@ public class MoCEntityRat extends MoCEntityMob {
         }
 
         @Override
-        protected double getAttackReachSqr(LivingEntity attackTarget) {
-            return 4.0F + attackTarget.getBbWidth();
+        protected boolean canPerformAttack(LivingEntity attackTarget) {
+            // 1.20 attack reach: 4.0F + attackTarget.getBbWidth()
+            return this.isTimeToAttack() && this.mob.distanceToSqr(attackTarget) <= (4.0F + attackTarget.getBbWidth()) && this.mob.getSensing().hasLineOfSight(attackTarget);
         }
     }
 

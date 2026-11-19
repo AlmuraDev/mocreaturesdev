@@ -2,6 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.passive;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -38,7 +41,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.server.level.ServerLevel;
-import net.neoforged.neoforge.network.PacketDistributor;
 import drzhark.mocreatures.network.MoCMessageHandler;
 import drzhark.mocreatures.network.message.MoCMessageHeart;
 import java.util.List;
@@ -112,7 +114,7 @@ public class MoCEntityTurkey extends MoCEntityTameableAnimal {
     // TODO: Add unique sound event
     @Override
     protected void playStepSound(BlockPos pos, BlockState blockIn) {
-        this.playSound(SoundEvents.CHICKEN_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.CHICKEN_STEP.value(), 0.15F, 1.0F);
     }
 
     @Override
@@ -237,8 +239,9 @@ public class MoCEntityTurkey extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.945F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.945F));
     }
     
     @Override
@@ -307,16 +310,14 @@ public class MoCEntityTurkey extends MoCEntityTameableAnimal {
 
             // Show hearts during breeding process
             if (this.gestationTime % 3 == 0) {
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> 
-                    new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                    new MoCMessageHeart(this.getId()));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageHeart(this.getId()));
             }
 
             // After 50 ticks (~2.5 seconds), create baby
             if (this.gestationTime <= 50) continue;
 
             // Create baby turkey
-            MoCEntityTurkey baby = MoCEntities.TURKEY.get().create(this.level());
+            MoCEntityTurkey baby = MoCEntities.TURKEY.get().create(this.level(), EntitySpawnReason.BREEDING);
             if (baby != null) {
                 baby.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(baby);

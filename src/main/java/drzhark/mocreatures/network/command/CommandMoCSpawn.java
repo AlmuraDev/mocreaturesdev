@@ -19,7 +19,6 @@ import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.server.command.EnumArgument;
 
 public class CommandMoCSpawn {
@@ -81,9 +80,7 @@ public class CommandMoCSpawn {
             }
             level.addFreshEntity(specialEntity);
             if (!level.isClientSide()) {
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> 
-                    new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(), 64, level.dimension())), 
-                    new MoCMessageAppear(specialEntity.getId()));
+                MoCMessageHandler.sendToNear(level, player.getX(), player.getY(), player.getZ(), 64, new MoCMessageAppear(specialEntity.getId()));
             }
             MoCTools.playCustomSound(specialEntity, MoCSoundEvents.ENTITY_GENERIC_MAGIC_APPEAR.get());
         } catch (Exception e){}

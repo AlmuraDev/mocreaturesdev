@@ -2,6 +2,17 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity;
+import net.minecraft.locale.Language;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.storage.ValueInput;
@@ -9,7 +20,6 @@ import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.tameable.IMoCTameable;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -58,7 +68,6 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
         // If the default navigation type needs adjustment, override createNavigation()
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public Component getName() {
         String entityString = this.getType().getDescriptionId(); // translation key like "entity.mocreatures.myentity"
@@ -68,8 +77,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
         // Build verbose key: "entity.<registry_name>.verbose.name"
         String registryName = this.getType().getDescriptionId(); // e.g., "myentity"
         String translationKey = "entity." + registryName + ".verbose.name";
-        String translated = I18n.get(translationKey);
-        if (!translationKey.equals(translated)) {
+        if (Language.getInstance().has(translationKey)) {
             return Component.translatable(translationKey);
         }
         return super.getName();
@@ -101,7 +109,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty,
                                         EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         selectType();
-        return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+        return super.finalizeSpawn(world, difficulty, reason, spawnData);
     }
 
     /**
@@ -290,19 +298,19 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
         entityData.putInt("Edad", getMoCAge());
         entityData.putString("Name", getPetName());
         entityData.putInt("TypeInt", getTypeMoC());
-        compound.put("MoCData", entityData);
+        MoCTools.writeTag(compound, "MoCData", entityData);
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput compound) {
         super.readAdditionalSaveData(compound);
         CompoundTag entityData = MoCTools.getEntityData(this);
-        if (compound.contains("MoCData", 10)) {
-            CompoundTag mocTag = compound.getCompound("MoCData");
-            setAdult(mocTag.getBoolean("Adult"));
-            setMoCAge(mocTag.getInt("Edad"));
-            setPetName(mocTag.getString("Name"));
-            setTypeMoC(mocTag.getInt("TypeInt"));
+        if (MoCTools.has(compound, "MoCData")) {
+            CompoundTag mocTag = MoCTools.readCompound(compound, "MoCData");
+            setAdult(mocTag.getBooleanOr("Adult", false));
+            setMoCAge(mocTag.getIntOr("Edad", 0));
+            setPetName(mocTag.getStringOr("Name", ""));
+            setTypeMoC(mocTag.getIntOr("TypeInt", 0));
         }
     }
 
@@ -430,11 +438,17 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
 
     @Override
     public boolean canBeLeashed() {
-        if (!this.level().isClientSide() && !MoCTools.isThisPlayerAnOP(player) && this.getIsTamed()
-                && !player.getUUID().equals(this.getOwnerId())) {
-            return false;
+        return super.canBeLeashed();
+    }
+
+    /** 26.3 no longer tells canBeLeashed who holds the lead, so a tamed pet refuses a lead from anyone but its owner (or an op) here. */
+    @Override
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
+        if (!this.level().isClientSide() && player.getItemInHand(hand).is(Items.LEAD) && this.getIsTamed()
+                && !MoCTools.isThisPlayerAnOP(player) && !player.getUUID().equals(this.getOwnerId())) {
+            return InteractionResult.PASS;
         }
-        return super.canBeLeashed(player);
+        return super.interact(player, hand, location);
     }
 
     @Override
@@ -534,5 +548,52 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
             }
         }
         super.setLeashedTo(leashHolder, sendAttachNotification);
+    }
+
+
+    /** 1.20 riding height: passengers sit this far above the creature's feet. Creatures override it. */
+    public double getPassengersRidingOffset() {
+        return this.getBbHeight() * 0.75D;
+    }
+
+    /** 1.20 offset of this creature when it rides something (for example a bunny on a player's head). */
+    public double getMyRidingOffset() {
+        return 0.0D;
+    }
+
+    @Override
+    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
+        return new Vec3(0.0D, this.getPassengersRidingOffset(), 0.0D);
+    }
+
+    @Override
+    public Vec3 getVehicleAttachmentPoint(Entity vehicle) {
+        return super.getVehicleAttachmentPoint(vehicle).subtract(0.0D, this.getMyRidingOffset(), 0.0D);
+    }
+
+    /**
+     * The creature's loot table, which may depend on its variant; null drops nothing. 26.3 ties a mob's loot table to its
+     * entity type, so the base class drops from this table itself.
+     */
+    protected @Nullable Identifier getDefaultLootTable() {
+        return null;
+    }
+
+    @Override
+    protected void dropFromLootTable(ServerLevel level, DamageSource source, boolean playerKilled) {
+        Identifier table = this.getDefaultLootTable();
+        if (table != null) {
+            this.dropFromLootTable(level, source, playerKilled, ResourceKey.create(Registries.LOOT_TABLE, table));
+        }
+    }
+
+    /**
+     * Mo' Creatures on-hit hook, kept from 1.20's {@code doEnchantDamageEffects}: runs after a successful melee hit.
+     * Creatures override it for their own hit effects (poison, fire, knockback) and call super for the enchantment effects.
+     */
+    public void doEnchantDamageEffects(LivingEntity attacker, Entity target) {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            EnchantmentHelper.doPostAttackEffects(serverLevel, target, this.damageSources().mobAttack(attacker));
+        }
     }
 }

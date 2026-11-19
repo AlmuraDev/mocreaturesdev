@@ -2,6 +2,13 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity;
+import net.minecraft.locale.Language;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.storage.ValueInput;
@@ -17,7 +24,6 @@ import drzhark.mocreatures.entity.passive.MoCEntityHorse;
 import drzhark.mocreatures.network.MoCMessageHandler;
 import drzhark.mocreatures.network.message.MoCMessageHealth;
 
-import net.minecraft.client.resources.language.I18n; // was net.minecraft.client.resources.I18n :contentReference[oaicite:0]{index=0}
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;               // was CompoundNBT
 import net.minecraft.network.chat.Component;
@@ -45,7 +51,6 @@ import net.minecraft.world.DifficultyInstance;                             // sa
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -76,7 +81,6 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
         this.goalSelector.addGoal(4, this.wander);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public Component getName() {
         String entityString = this.getType().getDescriptionId();
@@ -84,8 +88,7 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
             return super.getName();
         }
         String translationKey = "entity." + entityString + ".verbose.name";
-        String translatedString = I18n.get(translationKey);
-        return !translatedString.equals(translationKey)
+        return Language.getInstance().has(translationKey)
                 ? Component.translatable(translationKey)
                 : super.getName();
     }
@@ -102,7 +105,7 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty,
                                    EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         selectType();
-        return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+        return super.finalizeSpawn(world, difficulty, reason, spawnData);
     }
 
     @Override
@@ -227,11 +230,7 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     public void tick() {
         if (!this.level().isClientSide()) {
             if (getIsTamed() && this.random.nextInt(200) == 0) {
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(
-                        () -> new PacketDistributor.TargetPoint(
-                                this.getX(), this.getY(), this.getZ(), 64, this.level().dimension()
-                        )
-                ), new MoCMessageHealth(this.getId(), this.getHealth()));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageHealth(this.getId(), this.getHealth()));
             }
 
             if (this.isDaylightSensitive() && this.level().isBrightOutside()) {
@@ -273,11 +272,7 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     @Override
     public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
         if (!this.level().isClientSide() && getIsTamed()) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(
-                    () -> new PacketDistributor.TargetPoint(
-                            this.getX(), this.getY(), this.getZ(), 64, this.level().dimension()
-                    )
-            ), new MoCMessageHealth(this.getId(), this.getHealth()));
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageHealth(this.getId(), this.getHealth()));
         }
         return super.hurtServer(serverLevel, source, amount);
     }
@@ -453,6 +448,53 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
 
     @Override
     public void forceEntityJump() {
+    }
+
+
+    /** 1.20 riding height: passengers sit this far above the creature's feet. Creatures override it. */
+    public double getPassengersRidingOffset() {
+        return this.getBbHeight() * 0.75D;
+    }
+
+    /** 1.20 offset of this creature when it rides something (for example a bunny on a player's head). */
+    public double getMyRidingOffset() {
+        return 0.0D;
+    }
+
+    @Override
+    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
+        return new Vec3(0.0D, this.getPassengersRidingOffset(), 0.0D);
+    }
+
+    @Override
+    public Vec3 getVehicleAttachmentPoint(Entity vehicle) {
+        return super.getVehicleAttachmentPoint(vehicle).subtract(0.0D, this.getMyRidingOffset(), 0.0D);
+    }
+
+    /**
+     * The creature's loot table, which may depend on its variant; null drops nothing. 26.3 ties a mob's loot table to its
+     * entity type, so the base class drops from this table itself.
+     */
+    protected @Nullable Identifier getDefaultLootTable() {
+        return null;
+    }
+
+    @Override
+    protected void dropFromLootTable(ServerLevel level, DamageSource source, boolean playerKilled) {
+        Identifier table = this.getDefaultLootTable();
+        if (table != null) {
+            this.dropFromLootTable(level, source, playerKilled, ResourceKey.create(Registries.LOOT_TABLE, table));
+        }
+    }
+
+    /**
+     * Mo' Creatures on-hit hook, kept from 1.20's {@code doEnchantDamageEffects}: runs after a successful melee hit.
+     * Creatures override it for their own hit effects (poison, fire, knockback) and call super for the enchantment effects.
+     */
+    public void doEnchantDamageEffects(LivingEntity attacker, Entity target) {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            EnchantmentHelper.doPostAttackEffects(serverLevel, target, this.damageSources().mobAttack(attacker));
+        }
     }
 
     @Override

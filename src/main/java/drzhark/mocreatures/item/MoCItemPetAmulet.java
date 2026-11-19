@@ -26,7 +26,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -111,11 +110,7 @@ public class MoCItemPetAmulet extends MoCItem {
                     }
 
                     if (level.addFreshEntity(entity)) {
-                        MoCMessageHandler.INSTANCE.send(
-                                PacketDistributor.NEAR.with(() ->
-                                        new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(), 64, level.dimension())),
-                                new MoCMessageAppear(entity.getId())
-                        );
+                        MoCMessageHandler.sendToNear(level, player.getX(), player.getY(), player.getZ(), 64, new MoCMessageAppear(entity.getId()));
 
                         if (ownerUniqueId == null || name.isEmpty()) {
                             MoCTools.tameWithName(player, storedCreature);

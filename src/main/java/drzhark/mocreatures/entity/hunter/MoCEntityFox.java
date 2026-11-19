@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hunter;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
@@ -138,7 +140,7 @@ public class MoCEntityFox extends MoCEntityTameableAnimal {
         );
         
         // In 1.20.1, we need to check the biome path directly instead of using BiomeDictionary
-        String biomePath = this.level().getBiome(pos).unwrapKey().orElseThrow().location().getPath();
+        String biomePath = this.level().getBiome(pos).unwrapKey().orElseThrow().identifier().getPath();
         if (biomePath.contains("snow") || biomePath.contains("frozen") || biomePath.contains("cold")) {
             setTypeMoC(2);
         }
@@ -202,7 +204,8 @@ public class MoCEntityFox extends MoCEntityTameableAnimal {
         return 0.9F * getMoCAge() * 0.01F;
     }
 
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.86F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.86F));
     }
 }

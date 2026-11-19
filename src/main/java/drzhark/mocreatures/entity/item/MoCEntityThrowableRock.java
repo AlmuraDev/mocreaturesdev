@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.item;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -28,7 +30,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.NetworkHooks;
 import net.minecraft.network.FriendlyByteBuf;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 
@@ -96,20 +97,14 @@ public class MoCEntityThrowableRock extends Entity implements IEntityWithComplex
     @Override
     public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         BlockState iblockstate = this.getState();
-        nbttagcompound = MoCTools.getEntityData(this);
         nbttagcompound.putInt("Behavior", getBehavior());
         nbttagcompound.putInt("MasterID", getMasterID());
         nbttagcompound.putShort("BlockID", (short) (Block.getId(iblockstate) & 65535));
     }
 
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
 
     @Override
     public void readAdditionalSaveData(ValueInput nbttagcompound) {
-        nbttagcompound = MoCTools.getEntityData(this);
         setBehavior(nbttagcompound.getIntOr("Behavior", 0));
         setMasterID(nbttagcompound.getIntOr("MasterID", 0));
         BlockState iblockstate = Block.stateById(nbttagcompound.getShortOr("BlockID", (short) 0) & 65535);
@@ -261,7 +256,7 @@ public class MoCEntityThrowableRock extends Entity implements IEntityWithComplex
     }
 
     @Override
-    public void writeSpawnData(FriendlyByteBuf buffer) {
+    public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
         BlockState state = this.getState();
         buffer.writeInt(Block.getId(state));
         buffer.writeInt(getBehavior());
@@ -269,9 +264,14 @@ public class MoCEntityThrowableRock extends Entity implements IEntityWithComplex
     }
 
     @Override
-    public void readSpawnData(FriendlyByteBuf buffer) {
+    public void readSpawnData(RegistryFriendlyByteBuf buffer) {
         this.setState(Block.stateById(buffer.readInt()));
         this.setBehavior(buffer.readInt());
         this.setMasterID(buffer.readInt());
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        return false;
     }
 }

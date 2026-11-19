@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.neutral;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
@@ -181,7 +183,7 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
             float f = this.getYRot() * 0.01745329F;
             this.setDeltaMovement(this.getDeltaMovement().add(Mth.sin(f) * -0.2F, 0.0D, Mth.cos(f) * 0.2F));
         }
-        this.hasImpulse = true;
+        this.needsSync = true;
     }
 
     @Override
@@ -385,7 +387,7 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
         if (this.random.nextInt(3) == 0) {
             calm();
         }
-        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
+        return super.doHurtTarget(serverLevel, entityIn);
     }
 
     @Override
@@ -603,7 +605,8 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.945F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.945F));
     }
 }

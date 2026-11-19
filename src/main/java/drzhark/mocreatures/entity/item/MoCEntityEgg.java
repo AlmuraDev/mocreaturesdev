@@ -1,4 +1,6 @@
 package drzhark.mocreatures.entity.item;
+import drzhark.mocreatures.init.MoCDataComponents;
+import net.minecraft.world.entity.Entity;
 
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -29,7 +31,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.NetworkHooks;
 import net.minecraft.world.item.ItemStack;
 
 public class MoCEntityEgg extends Mob {
@@ -76,9 +77,7 @@ public class MoCEntityEgg extends Mob {
         }
         
         ItemStack eggStack = new ItemStack(MoCItems.MOC_EGG.get(), 1);
-        CompoundTag tag = new CompoundTag();
-        tag.putInt("EggType", type);
-        eggStack.setTag(tag);
+        eggStack.set(MoCDataComponents.EGG_TYPE.get(), type);
 
         if (this.lCounter > 10 && player.getInventory().add(eggStack)) {
 
@@ -158,7 +157,7 @@ public class MoCEntityEgg extends Mob {
 
             if (getEggType() == 30 || getEggType() == 31 || getEggType() == 32) {
                 MoCEntityOstrich ostrich = new MoCEntityOstrich(MoCEntities.OSTRICH.get(), this.level());
-                ostrich.setTypeMoC(this.level().dimension().location().getPath().contains("nether") || getEggType() == 32 ? 5 : 1);
+                ostrich.setTypeMoC(this.level().dimension().identifier().getPath().contains("nether") || getEggType() == 32 ? 5 : 1);
                 initializeHatchling(ostrich, 35);
                 ostrich.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(ostrich);
@@ -244,10 +243,6 @@ public class MoCEntityEgg extends Mob {
     public boolean shouldRenderAtSqrDistance(double distanceSq) { return true; }
 
     @Override
-    public boolean canBeCollidedWith() { return true; }
+    public boolean canBeCollidedWith(@org.jspecify.annotations.Nullable Entity other) { return true; }
 
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
 }

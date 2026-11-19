@@ -2,6 +2,16 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity;
+import net.minecraft.locale.Language;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.storage.ValueInput;
@@ -15,7 +25,6 @@ import drzhark.mocreatures.entity.item.MoCEntityKittyBed;
 import drzhark.mocreatures.entity.item.MoCEntityLitterBox;
 import drzhark.mocreatures.entity.passive.MoCEntityHorse;
 import drzhark.mocreatures.entity.tameable.IMoCTameable;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -91,7 +100,6 @@ public abstract class MoCEntityAnimal extends Animal implements IMoCEntity {
         this.navigatorFlyer = new PathNavigateFlyer(this, world);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public Component getName() {
         String entityString = this.getType().getDescriptionId();
@@ -100,8 +108,7 @@ public abstract class MoCEntityAnimal extends Animal implements IMoCEntity {
         }
         String registryName = this.getType().getDescriptionId();
         String translationKey = "entity." + registryName + ".verbose.name";
-        String translated = I18n.get(translationKey);
-        if (!translationKey.equals(translated)) {
+        if (Language.getInstance().has(translationKey)) {
             return Component.translatable(translationKey);
         }
         return super.getName();
@@ -123,7 +130,7 @@ public abstract class MoCEntityAnimal extends Animal implements IMoCEntity {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         selectType();
-        return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+        return super.finalizeSpawn(world, difficulty, reason, spawnData);
     }
 
     @Override
@@ -496,7 +503,7 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
                             && bsBelow.isCollisionShapeFullBlock(this.level(), pos)
                             && !bsAt.isCollisionShapeFullBlock(this.level(), pos.above())
                             && !bsAbove.isCollisionShapeFullBlock(this.level(), pos.above(2))) {
-                        this.moveTo(cx + dx + 0.5D, cy, cz + dz + 0.5D, this.getYRot(), this.getXRot());
+                        this.snapTo(cx + dx + 0.5D, cy, cz + dz + 0.5D, this.getYRot(), this.getXRot());
                         return;
                     }
                 }
@@ -529,14 +536,14 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
         data.putInt("Edad", getMoCAge());
         data.putString("Name", getPetName());
         data.putInt("TypeInt", getTypeMoC());
-        compound.put("MoCData", data);
+        MoCTools.writeTag(compound, "MoCData", data);
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput compound) {
         super.readAdditionalSaveData(compound);
-        if (compound.contains("MoCData", 10)) {
-            CompoundTag data = compound.getCompound("MoCData");
+        if (MoCTools.has(compound, "MoCData")) {
+            CompoundTag data = MoCTools.readCompound(compound, "MoCData");
             setAdult(data.getBooleanOr("Adult", false));
             setMoCAge(data.getIntOr("Edad", 0));
             setPetName(data.getStringOr("Name", ""));
@@ -761,6 +768,59 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
         return super.hurtServer(serverLevel, source, amount);
     }
 
+
+    /** 26.3 makes this abstract; 1.20's default was wheat. Creatures override it. */
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return stack.is(Items.WHEAT);
+    }
+
+    /** 1.20 riding height: passengers sit this far above the creature's feet. Creatures override it. */
+    public double getPassengersRidingOffset() {
+        return this.getBbHeight() * 0.75D;
+    }
+
+    /** 1.20 offset of this creature when it rides something (for example a bunny on a player's head). */
+    public double getMyRidingOffset() {
+        return 0.0D;
+    }
+
+    @Override
+    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
+        return new Vec3(0.0D, this.getPassengersRidingOffset(), 0.0D);
+    }
+
+    @Override
+    public Vec3 getVehicleAttachmentPoint(Entity vehicle) {
+        return super.getVehicleAttachmentPoint(vehicle).subtract(0.0D, this.getMyRidingOffset(), 0.0D);
+    }
+
+    /**
+     * The creature's loot table, which may depend on its variant; null drops nothing. 26.3 ties a mob's loot table to its
+     * entity type, so the base class drops from this table itself.
+     */
+    protected @Nullable Identifier getDefaultLootTable() {
+        return null;
+    }
+
+    @Override
+    protected void dropFromLootTable(ServerLevel level, DamageSource source, boolean playerKilled) {
+        Identifier table = this.getDefaultLootTable();
+        if (table != null) {
+            this.dropFromLootTable(level, source, playerKilled, ResourceKey.create(Registries.LOOT_TABLE, table));
+        }
+    }
+
+    /**
+     * Mo' Creatures on-hit hook, kept from 1.20's {@code doEnchantDamageEffects}: runs after a successful melee hit.
+     * Creatures override it for their own hit effects (poison, fire, knockback) and call super for the enchantment effects.
+     */
+    public void doEnchantDamageEffects(LivingEntity attacker, Entity target) {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            EnchantmentHelper.doPostAttackEffects(serverLevel, target, this.damageSources().mobAttack(attacker));
+        }
+    }
+
     @Override
     public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         boolean flag = entityIn.hurtOrSimulate(
@@ -783,10 +843,17 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
 
     @Override
     public boolean canBeLeashed() {
-        if (!this.level().isClientSide() && !MoCTools.isThisPlayerAnOP(player) && this.getIsTamed() && !player.getUUID().equals(this.getOwnerId())) {
-            return false;
+        return super.canBeLeashed();
+    }
+
+    /** 26.3 no longer tells canBeLeashed who holds the lead, so a tamed pet refuses a lead from anyone but its owner (or an op) here. */
+    @Override
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
+        if (!this.level().isClientSide() && player.getItemInHand(hand).is(Items.LEAD) && this.getIsTamed()
+                && !MoCTools.isThisPlayerAnOP(player) && !player.getUUID().equals(this.getOwnerId())) {
+            return InteractionResult.PASS;
         }
-        return super.canBeLeashed(player);
+        return super.interact(player, hand, location);
     }
 
     @Override
@@ -829,7 +896,7 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
     }
 
     @Override
-    public boolean killedEntity(ServerLevel world, LivingEntity entityLivingIn) {
+    public boolean killedEntity(ServerLevel world, LivingEntity entityLivingIn, DamageSource killingDamage) {
         if (!(entityLivingIn instanceof Player)) {
             MoCTools.destroyDrops(this, 3D);
         }

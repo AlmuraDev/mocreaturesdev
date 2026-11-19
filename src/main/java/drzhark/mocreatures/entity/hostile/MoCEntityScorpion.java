@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ValueInput;
@@ -15,7 +16,6 @@ import drzhark.mocreatures.init.MoCSoundEvents;
 import drzhark.mocreatures.network.MoCMessageHandler;
 import drzhark.mocreatures.network.message.MoCMessageAnimation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,7 +36,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 
 public class MoCEntityScorpion extends MoCEntityMob {
@@ -108,7 +107,7 @@ public class MoCEntityScorpion extends MoCEntityMob {
 
     public void setPoisoning(boolean flag) {
         if (flag && !this.level().isClientSide()) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 0));
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 0));
         }
         this.isPoisoning = flag;
     }
@@ -147,7 +146,7 @@ public class MoCEntityScorpion extends MoCEntityMob {
         if (this.poisontimer != 1) {
             MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_SCORPION_CLAW.get());
         }
-        return super.doHurtTarget(serverLevel, serverLevel, entity);
+        return super.doHurtTarget(serverLevel, entity);
     }
 
     @Override
@@ -213,7 +212,7 @@ public class MoCEntityScorpion extends MoCEntityMob {
 
     public void swingArm() {
         if (!this.level().isClientSide()) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 1));
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 1));
         }
     }
 
@@ -228,9 +227,9 @@ public class MoCEntityScorpion extends MoCEntityMob {
         if (!this.level().isClientSide() && getIsAdult() && getHasBabies()) {
             int k = this.random.nextInt(5);
             for (int i = 0; i < k; i++) {
-                Entity entityscorpy = MoCEntities.PET_SCORPION.get().create(this.level());
+                Entity entityscorpy = MoCEntities.PET_SCORPION.get().create(this.level(), EntitySpawnReason.BREEDING);
                 if (entityscorpy instanceof MoCEntityPetScorpion petScorpion) {
-                    petScorpion.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+                    petScorpion.snapTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
                     petScorpion.setAdult(false);
                     petScorpion.setMoCAge(20);
                     petScorpion.setTypeMoC(getTypeMoC);
@@ -255,7 +254,7 @@ public class MoCEntityScorpion extends MoCEntityMob {
     protected SoundEvent getAmbientSound() {
         // Mouth Movement Animation
         if (!this.level().isClientSide()) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 3));
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 3));
         }
         return MoCSoundEvents.ENTITY_SCORPION_AMBIENT.get();
     }
@@ -282,10 +281,6 @@ public class MoCEntityScorpion extends MoCEntityMob {
         return 300;
     }
 
-    @Override
-    public MobType getMobType() {
-        return MobType.ARTHROPOD;
-    }
 
     @Override
     public float getAdjustedYOffset() {
@@ -308,7 +303,7 @@ public class MoCEntityScorpion extends MoCEntityMob {
             double dist = 0.2D;
             double offsetX = this.getX() + (dist * Math.sin(this.getYRot() / 57.29578F));
             double offsetZ = this.getZ() - (dist * Math.cos(this.getYRot() / 57.29578F));
-            double offsetY = this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset();
+            double offsetY = this.getY() + this.getPassengersRidingOffset() + (-passenger.getVehicleAttachmentPoint(this).y);
             
             moveFunction.accept(passenger, offsetX, offsetY, offsetZ);
             passenger.setYRot(this.getYRot());
@@ -333,8 +328,9 @@ public class MoCEntityScorpion extends MoCEntityMob {
         }
 
         @Override
-        protected double getAttackReachSqr(LivingEntity attackTarget) {
-            return 4.0F + attackTarget.getBbWidth();
+        protected boolean canPerformAttack(LivingEntity attackTarget) {
+            // 1.20 attack reach: 4.0F + attackTarget.getBbWidth()
+            return this.isTimeToAttack() && this.mob.distanceToSqr(attackTarget) <= (4.0F + attackTarget.getBbWidth()) && this.mob.getSensing().hasLineOfSight(attackTarget);
         }
     }
 

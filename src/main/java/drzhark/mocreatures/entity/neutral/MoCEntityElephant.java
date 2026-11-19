@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.neutral;
+import net.minecraft.tags.ItemTags;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ValueInput;
@@ -33,7 +34,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -46,7 +46,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.resources.Identifier;
@@ -291,7 +290,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     private void sit() {
         this.sitCounter = 1;
         if (!this.level().isClientSide()) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new MoCMessageAnimation(this.getId(), 0));
+            MoCMessageHandler.sendToTracking(this, new MoCMessageAnimation(this.getId(), 0));
         }
         this.getNavigation().stop();
     }
@@ -324,7 +323,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
             if (!this.level().isClientSide() && !getIsAdult() && !getIsTamed() && this.temper >= 10) {
                 MoCTools.tameWithName(player, this);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
         if (!stack.isEmpty() && !getIsTamed() && !getIsAdult() && stack.getItem() == MoCItems.SUGAR_LUMP.get()) {
@@ -336,7 +335,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 setTamed(true);
                 MoCTools.tameWithName(player, this);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
         // Growth behavior reported in Clickibait and Pug's 1.0.5 community fix.
@@ -346,7 +345,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 if (!player.getAbilities().instabuild) stack.shrink(1);
                 MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_GENERIC_EATING.get());
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
         if (getIsTamed() && stack.isEmpty() && !player.isShiftKeyDown() && getStorage() > 0 && this.sitCounter == 0) {
@@ -400,7 +399,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                     ));
                 }
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
         if (getStorage() < 2 && getIsTamed() && stack.is(MoCItems.ELEPHANTCHEST.get()) && getArmorType() != 0) {
@@ -409,7 +408,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 initChest();
                 if (!player.getAbilities().instabuild) stack.shrink(1);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
         if (getStorage() < 4 && getStorage() > 1 && getIsTamed() && stack.is(Blocks.CHEST.asItem()) && getArmorType() != 0) {
@@ -418,7 +417,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 initChest();
                 if (!player.getAbilities().instabuild) stack.shrink(1);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
         if (getArmorType() == 0 && stack.is(MoCItems.ELEPHANTHARNESS.get()) && getIsTamed()) {
@@ -426,7 +425,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 this.setArmorType(1);
                 if (!player.getAbilities().instabuild) stack.shrink(1);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
         //giving a garment to an indian elephant with a harness will make it pretty
@@ -488,14 +487,14 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
             initChest();
             if (getStorage() >= 1) {
                 // Chest handling would go here with 1.20.1 menu system
-                return InteractionResult.sidedSuccess(this.level().isClientSide());
+                return InteractionResult.SUCCESS;
             }
         }
         
-        if (!stack.isEmpty() && getTusks() > 0 && stack.getItem() instanceof PickaxeItem) {
+        if (!stack.isEmpty() && getTusks() > 0 && stack.is(ItemTags.PICKAXES)) {
             MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_GENERIC_ARMOR_OFF.get());
             dropTusks();
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
         if (getIsTamed() && getIsAdult() && getArmorType() >= 1 && this.sitCounter != 0) {
@@ -503,9 +502,9 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 player.setYRot(this.getYRot());
                 player.setXRot(this.getXRot());
                 this.sitCounter = 0;
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new MoCMessageAnimation(this.getId(), 1));
+                MoCMessageHandler.sendToTracking(this, new MoCMessageAnimation(this.getId(), 1));
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
         return super.mobInteract(player, hand);
@@ -581,7 +580,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     public boolean checkSpawningBiome() {
         BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getBoundingBox().minY), Mth.floor(this.getZ()));
         ResourceKey<Biome> currentbiome = MoCTools.biomeKind(this.level(), pos);
-        String biomeName = currentbiome.location().toString().toLowerCase();
+        String biomeName = currentbiome.identifier().toString().toLowerCase();
 
         // African - savanna or desert biomes
         if (biomeName.contains("savanna") || biomeName.contains("desert")) {
@@ -638,11 +637,11 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 if (!this.localstack.isEmpty()) {
                     CompoundTag nbttagcompound1 = new CompoundTag();
                     nbttagcompound1.putByte("Slot", (byte) i);
-                    this.localstack.save(nbttagcompound1);
+                    MoCTools.saveStack(this, this.localstack, nbttagcompound1);
                     nbttaglist.add(nbttagcompound1);
                 }
             }
-            nbttagcompound.put("Items", nbttaglist);
+            MoCTools.writeTag(nbttagcompound, "Items", nbttaglist);
         }
 
         if (getStorage() >= 2 && this.localelephantchest2 != null) {
@@ -652,11 +651,11 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 if (!this.localstack.isEmpty()) {
                     CompoundTag nbttagcompound1 = new CompoundTag();
                     nbttagcompound1.putByte("Slot", (byte) i);
-                    this.localstack.save(nbttagcompound1);
+                    MoCTools.saveStack(this, this.localstack, nbttagcompound1);
                     nbttaglist.add(nbttagcompound1);
                 }
             }
-            nbttagcompound.put("Items2", nbttaglist);
+            MoCTools.writeTag(nbttagcompound, "Items2", nbttaglist);
         }
 
         if (getStorage() >= 3 && this.localelephantchest3 != null) {
@@ -666,11 +665,11 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 if (!this.localstack.isEmpty()) {
                     CompoundTag nbttagcompound1 = new CompoundTag();
                     nbttagcompound1.putByte("Slot", (byte) i);
-                    this.localstack.save(nbttagcompound1);
+                    MoCTools.saveStack(this, this.localstack, nbttagcompound1);
                     nbttaglist.add(nbttagcompound1);
                 }
             }
-            nbttagcompound.put("Items3", nbttaglist);
+            MoCTools.writeTag(nbttagcompound, "Items3", nbttaglist);
         }
 
         if (getStorage() >= 4 && this.localelephantchest4 != null) {
@@ -680,11 +679,11 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
                 if (!this.localstack.isEmpty()) {
                     CompoundTag nbttagcompound1 = new CompoundTag();
                     nbttagcompound1.putByte("Slot", (byte) i);
-                    this.localstack.save(nbttagcompound1);
+                    MoCTools.saveStack(this, this.localstack, nbttagcompound1);
                     nbttaglist.add(nbttagcompound1);
                 }
             }
-            nbttagcompound.put("Items4", nbttaglist);
+            MoCTools.writeTag(nbttagcompound, "Items4", nbttaglist);
         }
     }
 
@@ -697,47 +696,47 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
         this.temper = nbttagcompound.getByteOr("Temper", (byte) 0);
         this.tuskUses = nbttagcompound.getByteOr("TuskUses", (byte) 0);
         if (getStorage() > 0) {
-            ListTag nbttaglist = nbttagcompound.getList("Items", 10);
+            ListTag nbttaglist = MoCTools.readList(nbttagcompound, "Items");
             this.localelephantchest = new MoCAnimalChest("ElephantChest", MoCAnimalChest.Size.small);
             for (int i = 0; i < nbttaglist.size(); i++) {
-                CompoundTag nbttagcompound1 = nbttaglist.getCompound(i);
-                int j = nbttagcompound1.getByte("Slot") & 0xff;
+                CompoundTag nbttagcompound1 = nbttaglist.getCompoundOrEmpty(i);
+                int j = nbttagcompound1.getByteOr("Slot", (byte) 0) & 0xff;
                 if (j < this.localelephantchest.getContainerSize()) {
-                    this.localelephantchest.setItem(j, ItemStack.of(nbttagcompound1));
+                    this.localelephantchest.setItem(j, MoCTools.loadStack(this, nbttagcompound1));
                 }
             }
         }
         if (getStorage() >= 2) {
-            ListTag nbttaglist = nbttagcompound.getList("Items2", 10);
+            ListTag nbttaglist = MoCTools.readList(nbttagcompound, "Items2");
             this.localelephantchest2 = new MoCAnimalChest("ElephantChest", MoCAnimalChest.Size.small);
             for (int i = 0; i < nbttaglist.size(); i++) {
-                CompoundTag nbttagcompound1 = nbttaglist.getCompound(i);
-                int j = nbttagcompound1.getByte("Slot") & 0xff;
+                CompoundTag nbttagcompound1 = nbttaglist.getCompoundOrEmpty(i);
+                int j = nbttagcompound1.getByteOr("Slot", (byte) 0) & 0xff;
                 if (j < this.localelephantchest2.getContainerSize()) {
-                    this.localelephantchest2.setItem(j, ItemStack.of(nbttagcompound1));
+                    this.localelephantchest2.setItem(j, MoCTools.loadStack(this, nbttagcompound1));
                 }
             }
         }
 
         if (getStorage() >= 3) {
-            ListTag nbttaglist = nbttagcompound.getList("Items3", 10);
+            ListTag nbttaglist = MoCTools.readList(nbttagcompound, "Items3");
             this.localelephantchest3 = new MoCAnimalChest("ElephantChest", MoCAnimalChest.Size.tiny);
             for (int i = 0; i < nbttaglist.size(); i++) {
-                CompoundTag nbttagcompound1 = nbttaglist.getCompound(i);
-                int j = nbttagcompound1.getByte("Slot") & 0xff;
+                CompoundTag nbttagcompound1 = nbttaglist.getCompoundOrEmpty(i);
+                int j = nbttagcompound1.getByteOr("Slot", (byte) 0) & 0xff;
                 if (j < this.localelephantchest3.getContainerSize()) {
-                    this.localelephantchest3.setItem(j, ItemStack.of(nbttagcompound1));
+                    this.localelephantchest3.setItem(j, MoCTools.loadStack(this, nbttagcompound1));
                 }
             }
         }
         if (getStorage() >= 4) {
-            ListTag nbttaglist = nbttagcompound.getList("Items4", 10);
+            ListTag nbttaglist = MoCTools.readList(nbttagcompound, "Items4");
             this.localelephantchest4 = new MoCAnimalChest("ElephantChest", MoCAnimalChest.Size.tiny);
             for (int i = 0; i < nbttaglist.size(); i++) {
-                CompoundTag nbttagcompound1 = nbttaglist.getCompound(i);
-                int j = nbttagcompound1.getByte("Slot") & 0xff;
+                CompoundTag nbttagcompound1 = nbttaglist.getCompoundOrEmpty(i);
+                int j = nbttagcompound1.getByteOr("Slot", (byte) 0) & 0xff;
                 if (j < this.localelephantchest4.getContainerSize()) {
-                    this.localelephantchest4.setItem(j, ItemStack.of(nbttagcompound1));
+                    this.localelephantchest4.setItem(j, MoCTools.loadStack(this, nbttagcompound1));
                 }
             }
         }
@@ -800,7 +799,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
         double yaw = Math.toRadians(this.getYRot() - 90F);
         moveFunction.accept(passenger,
                 this.getX() - distance * Math.cos(yaw),
-                this.getY() + getPassengersRidingOffset() + passenger.getMyRidingOffset(),
+                this.getY() + getPassengersRidingOffset() + (-passenger.getVehicleAttachmentPoint(this).y),
                 this.getZ() - distance * Math.sin(yaw));
         passenger.setYRot(this.getYRot());
     }
@@ -868,12 +867,13 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
+        int looting = MoCTools.lootingLevel(serverLevel, source);
         int i = this.random.nextInt(3);
 
         if (looting > 0) {
             i += this.random.nextInt(looting + 1);
         }
-        this.spawnAtLocation(new ItemStack(MoCItems.ANIMALHIDE.get(), i));
+        this.spawnAtLocation((ServerLevel) this.level(), new ItemStack(MoCItems.ANIMALHIDE.get(), i));
     }
 
     @Override

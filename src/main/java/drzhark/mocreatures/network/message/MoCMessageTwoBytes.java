@@ -3,15 +3,29 @@
  */
 package drzhark.mocreatures.network.message;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import drzhark.mocreatures.MoCConstants;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import drzhark.mocreatures.entity.hostile.MoCEntityGolem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class MoCMessageTwoBytes {
+public class MoCMessageTwoBytes implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<MoCMessageTwoBytes> TYPE =
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "two_bytes"));
+    public static final StreamCodec<FriendlyByteBuf, MoCMessageTwoBytes> STREAM_CODEC = StreamCodec.ofMember(MoCMessageTwoBytes::encode, MoCMessageTwoBytes::new);
+
+    @Override
+    public CustomPacketPayload.Type<MoCMessageTwoBytes> type() {
+        return TYPE;
+    }
+
 
     public int entityId;
     public byte slot;
@@ -38,8 +52,8 @@ public class MoCMessageTwoBytes {
         this.value = buffer.readByte();
     }
 
-    public static void onMessage(MoCMessageTwoBytes message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void onMessage(MoCMessageTwoBytes message, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
             Minecraft minecraft = Minecraft.getInstance();
             if (minecraft.level != null) {
                 Entity ent = minecraft.level.getEntity(message.entityId);
@@ -48,8 +62,7 @@ public class MoCMessageTwoBytes {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
-    }
+            }
 
     @Override
     public String toString() {

@@ -8,7 +8,6 @@ import drzhark.mocreatures.MoCTools;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -53,7 +52,7 @@ public abstract class MoCEntityInsect extends MoCEntityAmbient {
     @Override
     protected PathNavigation createNavigation(Level worldIn) {
         FlyingPathNavigation nav = new FlyingPathNavigation(this, worldIn);
-        nav.setCanPassDoors(true);
+        nav.getNodeEvaluator().setCanPassDoors(true);
         nav.setCanFloat(true);
         return nav;
     }
@@ -70,8 +69,9 @@ public abstract class MoCEntityInsect extends MoCEntityAmbient {
     }
 
     @Override
-    public float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return 0.2F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (0.2F));
     }
 
     @Override
@@ -139,8 +139,4 @@ public abstract class MoCEntityInsect extends MoCEntityAmbient {
         return true;
     }
 
-    @Override
-    public MobType getMobType() {
-        return MobType.ARTHROPOD;
-    }
 }

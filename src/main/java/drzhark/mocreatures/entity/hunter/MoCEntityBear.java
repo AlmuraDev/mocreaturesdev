@@ -40,12 +40,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SaddleItem;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityBear extends MoCEntityTameableAnimal {
 
@@ -160,7 +158,7 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
     @Override
     public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         startAttack();
-        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
+        return super.doHurtTarget(serverLevel, entityIn);
     }
 
     /**
@@ -287,10 +285,7 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
 
     private void startAttack() {
         if (!this.level().isClientSide() && this.attackCounter == 0 && getBearState() == 1) {
-            MoCMessageHandler.INSTANCE.send(
-                PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), 
-                new MoCMessageAnimation(this.getId(), 0)
-            );
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 0));
             this.attackCounter = 1;
         }
     }
@@ -335,7 +330,7 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
 
         final ItemStack stack = player.getItemInHand(hand);
         if (!stack.isEmpty() && getIsTamed() && !getIsRideable() && (getMoCAge() > 80)
-                && (stack.getItem() instanceof SaddleItem || stack.getItem() == MoCItems.HORSE_SADDLE.get())) {
+                && (stack.is(Items.SADDLE) || stack.getItem() == MoCItems.HORSE_SADDLE.get())) {
             if (!player.isCreative()) stack.shrink(1);
             setRideable(true);
             return InteractionResult.SUCCESS;
@@ -396,7 +391,7 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
         double dist = getSizeFactor() * (0.1D);
         double newPosX = this.getX() + (dist * Math.sin(this.yBodyRot / 57.29578F));
         double newPosZ = this.getZ() - (dist * Math.cos(this.yBodyRot / 57.29578F));
-        passenger.setPos(newPosX, this.getY() + getPassengersRidingOffset() + passenger.getMyRidingOffset(), newPosZ);
+        passenger.setPos(newPosX, this.getY() + getPassengersRidingOffset() + (-passenger.getVehicleAttachmentPoint(this).y), newPosZ);
     }
 
     @Override
@@ -429,11 +424,11 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
                 if (!this.localstack.isEmpty()) {
                     CompoundTag nbttagcompound1 = new CompoundTag();
                     nbttagcompound1.putByte("Slot", (byte) i);
-                    this.localstack.save(nbttagcompound1);
+                    MoCTools.saveStack(this, this.localstack, nbttagcompound1);
                     nbttaglist.add(nbttagcompound1);
                 }
             }
-            nbttagcompound.put("Items", nbttaglist);
+            MoCTools.writeTag(nbttagcompound, "Items", nbttaglist);
         }
 
     }
@@ -446,14 +441,14 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
         setIsGhost(nbttagcompound.getBooleanOr("Ghost", false));
         setBearState(nbttagcompound.getIntOr("BearState", 0));
         if (getIsChested()) {
-            ListTag nbttaglist = nbttagcompound.getList("Items", 10);
+            ListTag nbttaglist = MoCTools.readList(nbttagcompound, "Items");
             this.localchest = new MoCAnimalChest("BigBearChest", MoCAnimalChest.Size.small);
             this.localchest.read(nbttagcompound);
             for (int i = 0; i < nbttaglist.size(); i++) {
-                CompoundTag nbttagcompound1 = nbttaglist.getCompound(i);
-                int j = nbttagcompound1.getByte("Slot") & 0xff;
+                CompoundTag nbttagcompound1 = nbttaglist.getCompoundOrEmpty(i);
+                int j = nbttagcompound1.getByteOr("Slot", (byte) 0) & 0xff;
                 if (j < this.localchest.getContainerSize()) {
-                    this.localchest.setItem(j, ItemStack.of(nbttagcompound1));
+                    this.localchest.setItem(j, MoCTools.loadStack(this, nbttagcompound1));
                 }
             }
         }

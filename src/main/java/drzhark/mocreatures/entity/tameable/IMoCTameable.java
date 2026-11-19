@@ -5,7 +5,8 @@ package drzhark.mocreatures.entity.tameable;
 
 import drzhark.mocreatures.entity.IMoCEntity;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -22,9 +23,9 @@ public interface IMoCTameable extends IMoCEntity {
 
     void remove(Entity.RemovalReason reason);
 
-    void addAdditionalSaveData(CompoundTag nbttagcompound);
+    void addAdditionalSaveData(ValueOutput nbttagcompound);
 
-    void readAdditionalSaveData(CompoundTag nbttagcompound);
+    void readAdditionalSaveData(ValueInput nbttagcompound);
 
     void setOwnerId(@Nullable UUID uuid);
 

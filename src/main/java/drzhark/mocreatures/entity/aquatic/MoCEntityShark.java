@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.aquatic;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -65,19 +67,19 @@ public class MoCEntityShark extends MoCEntityTameableAquatic {
         
         // Target players in water (but chase even if they're in boats - just don't attack)
         // Reduced targetChance to 5 for more frequent targeting checks
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 5, true, false, (player) -> {
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 5, true, false, (player, targetLevel) -> {
             if (player == null) return false;
             // Target players in water, or within reasonable distance even if not in water
             return !getIsTamed() && isReadyToHunt() && (player.isInWater() || distanceTo(player) < 16.0F);
         }));
         
         // Target squids - more persistent targeting
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Squid.class, 5, true, false, (squid) -> {
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Squid.class, 5, true, false, (squid, targetLevel) -> {
             return squid != null && !getIsTamed() && isReadyToHunt();
         }));
         
         // Target dolphins only if config allows
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, MoCEntityDolphin.class, 5, true, false, (dolphin) -> {
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, MoCEntityDolphin.class, 5, true, false, (dolphin, targetLevel) -> {
             return dolphin != null && !getIsTamed() && isReadyToHunt() && MoCreatures.proxy.attackDolphins;
         }));
     }
@@ -146,7 +148,7 @@ public class MoCEntityShark extends MoCEntityTameableAquatic {
             return false;
         }
         
-        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
+        return super.doHurtTarget(serverLevel, entityIn);
     }
 
     @Override
@@ -165,8 +167,9 @@ public class MoCEntityShark extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.61F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.61F));
     }
 
     @Override

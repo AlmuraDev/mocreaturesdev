@@ -2,6 +2,13 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity;
+import net.minecraft.locale.Language;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.server.level.ServerLevel;
@@ -12,7 +19,6 @@ import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIMoverHelperMoC;
 import drzhark.mocreatures.entity.tameable.IMoCTameable;
 
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -139,7 +145,6 @@ public boolean isPushedByFluid(FluidType type) {
     }
 
     // === NAMING / VERBOSE NAMES (CLIENT‐ONLY) ===
-    @OnlyIn(Dist.CLIENT)
     @Override
     public Component getName() {
         String entityKey = this.getType().getDescriptionId();
@@ -147,8 +152,7 @@ public boolean isPushedByFluid(FluidType type) {
             return super.getName();
         }
         String translationKey = "entity." + entityKey + ".verbose.name";
-        String localized = I18n.get(translationKey);
-        if (!localized.equals(translationKey)) {
+        if (Language.getInstance().has(translationKey)) {
             return Component.translatable(translationKey);
         }
         return super.getName();
@@ -159,7 +163,7 @@ public boolean isPushedByFluid(FluidType type) {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         this.selectType();
-        return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+        return super.finalizeSpawn(world, difficulty, reason, spawnData);
     }
 
     @Override
@@ -311,7 +315,7 @@ public boolean isPushedByFluid(FluidType type) {
                 // Filter lambda: only keep those whose ItemStack is in the FISHES tag and that are in water
                 itemEntity -> {
                     ItemStack stack = itemEntity.getItem();
-                    return stack.is(ItemTags.FISHES) && itemEntity.isInFluidType(NeoForgeMod.WATER_TYPE.get());
+                    return stack.is(ItemTags.FISHES) && itemEntity.isInWater();
                 }
         );
 
@@ -645,7 +649,7 @@ public boolean isPushedByFluid(FluidType type) {
         }
         
         // Use vanilla surface water animal spawn rules
-        boolean willSpawn = net.minecraft.world.entity.animal.WaterAnimal.checkSurfaceWaterAnimalSpawnRules(type, world, reason, pos, random);
+        boolean willSpawn = net.minecraft.world.entity.animal.fish.WaterAnimal.checkSurfaceWaterAnimalSpawnRules(type, world, reason, pos, random);
         
         // Add light level check from BiomeSpawnConfig if this is a Level (not just LevelAccessor)
         if (willSpawn && world.getLevel() instanceof Level) {
@@ -965,8 +969,8 @@ public boolean isPushedByFluid(FluidType type) {
     }
 
     @Override
-    protected void handleAirSupply(int air) {
-        if (this.isAlive() && !this.isInWaterOrBubble()) {
+    protected void handleAirSupply(ServerLevel serverLevel, int air) {
+        if (this.isAlive() && !this.isInWater()) {
             this.setAirSupply(air - 1);
             if (this.getAirSupply() == -30) {
                 this.setAirSupply(0);
@@ -1048,6 +1052,53 @@ public boolean isPushedByFluid(FluidType type) {
         return 100;
     }
 
+
+    /** 1.20 riding height: passengers sit this far above the creature's feet. Creatures override it. */
+    public double getPassengersRidingOffset() {
+        return this.getBbHeight() * 0.75D;
+    }
+
+    /** 1.20 offset of this creature when it rides something (for example a bunny on a player's head). */
+    public double getMyRidingOffset() {
+        return 0.0D;
+    }
+
+    @Override
+    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
+        return new Vec3(0.0D, this.getPassengersRidingOffset(), 0.0D);
+    }
+
+    @Override
+    public Vec3 getVehicleAttachmentPoint(Entity vehicle) {
+        return super.getVehicleAttachmentPoint(vehicle).subtract(0.0D, this.getMyRidingOffset(), 0.0D);
+    }
+
+    /**
+     * The creature's loot table, which may depend on its variant; null drops nothing. 26.3 ties a mob's loot table to its
+     * entity type, so the base class drops from this table itself.
+     */
+    protected @Nullable Identifier getDefaultLootTable() {
+        return null;
+    }
+
+    @Override
+    protected void dropFromLootTable(ServerLevel level, DamageSource source, boolean playerKilled) {
+        Identifier table = this.getDefaultLootTable();
+        if (table != null) {
+            this.dropFromLootTable(level, source, playerKilled, ResourceKey.create(Registries.LOOT_TABLE, table));
+        }
+    }
+
+    /**
+     * Mo' Creatures on-hit hook, kept from 1.20's {@code doEnchantDamageEffects}: runs after a successful melee hit.
+     * Creatures override it for their own hit effects (poison, fire, knockback) and call super for the enchantment effects.
+     */
+    public void doEnchantDamageEffects(LivingEntity attacker, Entity target) {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            EnchantmentHelper.doPostAttackEffects(serverLevel, target, this.damageSources().mobAttack(attacker));
+        }
+    }
+
     @Override
     public boolean doHurtTarget(ServerLevel serverLevel, Entity target) {
         if (!(target instanceof LivingEntity)) {
@@ -1073,11 +1124,11 @@ public boolean isPushedByFluid(FluidType type) {
                 return;
             }
         }
-        super.canBeLeashed((Player) entity);
+        super.setLeashedTo(entity, sendAttachNotification);
     }
 
     @Override
-    public boolean canChangeDimensions() {
+    public boolean canUsePortal(boolean allowPassengers) {
         return !this.isVehicle();
     }
 

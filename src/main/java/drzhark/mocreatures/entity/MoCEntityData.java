@@ -55,18 +55,19 @@ public class MoCEntityData {
             ResourceKey<Level>[] dimensions,
             MobCategory type,
             MobSpawnSettings.SpawnerData spawnListEntry,
+            int weight,
             List<TagKey<net.minecraft.world.level.biome.Biome>> biomeTags
     ) {
         this.entityName = name;
         this.typeOfCreature = type;
         this.dimensions = dimensions;
         this.biomeTags = biomeTags;
-        this.frequency = spawnListEntry.getWeight().asInt();      // formerly itemWeight
-        this.minGroup = spawnListEntry.minCount;     // formerly minCount
-        this.maxGroup = spawnListEntry.maxCount;     // formerly maxCount
+        this.frequency = weight;      // 26.3 keeps the weight beside the SpawnerData
+        this.minGroup = spawnListEntry.count().minInclusive();
+        this.maxGroup = spawnListEntry.count().maxInclusive();
         this.maxSpawnInChunk = maxChunk;
         this.spawnListEntry = spawnListEntry;
-        MoCreatures.entityMap.put(spawnListEntry.type, this);
+        MoCreatures.entityMap.put(spawnListEntry.type(), this);
     }
 
     public MoCEntityData(
@@ -75,6 +76,7 @@ public class MoCEntityData {
             ResourceKey<Level>[] dimensions,
             MobCategory type,
             MobSpawnSettings.SpawnerData spawnListEntry,
+            int weight,
             List<TagKey<net.minecraft.world.level.biome.Biome>> biomeTags,
             List<TagKey<net.minecraft.world.level.biome.Biome>> blockedBiomeTags
     ) {
@@ -83,17 +85,17 @@ public class MoCEntityData {
         this.dimensions = dimensions;
         this.biomeTags = biomeTags;
         this.blockedBiomeTags = blockedBiomeTags;
-        this.frequency = spawnListEntry.getWeight().asInt();
-        this.minGroup = spawnListEntry.minCount;
-        this.maxGroup = spawnListEntry.maxCount;
+        this.frequency = weight;
+        this.minGroup = spawnListEntry.count().minInclusive();
+        this.maxGroup = spawnListEntry.count().maxInclusive();
         this.maxSpawnInChunk = maxChunk;
         this.spawnListEntry = spawnListEntry;
-        MoCreatures.entityMap.put(spawnListEntry.type, this);
+        MoCreatures.entityMap.put(spawnListEntry.type(), this);
     }
 
     /** Returns the EntityType of this entry. */
     public EntityType<?> getEntityClass() {
-        return this.spawnListEntry.type;
+        return this.spawnListEntry.type();
     }
 
     /** Returns the mob category (formerly EntityClassification). */

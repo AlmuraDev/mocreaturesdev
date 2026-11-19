@@ -3,6 +3,11 @@
  */
 package drzhark.mocreatures.network.message;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import drzhark.mocreatures.MoCConstants;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import drzhark.mocreatures.client.gui.MoCGUIEntityNamer;
 import drzhark.mocreatures.entity.IMoCEntity;
 import net.minecraft.client.Minecraft;
@@ -10,12 +15,20 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.DistExecutor;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class MoCMessageNameGUI {
+public class MoCMessageNameGUI implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<MoCMessageNameGUI> TYPE =
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "name_g_u_i"));
+    public static final StreamCodec<FriendlyByteBuf, MoCMessageNameGUI> STREAM_CODEC = StreamCodec.ofMember(MoCMessageNameGUI::encode, MoCMessageNameGUI::new);
+
+    @Override
+    public CustomPacketPayload.Type<MoCMessageNameGUI> type() {
+        return TYPE;
+    }
+
     public int entityId;
 
     public MoCMessageNameGUI() {}
@@ -32,17 +45,9 @@ public class MoCMessageNameGUI {
         this.entityId = buffer.readInt();
     }
 
-    public static void onMessage(MoCMessageNameGUI message, Supplier<NetworkEvent.Context> ctx) {
-        // We're already on the client when we receive this packet
-        if (DistExecutor.unsafeRunForDist(
-                () -> () -> {
-                    ctx.get().enqueueWork(() -> handleClient(message));
-                    return true;
-                },
-                () -> () -> false)) {
-            // Only executed on client side
-        }
-        ctx.get().setPacketHandled(true);
+    public static void onMessage(MoCMessageNameGUI message, IPayloadContext ctx) {
+        // Registered client-bound only, so this runs on the client.
+        ctx.enqueueWork(() -> handleClient(message));
     }
 
     @OnlyIn(Dist.CLIENT)

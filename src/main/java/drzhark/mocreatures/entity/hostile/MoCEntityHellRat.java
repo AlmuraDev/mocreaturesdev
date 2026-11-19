@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCreatures;
@@ -85,7 +87,7 @@ public class MoCEntityHellRat extends MoCEntityRat {
 
     @Override
     public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
-        boolean flag = super.doHurtTarget(serverLevel, serverLevel, entityIn);
+        boolean flag = super.doHurtTarget(serverLevel, entityIn);
 
         if (flag && entityIn instanceof LivingEntity) {
             entityIn.igniteForSeconds(5);
@@ -105,7 +107,8 @@ public class MoCEntityHellRat extends MoCEntityRat {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.485F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.485F));
     }
 }

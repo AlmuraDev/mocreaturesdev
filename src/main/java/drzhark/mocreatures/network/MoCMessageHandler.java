@@ -5,108 +5,75 @@ package drzhark.mocreatures.network;
 
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.network.message.*;
-import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
-import net.neoforged.neoforge.network.simple.SimpleChannel;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@SuppressWarnings("removal")
-public class MoCMessageHandler {
+/**
+ * Registers the Mo' Creatures packets and sends them from the server.
+ * Sending to the server lives in {@link drzhark.mocreatures.client.MoCClientPackets}, which only the client loads.
+ */
+@EventBusSubscriber(modid = MoCConstants.MOD_ID)
+public final class MoCMessageHandler {
 
     private static final String PROTOCOL_VERSION = "1";
-    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "channel"),
-            () -> PROTOCOL_VERSION,
-            PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals);
 
-    public static void init() {
-        int id = 0;
-        
-        // Register all messages in order with unique IDs
-        // Note: These are all Server->Client packets that should be handled on the client side
-        // Make sure each message class has a static onMessage method!
-        INSTANCE.messageBuilder(MoCMessageAnimation.class, id++)
-            .encoder(MoCMessageAnimation::encode)
-            .decoder(MoCMessageAnimation::new)
-            .consumerMainThread((message, context) -> MoCMessageAnimation.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageAppear.class, id++)
-            .encoder(MoCMessageAppear::encode)
-            .decoder(MoCMessageAppear::new)
-            .consumerMainThread((message, context) -> MoCMessageAppear.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageAttachedEntity.class, id++)
-            .encoder(MoCMessageAttachedEntity::encode)
-            .decoder(MoCMessageAttachedEntity::new)
-            .consumerMainThread((message, context) -> MoCMessageAttachedEntity.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageEntityDive.class, id++)
-            .encoder(MoCMessageEntityDive::encode)
-            .decoder(MoCMessageEntityDive::new)
-            .consumerMainThread((message, context) -> MoCMessageEntityDive.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageEntityJump.class, id++)
-            .encoder(MoCMessageEntityJump::encode)
-            .decoder(MoCMessageEntityJump::new)
-            .consumerMainThread((message, context) -> MoCMessageEntityJump.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageExplode.class, id++)
-            .encoder(MoCMessageExplode::encode)
-            .decoder(MoCMessageExplode::new)
-            .consumerMainThread((message, context) -> MoCMessageExplode.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageHealth.class, id++)
-            .encoder(MoCMessageHealth::encode)
-            .decoder(MoCMessageHealth::new)
-            .consumerMainThread((message, context) -> MoCMessageHealth.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageHeart.class, id++)
-            .encoder(MoCMessageHeart::encode)
-            .decoder(MoCMessageHeart::new)
-            .consumerMainThread((message, context) -> MoCMessageHeart.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageInstaSpawn.class, id++)
-            .encoder(MoCMessageInstaSpawn::encode)
-            .decoder(MoCMessageInstaSpawn::new)
-            .consumerMainThread((message, context) -> MoCMessageInstaSpawn.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageNameGUI.class, id++)
-            .encoder(MoCMessageNameGUI::encode)
-            .decoder(MoCMessageNameGUI::new)
-            .consumerMainThread((message, context) -> MoCMessageNameGUI.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageUpdatePetName.class, id++)
-            .encoder(MoCMessageUpdatePetName::encode)
-            .decoder(MoCMessageUpdatePetName::new)
-            .consumerMainThread((message, context) -> MoCMessageUpdatePetName.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageShuffle.class, id++)
-            .encoder(MoCMessageShuffle::encode)
-            .decoder(MoCMessageShuffle::new)
-            .consumerMainThread((message, context) -> MoCMessageShuffle.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageTwoBytes.class, id++)
-            .encoder(MoCMessageTwoBytes::encode)
-            .decoder(MoCMessageTwoBytes::new)
-            .consumerMainThread((message, context) -> MoCMessageTwoBytes.onMessage(message, context))
-            .add();
-            
-        INSTANCE.messageBuilder(MoCMessageVanish.class, id++)
-            .encoder(MoCMessageVanish::encode)
-            .decoder(MoCMessageVanish::new)
-            .consumerMainThread((message, context) -> MoCMessageVanish.onMessage(message, context))
-            .add();
+    private MoCMessageHandler() {
+    }
+
+    @SubscribeEvent
+    public static void register(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar(PROTOCOL_VERSION);
+
+        // Server to client
+        registrar.playToClient(MoCMessageAnimation.TYPE, MoCMessageAnimation.STREAM_CODEC, MoCMessageAnimation::onMessage);
+        registrar.playToClient(MoCMessageAppear.TYPE, MoCMessageAppear.STREAM_CODEC, MoCMessageAppear::onMessage);
+        registrar.playToClient(MoCMessageAttachedEntity.TYPE, MoCMessageAttachedEntity.STREAM_CODEC, MoCMessageAttachedEntity::onMessage);
+        registrar.playToClient(MoCMessageExplode.TYPE, MoCMessageExplode.STREAM_CODEC, MoCMessageExplode::onMessage);
+        registrar.playToClient(MoCMessageHealth.TYPE, MoCMessageHealth.STREAM_CODEC, MoCMessageHealth::onMessage);
+        registrar.playToClient(MoCMessageHeart.TYPE, MoCMessageHeart.STREAM_CODEC, MoCMessageHeart::onMessage);
+        registrar.playToClient(MoCMessageNameGUI.TYPE, MoCMessageNameGUI.STREAM_CODEC, MoCMessageNameGUI::onMessage);
+        registrar.playToClient(MoCMessageShuffle.TYPE, MoCMessageShuffle.STREAM_CODEC, MoCMessageShuffle::onMessage);
+        registrar.playToClient(MoCMessageTwoBytes.TYPE, MoCMessageTwoBytes.STREAM_CODEC, MoCMessageTwoBytes::onMessage);
+        registrar.playToClient(MoCMessageVanish.TYPE, MoCMessageVanish.STREAM_CODEC, MoCMessageVanish::onMessage);
+
+        // Client to server
+        registrar.playToServer(MoCMessageEntityDive.TYPE, MoCMessageEntityDive.STREAM_CODEC, MoCMessageEntityDive::onMessage);
+        registrar.playToServer(MoCMessageEntityJump.TYPE, MoCMessageEntityJump.STREAM_CODEC, MoCMessageEntityJump::onMessage);
+        registrar.playToServer(MoCMessageInstaSpawn.TYPE, MoCMessageInstaSpawn.STREAM_CODEC, MoCMessageInstaSpawn::onMessage);
+        registrar.playToServer(MoCMessageUpdatePetName.TYPE, MoCMessageUpdatePetName.STREAM_CODEC, MoCMessageUpdatePetName::onMessage);
+    }
+
+    /** Sends to every player within {@code radius} of the point. Does nothing on the client. */
+    public static void sendToNear(Level level, double x, double y, double z, double radius, CustomPacketPayload message) {
+        if (level instanceof ServerLevel serverLevel) {
+            PacketDistributor.sendToPlayersNear(serverLevel, null, x, y, z, radius, message);
+        }
+    }
+
+    /** Sends to every player tracking the entity. Does nothing on the client. */
+    public static void sendToTracking(Entity entity, CustomPacketPayload message) {
+        if (!entity.level().isClientSide()) {
+            PacketDistributor.sendToPlayersTrackingEntity(entity, message);
+        }
+    }
+
+    /** Sends to one player. Does nothing unless the player is on the server. */
+    public static void sendToPlayer(Player player, CustomPacketPayload message) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, message);
+        }
+    }
+
+    public static void sendToAll(CustomPacketPayload message) {
+        PacketDistributor.sendToAllPlayers(message);
     }
 }

@@ -129,7 +129,7 @@ public class EntityAIFollowOwnerPlayer extends Goal {
                                 for (int i1 = 0; i1 <= 4; ++i1) {
                                     final BlockPos pos = new BlockPos(i + l, k - 1, j + i1);
                                     if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && this.level.getBlockState(pos).isFaceSturdy(level, pos, Direction.UP) && this.isEmptyBlock(new BlockPos(i + l, k, j + i1)) && this.isEmptyBlock(new BlockPos(i + l, k + 1, j + i1))) {
-                                        this.thePet.moveTo((double)(i + l) + 0.5D, k, (double)(j + i1) + 0.5D, this.thePet.getYRot(), this.thePet.getXRot());
+                                        this.thePet.snapTo((double)(i + l) + 0.5D, k, (double)(j + i1) + 0.5D, this.thePet.getYRot(), this.thePet.getXRot());
                                         this.petPathfinder.stop();
                                         return;
                                     }

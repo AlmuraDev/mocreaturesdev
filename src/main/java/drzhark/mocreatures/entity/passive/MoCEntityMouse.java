@@ -97,7 +97,7 @@ public class MoCEntityMouse extends MoCEntityAnimal {
         
         try {
             // In 1.20.1, we should use biome checks compatible with the MoCTools methods actually available
-            String biomeName = this.level().getBiome(pos).unwrapKey().orElseThrow().location().getPath();
+            String biomeName = this.level().getBiome(pos).unwrapKey().orElseThrow().identifier().getPath();
             
             if (biomeName.contains("mesa")) {
                 setTypeMoC(2); // only brown mice
@@ -143,13 +143,13 @@ public class MoCEntityMouse extends MoCEntityAnimal {
     @Override
     public double getMyRidingOffset() {
         if (this.getVehicle() instanceof Player && this.getVehicle() == MoCreatures.proxy.getPlayer() && this.level().isClientSide()) {
-            return (super.getMyRidingOffset() - 0.7F);
+            return ((-super.getVehicleAttachmentPoint(this).y) - 0.7F);
         }
 
         if ((this.getVehicle() instanceof Player) && this.level().isClientSide()) {
-            return (super.getMyRidingOffset() - 0.1F);
+            return ((-super.getVehicleAttachmentPoint(this).y) - 0.1F);
         } else {
-            return super.getMyRidingOffset();
+            return (-super.getVehicleAttachmentPoint(this).y);
         }
     }
 
@@ -211,7 +211,8 @@ public class MoCEntityMouse extends MoCEntityAnimal {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.575F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.575F));
     }
 }

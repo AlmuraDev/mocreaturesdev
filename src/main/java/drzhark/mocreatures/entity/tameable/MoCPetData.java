@@ -2,7 +2,6 @@ package drzhark.mocreatures.entity.tameable;
 
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
@@ -25,15 +24,15 @@ public class MoCPetData {
     public MoCPetData(IMoCTameable pet) {
         this.ownerData.put("TamedList", this.tamedList);
         Level level = ((Entity) pet).level();
-        this.ownerUniqueId = MoCreatures.isServer(level) ? pet.getOwnerId() : Minecraft.getInstance().player.getUUID();
+        this.ownerUniqueId = MoCreatures.isServer(level) ? pet.getOwnerId() : MoCreatures.proxy.getPlayer().getUUID();
         MoCreatures.LOGGER.debug("Created new MoCPetData for owner {}", this.ownerUniqueId);
     }
 
     public MoCPetData(CompoundTag nbt, UUID owner) {
         this.ownerData = nbt;
-        this.tamedList = nbt.getList("TamedList", 10);
+        this.tamedList = nbt.getListOrEmpty("TamedList");
         this.ownerUniqueId = owner;
-        this.loadPetDataMap(nbt.getCompound("PetIdData"));
+        this.loadPetDataMap(nbt.getCompoundOrEmpty("PetIdData"));
         MoCreatures.LOGGER.debug("Loaded MoCPetData for owner {} with {} pets", 
                 this.ownerUniqueId, this.tamedList.size());
     }
@@ -41,7 +40,7 @@ public class MoCPetData {
     public int addPet(IMoCTameable pet) {
         Entity entity = (Entity) pet;
         ChunkPos chunkCoord = entity.chunkPosition();
-        BlockPos coords = new BlockPos(chunkCoord.x, chunkCoord.getWorldPosition().getY(), chunkCoord.z);
+        BlockPos coords = new BlockPos(chunkCoord.x(), chunkCoord.getWorldPosition().getY(), chunkCoord.z());
         CompoundTag petNBT = MoCTools.getEntityData(entity);
 
         if (this.tamedList != null) {
@@ -51,7 +50,7 @@ public class MoCPetData {
             petData.putInt("ChunkX", coords.getX());
             petData.putInt("ChunkY", coords.getY());
             petData.putInt("ChunkZ", coords.getZ());
-            petData.putString("Dimension", entity.level().dimension().location().toString());
+            petData.putString("Dimension", entity.level().dimension().identifier().toString());
             this.tamedList.add(petData);
             this.ownerData.put("PetIdData", savePetDataMap());
             MoCreatures.LOGGER.debug("Added pet ID {} for owner {}", id, this.ownerUniqueId);
@@ -64,7 +63,7 @@ public class MoCPetData {
 
     public boolean removePet(int id) {
         for (int i = this.tamedList.size() - 1; i >= 0; i--) {
-            CompoundTag nbt = this.tamedList.getCompound(i);
+            CompoundTag nbt = this.tamedList.getCompoundOrEmpty(i);
             if (nbt.contains("PetId") && nbt.getIntOr("PetId", 0) == id) {
                 if (i >= 0 && i < this.tamedList.size()) {
                     this.tamedList.remove(i);
@@ -90,7 +89,7 @@ public class MoCPetData {
     public CompoundTag getPetData(int id) {
         if (this.tamedList != null) {
             for (int i = 0; i < this.tamedList.size(); i++) {
-                CompoundTag nbt = this.tamedList.getCompound(i);
+                CompoundTag nbt = this.tamedList.getCompoundOrEmpty(i);
                 if (nbt.contains("PetId") && nbt.getIntOr("PetId", 0) == id) {
                     return nbt;
                 }
@@ -108,12 +107,12 @@ public class MoCPetData {
     }
 
     public String getOwner() {
-        return this.ownerData != null ? this.ownerData.getString("Owner") : null;
+        return this.ownerData != null ? this.ownerData.getStringOr("Owner", "") : null;
     }
 
     public boolean getInAmulet(int petId) {
         CompoundTag petData = getPetData(petId);
-        return petData != null && petData.getBoolean("InAmulet");
+        return petData != null && petData.getBooleanOr("InAmulet", false);
     }
 
     public void setInAmulet(int petId, boolean flag) {
@@ -155,7 +154,7 @@ public class MoCPetData {
             this.idMap.clear();
             MoCreatures.LOGGER.debug("Reset pet ID map for owner {} (null compound tag)", this.ownerUniqueId);
         } else {
-            int[] intArray = compoundTag.getIntArray("PetIdArray");
+            int[] intArray = compoundTag.getIntArray("PetIdArray").orElse(new int[0]);
             for (int i = 0; i < intArray.length; i++) {
                 for (int j = 0; j < Integer.SIZE; j++) {
                     this.idMap.set(i * Integer.SIZE + j, (intArray[i] & (1 << j)) != 0);

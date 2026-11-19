@@ -53,7 +53,7 @@ public class CommandMoCTP {
         MoCPetData ownerPetData = MoCreatures.instance.mapData.getPetData(player.getUUID());
         if (ownerPetData != null) {
             for (int i = 0; i < ownerPetData.getTamedList().size(); i++) {
-                CompoundTag nbt = ownerPetData.getTamedList().getCompound(i);
+                CompoundTag nbt = ownerPetData.getTamedList().getCompoundOrEmpty(i);
                 if (nbt.contains("PetId") && nbt.getIntOr("PetId", 0) == petId) {
                     String petName = nbt.getStringOr("Name", "");
                     ResourceKey<Level> dimensionKey = ResourceKey.create(Registries.DIMENSION, 
@@ -62,9 +62,9 @@ public class CommandMoCTP {
                     
                     if (world != null) {
                         if (!teleportLoadedPet(world, player, petId, petName, source)) {
-                            double posX = nbt.getList("Pos", 6).getDouble(0);
-                            double posY = nbt.getList("Pos", 6).getDouble(1);
-                            double posZ = nbt.getList("Pos", 6).getDouble(2);
+                            double posX = nbt.getListOrEmpty("Pos").getDouble(0);
+                            double posY = nbt.getListOrEmpty("Pos").getDouble(1);
+                            double posZ = nbt.getListOrEmpty("Pos").getDouble(2);
                             int x = (int) Math.floor(posX);
                             int y = (int) Math.floor(posY);
                             int z = (int) Math.floor(posZ);
@@ -98,7 +98,7 @@ public class CommandMoCTP {
                 CompoundTag compound = new CompoundTag();
                 entity.save(compound);
                 
-                if (!compound.isEmpty() && !compound.getString("Owner").isEmpty()) {
+                if (!compound.isEmpty() && !compound.getStringOr("Owner", "").isEmpty()) {
                     String owner = compound.getStringOr("Owner", "");
                     String name = compound.getStringOr("Name", "");
                     
@@ -116,7 +116,7 @@ public class CommandMoCTP {
                         source.sendSuccess(() -> Component.literal(name + 
                                 " has been teleported to location " + Math.round(player.getX()) + 
                                 ", " + Math.round(player.getY()) + ", " + Math.round(player.getZ()) + 
-                                " in dimension " + player.level().dimension().location()), true);
+                                " in dimension " + player.level().dimension().identifier()), true);
                         return true;
                     }
                 }

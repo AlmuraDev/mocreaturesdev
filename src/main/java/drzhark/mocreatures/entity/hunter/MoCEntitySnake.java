@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hunter;
+import drzhark.mocreatures.init.MoCDataComponents;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.server.level.ServerLevel;
@@ -40,7 +41,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 
@@ -98,7 +98,7 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, EntitySpawnReason reason, @Nullable SpawnGroupData spawnDataIn) {
         if (this.level().dimension() == MoCreatures.proxy.wyvernDimension) this.setPersistenceRequired();
-        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn);
     }
 
     @Override
@@ -444,9 +444,9 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
 
     @Override
     public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
-        boolean flag = super.doHurtTarget(serverLevel, serverLevel, entityIn);
+        boolean flag = super.doHurtTarget(serverLevel, entityIn);
         if (flag && entityIn instanceof LivingEntity && getTypeMoC() > 2) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new MoCMessageAnimation(this.getId(), 1));
+            MoCMessageHandler.sendToTracking(this, new MoCMessageAnimation(this.getId(), 1));
             setBiting(true);
         }
         return flag;
@@ -464,7 +464,7 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
     public void setBiting(boolean flag) {
         this.isBiting = flag;
         if (!this.level().isClientSide() && flag) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new MoCMessageAnimation(this.getId(), 1));
+            MoCMessageHandler.sendToTracking(this, new MoCMessageAnimation(this.getId(), 1));
         }
     }
 
@@ -507,9 +507,9 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
                 int snakeEggType = getTypeMoC() + 20;
                 ItemStack snakeEgg = new ItemStack(MoCItems.MOC_EGG.get(), 1);
 
-                snakeEgg.getOrCreateTag().putInt("EggType", snakeEggType);
+                snakeEgg.set(MoCDataComponents.EGG_TYPE.get(), snakeEggType);
 
-                this.spawnAtLocation(snakeEgg, 1);
+                this.spawnAtLocation((ServerLevel) this.level(), snakeEgg, 1);
             }
         }
     }
@@ -566,7 +566,7 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
          */
         try {
             // In 1.20.1, we need to check the biome path directly instead of using BiomeDictionary
-            String biomePath = this.level().getBiome(pos).unwrapKey().orElseThrow().location().getPath();
+            String biomePath = this.level().getBiome(pos).unwrapKey().orElseThrow().identifier().getPath();
             int l = this.random.nextInt(10);
 
             // Snowy biomes - no snakes

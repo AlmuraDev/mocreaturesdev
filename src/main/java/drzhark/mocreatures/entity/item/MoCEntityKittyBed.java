@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.item;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ValueInput;
@@ -134,9 +135,10 @@ public class MoCEntityKittyBed extends Mob {
         return 0.0F;
     }
 
+    /** The kitty sits on the floor of the bed or box. */
     @Override
-    public double getPassengersRidingOffset() {
-        return 0.0D;
+    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
+        return Vec3.ZERO;
     }
 
     @Override
@@ -153,7 +155,7 @@ public class MoCEntityKittyBed extends Mob {
                 MoCTools.playCustomSound(this, SoundEvents.ITEM_PICKUP, 0.2F);
                 this.discard();
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
         ItemStack stack = player.getItemInHand(hand);
         if (!getHasFood() && !getHasMilk()) {
@@ -163,7 +165,7 @@ public class MoCEntityKittyBed extends Mob {
                     setHasFood(true);
                     MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_KITTYBED_POURINGFOOD.get());
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide());
+                return InteractionResult.SUCCESS;
             }
             if (stack.is(Items.MILK_BUCKET)) {
                 if (!this.level().isClientSide()) {
@@ -171,7 +173,7 @@ public class MoCEntityKittyBed extends Mob {
                     setHasMilk(true);
                     MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_KITTYBED_POURINGMILK.get());
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide());
+                return InteractionResult.SUCCESS;
             }
         }
         if (this.getVehicle() == null) {
@@ -179,13 +181,13 @@ public class MoCEntityKittyBed extends Mob {
                 setYHeadRot((float) MoCTools.roundToNearest90Degrees(this.getYHeadRot()) + 90.0F);
                 MoCTools.playCustomSound(this, SoundEvents.ITEM_FRAME_ROTATE_ITEM);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
 
     private void giveOrDrop(Player player, ItemStack stack) {
-        if (!player.getInventory().add(stack)) player.drop(stack, false);
+        if (!player.getInventory().add(stack)) player.drop(stack, false, net.minecraft.util.Prediction.SERVER_ONLY);
     }
 
     @Override

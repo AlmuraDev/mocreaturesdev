@@ -1,4 +1,5 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.entity.item.MoCEntityKittyBed;
@@ -31,7 +32,7 @@ public class MoCItemKittyBed extends MoCItem {
         if (!level.isClientSide()) {
             if (!player.isCreative()) stack.shrink(1);
 
-            MoCEntityKittyBed kittyBed = MoCEntities.KITTY_BED.get().create(level);
+            MoCEntityKittyBed kittyBed = MoCEntities.KITTY_BED.get().create(level, EntitySpawnReason.SPAWN_ITEM_USE);
             if (kittyBed != null) {
                 kittyBed.setSheetColor(this.sheetType);
                 kittyBed.setPos(player.getX(), player.getY(), player.getZ());

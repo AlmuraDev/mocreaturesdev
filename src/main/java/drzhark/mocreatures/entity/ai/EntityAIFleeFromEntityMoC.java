@@ -85,6 +85,7 @@ public class EntityAIFleeFromEntityMoC extends Goal {
         // Find a random position away from the closest entity
         BlockPos awayPos = RandomPos.generateRandomDirectionWithinRadians(
                 this.entity.getRandom(),
+                0.0D,
                 16,                                   // horizontal search radius
                 7,                                    // vertical search range
                 (int) Math.floor(this.entity.getY()),// centerYOffset

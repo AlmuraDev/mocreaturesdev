@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.init.MoCLootTables;
@@ -68,7 +69,7 @@ public class MoCEntityFlameWraith extends MoCEntityWraith implements Enemy {
 
     @Override
     public void doEnchantDamageEffects(LivingEntity attacker, Entity target) {
-        if (!this.level().isClientSide() && !this.level().dimensionType().ultraWarm()) {
+        if (!this.level().isClientSide() && !this.level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) {
             target.igniteForSeconds(this.burningTime);
         }
         super.doEnchantDamageEffects(attacker, target);

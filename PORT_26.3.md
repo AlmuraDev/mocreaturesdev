@@ -35,15 +35,47 @@ furniture mod's `4.0` branch.
 
 ## Remaining (compile errors as of the last pass: about 2,000 unique)
 
+After the entities batch: about 1,130 unique errors, none in `entity/**` or the network messages.
+
 | Area | Errors | Main work |
 |---|---|---|
-| Entities (`entity/**`, 122 files) | ~770 | overrides that changed signature; networking calls (`PacketDistributor.NEAR`/`TargetPoint`); `MobType` to entity type tags; riding offsets to passenger attachments; NBT lists and item components in inventories; loot tables as `ResourceKey<LootTable>`; enchantment effects |
+| Entities (`entity/**`) | 0 | done, see below; needs in-game testing |
 | Client rendering (`client/**`, 58 files) | ~480 | custom quads (`vertex(...)` chains, `MultiBufferSource`, `RenderSystem` blend state) to `SubmitNodeCollector`; the six `RenderLayer`s to `submit`; renderers with their own `render(...)` override; name and health bar rendering; particles (`fx/impl`); the werewolf, wraith and legacy big cat renderers |
 | Registration (`init/**`) | ~195 | `EntityType.Builder.build(ResourceKey)`; spawn placements; creative tabs; villager trades; worldgen registration |
 | Items (`item/**`) | ~160 | tools and armour to `ToolMaterial` / `Item.Properties.sword()/humanoidArmor()` with an equipment asset; `use` returning `InteractionResult`; NBT to data components; `RecordItem` to a jukebox song |
 | World / worldgen / dimension | ~135 | 26.3 features are codec records (`Feature.place(level, generator, random, origin)`); `MobSpawnSettings.SpawnerData` changed; biome modifier codecs |
-| Network / commands | ~75 | `SimpleChannel` to `CustomPacketPayload` + `RegisterPayloadHandlersEvent`; permission checks |
+| Commands (`network/command/**`) | ~30 | permission checks; teleporting between dimensions; pet listing NBT |
 | Other (events, util, compat, blocks) | ~160 | removed events (`TickEvent`, `BlockEvent.BreakEvent` moves, `MissingMappingsEvent`), `IPlantable`, `GlassBlock`, data fixers |
+
+### Entities batch: how the 1.20 behaviour was kept
+
+- **Packets:** the messages are NeoForge payloads (`TYPE` + `STREAM_CODEC`), registered in `MoCMessageHandler`
+  (client-bound and server-bound separately). Servers send through `MoCMessageHandler.sendToNear/sendToTracking/
+  sendToPlayer/sendToAll`; the client sends through `client/MoCClientPackets`, which only client code calls.
+- **Save data:** entities save through `ValueOutput`/`ValueInput`. Nested compounds and lists go through
+  `MoCTools.writeTag/readCompound/readList/has`, and inventory stacks through `MoCTools.saveStack/loadStack` (item codec,
+  same "Slot" layout). The pet owner is synced as an entity reference.
+- **Pet map:** `MoCPetMapData.TYPE` is a 26.3 `SavedDataType`, id `mocreatures:pets`, so it's a new file in a new world.
+- **Loot:** 26.3 ties a mob's loot table to its entity type, so the base classes override `dropFromLootTable` and
+  drop from the creature's own `getDefaultLootTable()` (per variant; null drops nothing). `dropCustomDeathLoot` gets
+  the looting level from `MoCTools.lootingLevel`.
+- **Undead and arthropods:** `MobType` is gone. Always-undead and arthropod creatures are in the `minecraft:undead` and
+  `minecraft:arthropod` entity type tags (`data/minecraft/tags/entity_type`). The variants that are only sometimes
+  undead (some horses and horse mobs, the undead ostrich, the ghost wyvern) override `isInvertedHealAndHarm`, so
+  healing and harming work as before. Smite only sees the tag.
+- **Riding:** creatures keep `getPassengersRidingOffset()` / `getMyRidingOffset()`; the base classes turn them into
+  26.3 passenger and vehicle attachment points. Seat heights may differ slightly for players; check in game.
+- **Leads:** `canBeLeashed()` no longer gets the player, so tamed pets refuse a lead from anyone but the owner or an op
+  in `interact` instead.
+- **On-hit effects:** 26.3 has no `doEnchantDamageEffects`, so it is a Mo' Creatures method on the base classes, called
+  from their `doHurtTarget`; creatures still override it for poison, fire and the like.
+- **Eye height and size:** `getStandingEyeHeight` became `getDefaultDimensions(...).withEyeHeight(...)`; the werewolf and
+  filch lizard size changes moved there too (`getDimensions` is final).
+- **Eggs:** the egg's creature type is the `mocreatures:egg_type` item component (`MoCDataComponents`), not stack NBT.
+- **Approximations to check in game:** werewolf damage from swords and tools (no tool tiers in 26.3; it uses the
+  weapon's attack damage), `ultraWarm` dimensions (now "water evaporates"), glowing outline (not drawn).
+- **Server safety:** entity code no longer uses `I18n` or `Minecraft`; verbose names use `Language`, and client-only
+  lookups go through the proxy.
 
 Resources are untouched so far:
 - data pack folder renames (`loot_tables` to `loot_table`, `recipes` to `recipe`, `tags/items` to `tags/item`, and so on), plus the recipe and loot JSON formats

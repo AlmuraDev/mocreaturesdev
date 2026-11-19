@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "mocreatures:petscorpion",
+    "mocreatures:cavescorpion",
+    "mocreatures:dirtscorpion",
+    "mocreatures:firescorpion",
+    "mocreatures:frostscorpion",
+    "mocreatures:undeadscorpion",
+    "mocreatures:bee",
+    "mocreatures:butterfly",
+    "mocreatures:crab",
+    "mocreatures:dragonfly",
+    "mocreatures:firefly",
+    "mocreatures:fly",
+    "mocreatures:grasshopper",
+    "mocreatures:roach"
+  ]
+}

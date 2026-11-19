@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.aquatic;
+import drzhark.mocreatures.init.MoCDataComponents;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
@@ -44,7 +46,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -144,7 +145,7 @@ public class MoCEntityFishy extends MoCEntityTameableAquatic {
             int fishyEggType = getTypeMoC();
             ItemStack fishyEgg = new ItemStack(MoCItems.MOC_EGG.get(), j + 1);
 
-            fishyEgg.getOrCreateTag().putInt("EggType", fishyEggType);
+            fishyEgg.set(MoCDataComponents.EGG_TYPE.get(), fishyEggType);
 
             spawnAtLocation((ServerLevel) this.level(), fishyEgg, 0.0F);
         }
@@ -214,7 +215,7 @@ public class MoCEntityFishy extends MoCEntityTameableAquatic {
                     this.gestationtime++;
                 }
                 if (this.gestationtime % 3 == 0) {
-                    MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageHeart(this.getId()));
+                    MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageHeart(this.getId()));
                 }
                 if (this.gestationtime <= 50) {
                     continue;
@@ -222,10 +223,10 @@ public class MoCEntityFishy extends MoCEntityTameableAquatic {
                 int l = this.random.nextInt(3) + 1;
                 for (int i1 = 0; i1 < l; i1++) {
                     // Create the baby entity using a safer approach
-                    Entity babyEntity = MoCEntities.FISHY.get().create(this.level());
+                    Entity babyEntity = MoCEntities.FISHY.get().create(this.level(), EntitySpawnReason.BREEDING);
                     if (babyEntity instanceof MoCEntityFishy) {
                         MoCEntityFishy entityfishy1 = (MoCEntityFishy) babyEntity;
-                        entityfishy1.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+                        entityfishy1.snapTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
                         this.level().addFreshEntity(entityfishy1);
                         MoCTools.playCustomSound(this, SoundEvents.CHICKEN_EGG);
                         setHasEaten(false);
@@ -320,8 +321,9 @@ public class MoCEntityFishy extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return sizeIn.height * 0.65F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.65F));
     }
 
     static class FishMoveControl extends MoveControl {

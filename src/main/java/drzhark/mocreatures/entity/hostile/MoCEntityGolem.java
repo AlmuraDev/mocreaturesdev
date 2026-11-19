@@ -2,6 +2,10 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.hostile;
+import net.minecraft.world.item.DyeColor;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.storage.ValueInput;
@@ -48,8 +52,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.NetworkHooks;
 import net.neoforged.neoforge.common.NeoForge;
 
 import javax.annotation.Nullable;
@@ -89,10 +91,6 @@ public class MoCEntityGolem extends MoCEntityMob {
                 .add(Attributes.ATTACK_DAMAGE, 7.0D);
     }
 
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
 
     // These methods will be called by NetworkHooks when spawning the entity
     public void writeSpawnData(FriendlyByteBuf data) {
@@ -161,7 +159,7 @@ public class MoCEntityGolem extends MoCEntityMob {
                     MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_GOLEM_DYING.get(), 3F);
                     if (!this.level().isClientSide()) {
                         ServerLevel serverWorld = (ServerLevel) this.level();
-                        MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 1));
+                        MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 1));
                     }
                 }
 
@@ -178,7 +176,7 @@ public class MoCEntityGolem extends MoCEntityMob {
                 this.tCounter = 1;
                 if (!this.level().isClientSide()) {
                     ServerLevel serverWorld = (ServerLevel) this.level();
-                    MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), 0));
+                    MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageAnimation(this.getId(), 0));
                 }
             }
 
@@ -291,9 +289,9 @@ public class MoCEntityGolem extends MoCEntityMob {
 
             if (!stateTarget.isAir() && stateTarget.getBlock() != Blocks.WATER && stateTarget.getBlock() != Blocks.BEDROCK && stateAbove.isAir()) {
                 if (MoCTools.mobGriefing(level)) {
-                    BlockEvent.BreakEvent event = null;
+                    BreakBlockEvent event = null;
                     if (!level.isClientSide()) {
-                        event = new BlockEvent.BreakEvent(level, pos, stateTarget, FakePlayerFactory.get((ServerLevel) level, MoCreatures.MOCFAKEPLAYER));
+                        event = new BreakBlockEvent(level, pos, stateTarget, FakePlayerFactory.get((ServerLevel) level, MoCreatures.MOCFAKEPLAYER));
                     }
                     if (event != null && !event.isCanceled()) {
                         level.removeBlock(pos, false);
@@ -495,17 +493,17 @@ public class MoCEntityGolem extends MoCEntityMob {
             nbttag.putByte("Slot", this.golemCubes[i]);
             cubeLists.add(nbttag);
         }
-        nbttagcompound.put("GolemBlocks", cubeLists);
+        MoCTools.writeTag(nbttagcompound, "GolemBlocks", cubeLists);
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
         setGolemState(nbttagcompound.getIntOr("golemState", 0));
-        ListTag nbttaglist = nbttagcompound.getList("GolemBlocks", 10);
+        ListTag nbttaglist = MoCTools.readList(nbttagcompound, "GolemBlocks");
         for (int i = 0; i < 23; i++) {
-            CompoundTag var4 = nbttaglist.getCompound(i);
-            this.golemCubes[i] = var4.getByte("Slot");
+            CompoundTag var4 = nbttaglist.getCompoundOrEmpty(i);
+            this.golemCubes[i] = var4.getByteOr("Slot", (byte) 0);
         }
     }
 
@@ -542,7 +540,7 @@ public class MoCEntityGolem extends MoCEntityMob {
     public void saveGolemCube(byte slot, byte value) {
         this.golemCubes[slot] = value;
         if (!this.level().isClientSide() && MoCreatures.proxy.worldInitDone) {
-            MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageTwoBytes(this.getId(), slot, value));
+            MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageTwoBytes(this.getId(), slot, value));
         }
     }
 
@@ -686,7 +684,7 @@ public class MoCEntityGolem extends MoCEntityMob {
         if (block == Blocks.OAK_LOG || block == Blocks.STRIPPED_OAK_LOG) return 6;
         if (block == Blocks.GOLD_BLOCK || block == Blocks.GOLD_ORE) return 7;
         if (block == Blocks.GLASS) return 8;
-        if (block == Blocks.BLUE_WOOL || block == Blocks.LAPIS_BLOCK) return 9;
+        if (block == Blocks.WOOL.pick(DyeColor.BLUE) || block == Blocks.LAPIS_BLOCK) return 9;
         if (block == Blocks.OAK_LEAVES) return 10;
         if (block == Blocks.IRON_BLOCK || block == Blocks.IRON_ORE) return 11;
         if (block == Blocks.BRICKS) return 12;
@@ -731,7 +729,7 @@ public class MoCEntityGolem extends MoCEntityMob {
             case 8:
                 return Blocks.GLASS.defaultBlockState();
             case 9:
-                return Blocks.BLUE_WOOL.defaultBlockState();
+                return Blocks.WOOL.pick(DyeColor.BLUE).defaultBlockState();
             case 10:
                 return Blocks.OAK_LEAVES.defaultBlockState();
             case 11:
@@ -850,8 +848,9 @@ public class MoCEntityGolem extends MoCEntityMob {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.8F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.8F));
     }
 
     static class AIGolemAttack extends MeleeAttackGoal {
@@ -872,8 +871,9 @@ public class MoCEntityGolem extends MoCEntityMob {
         }
 
         @Override
-        protected double getAttackReachSqr(LivingEntity attackTarget) {
-            return 4.0F + attackTarget.getBbWidth();
+        protected boolean canPerformAttack(LivingEntity attackTarget) {
+            // 1.20 attack reach: 4.0F + attackTarget.getBbWidth()
+            return this.isTimeToAttack() && this.mob.distanceToSqr(attackTarget) <= (4.0F + attackTarget.getBbWidth()) && this.mob.getSensing().hasLineOfSight(attackTarget);
         }
     }
 

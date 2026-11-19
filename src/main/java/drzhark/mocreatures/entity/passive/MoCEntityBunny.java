@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.passive;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.server.level.ServerLevel;
@@ -84,7 +86,7 @@ public class MoCEntityBunny extends MoCEntityTameableAnimal {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, EntitySpawnReason reason, @Nullable SpawnGroupData spawnDataIn) {
         if (worldIn.getLevel().dimension() == MoCreatures.proxy.wyvernDimension) this.setPersistenceRequired();
-        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn);
     }
 
     @Override
@@ -118,7 +120,7 @@ public class MoCEntityBunny extends MoCEntityTameableAnimal {
 
         try {
             // In 1.20.1, check biome directly
-            String biomeName = this.level().getBiome(pos).unwrapKey().orElseThrow().location().getPath();
+            String biomeName = this.level().getBiome(pos).unwrapKey().orElseThrow().identifier().getPath();
             if (biomeName.contains("snow")) {
                 setTypeMoC(3); //snow-white bunnies!
                 return true;
@@ -230,7 +232,7 @@ public class MoCEntityBunny extends MoCEntityTameableAnimal {
                         if ((entitybunny.getVehicle() != null) || (entitybunny.bunnyReproduceTickerA < 1023) || !entitybunny.getIsAdult() || !entitybunny.getHasEaten()) {
                             continue;
                         }
-                        MoCEntityBunny entitybunny1 = MoCEntities.BUNNY.get().create(this.level());
+                        MoCEntityBunny entitybunny1 = MoCEntities.BUNNY.get().create(this.level(), EntitySpawnReason.BREEDING);
                         if (entitybunny1 != null) {
                             entitybunny1.setPos(this.getX(), this.getY(), this.getZ());
                             entitybunny1.setAdult(false);
@@ -275,7 +277,7 @@ public class MoCEntityBunny extends MoCEntityTameableAnimal {
 
     @Override
     public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
-        if (this.isInvulnerableTo(damagesource)) {
+        if (this.isInvulnerableTo(serverLevel, damagesource)) {
             return false;
         }
         
@@ -298,7 +300,7 @@ public class MoCEntityBunny extends MoCEntityTameableAnimal {
             return this.getVehicle().isCrouching() ? 0.25 : 0.5F;
         }
 
-        return super.getMyRidingOffset();
+        return (-super.getVehicleAttachmentPoint(this).y);
     }
 
     @Override
@@ -312,7 +314,8 @@ public class MoCEntityBunny extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return this.getBbHeight() * 0.675F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.675F));
     }
 }

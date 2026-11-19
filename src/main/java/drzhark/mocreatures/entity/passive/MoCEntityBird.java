@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.passive;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
@@ -116,7 +118,7 @@ public class MoCEntityBird extends MoCEntityTameableAnimal {
         
         try {
             // In 1.20.1, check biome directly
-            String biomeName = this.level().getBiome(pos).unwrapKey().orElseThrow().location().getPath();
+            String biomeName = this.level().getBiome(pos).unwrapKey().orElseThrow().identifier().getPath();
             if (biomeName.contains("mesa")) {
                 setTypeMoC(2); // only black birds
             }
@@ -519,7 +521,8 @@ public class MoCEntityBird extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return sizeIn.height * 0.8F;
+    protected EntityDimensions getDefaultDimensions(Pose poseIn) {
+        EntityDimensions sizeIn = super.getDefaultDimensions(poseIn);
+        return sizeIn.withEyeHeight((float) (sizeIn.height() * 0.8F));
     }
 }

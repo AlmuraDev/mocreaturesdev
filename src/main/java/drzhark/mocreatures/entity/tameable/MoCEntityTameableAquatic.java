@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.entity.tameable;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityReference;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ValueInput;
@@ -40,7 +42,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 import javax.annotation.Nullable;
@@ -50,7 +51,7 @@ import java.util.UUID;
 
 public class MoCEntityTameableAquatic extends MoCEntityAquatic implements IMoCTameable {
 
-    protected static final EntityDataAccessor<Optional<UUID>> OWNER_UNIQUE_ID = SynchedEntityData.defineId(MoCEntityTameableAquatic.class, EntityDataSerializers.OPTIONAL_UUID);
+    protected static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> OWNER_UNIQUE_ID = SynchedEntityData.defineId(MoCEntityTameableAquatic.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
     protected static final EntityDataAccessor<Integer> PET_ID = SynchedEntityData.defineId(MoCEntityTameableAquatic.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Boolean> TAMED = SynchedEntityData.defineId(MoCEntityTameableAquatic.class, EntityDataSerializers.BOOLEAN);
 
@@ -81,11 +82,11 @@ public class MoCEntityTameableAquatic extends MoCEntityAquatic implements IMoCTa
 
     @Nullable
     public UUID getOwnerId() {
-        return this.entityData.get(OWNER_UNIQUE_ID).orElse(null);
+        return this.entityData.get(OWNER_UNIQUE_ID).map(EntityReference::getUUID).orElse(null);
     }
 
     public void setOwnerId(@Nullable UUID uniqueId) {
-        this.entityData.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId));
+        this.entityData.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId).map(EntityReference::<LivingEntity>of));
     }
 
     @Override
@@ -334,21 +335,21 @@ public class MoCEntityTameableAquatic extends MoCEntityAquatic implements IMoCTa
         super.readAdditionalSaveData(nbttagcompound);
         setTamed(nbttagcompound.getBooleanOr("Tamed", false));
         String s = "";
-        if (nbttagcompound.contains("OwnerUUID", 8)) {
+        if (MoCTools.has(nbttagcompound, "OwnerUUID")) {
             s = nbttagcompound.getStringOr("OwnerUUID", "");
         }
         if (!s.isEmpty()) {
             this.setOwnerId(UUID.fromString(s));
         }
-        if (nbttagcompound.contains("PetId")) {
+        if (MoCTools.has(nbttagcompound, "PetId")) {
             setOwnerPetId(nbttagcompound.getIntOr("PetId", 0));
         }
-        if (this.getIsTamed() && nbttagcompound.contains("PetId")) {
+        if (this.getIsTamed() && MoCTools.has(nbttagcompound, "PetId")) {
             MoCPetData petData = MoCreatures.instance.mapData.getPetData(this.getOwnerId());
             if (petData != null) {
-                ListTag tag = petData.getOwnerRootNBT().getList("TamedList", 10);
+                ListTag tag = petData.getOwnerRootNBT().getListOrEmpty("TamedList");
                 for (int i = 0; i < tag.size(); i++) {
-                    CompoundTag nbt = tag.getCompound(i);
+                    CompoundTag nbt = tag.getCompoundOrEmpty(i);
                     if (nbt.getIntOr("PetId", 0) == nbttagcompound.getIntOr("PetId", 0)) {
                         // update amulet flag
                         nbt.putBoolean("InAmulet", false);
@@ -374,7 +375,7 @@ public class MoCEntityTameableAquatic extends MoCEntityAquatic implements IMoCTa
     public void handleEntityEvent(byte par1) {
         if (par1 == 2) {
             this.walkAnimation.setSpeed(1.5F);
-            this.invulnerableTime = this.invulnerableDuration;
+            this.setInvulnerableTime(20);
             this.hurtTime = this.hurtDuration = 10;
             playSound(getHurtSound(this.damageSources().generic()), getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
             hurtOrSimulate(this.damageSources().generic(), 0.0F);
@@ -498,7 +499,7 @@ public class MoCEntityTameableAquatic extends MoCEntityAquatic implements IMoCTa
 
             setGestationTime(getGestationTime() + 1);
             if (!this.level().isClientSide()) {
-                MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageHeart(this.getId()));
+                MoCMessageHandler.sendToNear(this.level(), this.getX(), this.getY(), this.getZ(), 64, new MoCMessageHeart(this.getId()));
             }
 
             if (getGestationTime() <= 50) {
@@ -508,10 +509,10 @@ public class MoCEntityTameableAquatic extends MoCEntityAquatic implements IMoCTa
             try {
                 String offspringName = this.getOffspringClazz((IMoCTameable) mate);
 
-                Mob offspring = (Mob) BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(MoCConstants.MOD_PREFIX + offspringName.toLowerCase())).create(this.level());
+                Mob offspring = (Mob) BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(MoCConstants.MOD_PREFIX + offspringName.toLowerCase())).create(this.level(), EntitySpawnReason.BREEDING);
                 if (offspring instanceof IMoCTameable) {
                     IMoCTameable baby = (IMoCTameable) offspring;
-                    offspring.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+                    offspring.snapTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
                     this.level().addFreshEntity(offspring);
                     baby.setAdult(false);
                     baby.setMoCAge(35);

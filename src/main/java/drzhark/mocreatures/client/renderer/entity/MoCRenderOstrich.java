@@ -8,10 +8,7 @@ import drzhark.mocreatures.client.model.MoCModelOstrich;
 import drzhark.mocreatures.entity.neutral.MoCEntityOstrich;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderOstrich extends MoCRenderMoC<MoCEntityOstrich, MoCModelOstrich<MoCEntityOstrich>> {
 
     public MoCRenderOstrich(EntityRendererProvider.Context renderManagerIn, MoCModelOstrich modelbase, float f) {

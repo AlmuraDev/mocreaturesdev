@@ -12,9 +12,7 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = MoCConstants.MOD_ID)
 public class MoCEventHooksClient {
 

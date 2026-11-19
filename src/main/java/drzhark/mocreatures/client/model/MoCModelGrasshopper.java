@@ -18,10 +18,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCModelGrasshopper<T extends MoCEntityGrasshopper> extends MoCEntityModel<T> implements IPartialTransparencyModel<T> {
 
     @SuppressWarnings("removal")

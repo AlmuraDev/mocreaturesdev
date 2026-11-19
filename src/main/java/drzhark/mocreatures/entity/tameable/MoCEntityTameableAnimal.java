@@ -41,8 +41,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
@@ -378,7 +376,6 @@ public class MoCEntityTameableAnimal extends MoCEntityAnimal implements IMoCTame
 
     // Override to fix heart animation on clients
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void handleEntityEvent(byte par1) {
         if (par1 == 2) {
             this.walkAnimation.setSpeed(1.5F);

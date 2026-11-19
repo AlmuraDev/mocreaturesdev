@@ -12,8 +12,6 @@ import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 to 1.20.1. All ModelRenderer fields are now ModelPart
@@ -21,7 +19,6 @@ import net.neoforged.api.distmarker.OnlyIn;
  * setupAnim(...), rendering to renderToBuffer(...), and entity data captured
  * in prepareMobModel(...).
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelOstrich<T extends MoCEntityOstrich> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

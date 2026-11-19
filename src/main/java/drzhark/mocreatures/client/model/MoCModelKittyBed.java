@@ -13,13 +13,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelKittyBed (1.16.5) to Minecraft 1.20.1.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelKittyBed<T extends MoCEntityKittyBed> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

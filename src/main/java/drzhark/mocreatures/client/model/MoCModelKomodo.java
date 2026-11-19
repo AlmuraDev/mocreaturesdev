@@ -14,14 +14,11 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.client.model.EntityModel;
 
 /**
  * Port of MoCModelKomodo (1.16.5) to Minecraft 1.20.1.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelKomodo<T extends MoCEntityKomodo> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

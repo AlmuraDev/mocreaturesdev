@@ -10,10 +10,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class MoCModelAbstractScorpion<T extends net.minecraft.world.entity.Entity> extends MoCEntityModel<T> {
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =

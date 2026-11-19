@@ -14,13 +14,10 @@ import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelWraith from 1.16.5’s BipedModel to 1.20.1’s HumanoidModel.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelWraith<T extends MoCEntityWraith> extends MoCHumanoidModel<T> {
 
     @SuppressWarnings("removal")

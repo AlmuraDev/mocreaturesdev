@@ -12,13 +12,10 @@ import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelSnake from 1.16.5 → 1.20.1.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelSnake<T extends MoCEntitySnake> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

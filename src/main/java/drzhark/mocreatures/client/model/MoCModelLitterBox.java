@@ -20,15 +20,12 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 → 1.20.1. This model has seven child parts:
  * Table1, Table2, Table3, Table4, Bottom, Litter, and LitterUsed.
  * A public boolean `usedlitter` toggles which “litter” quad is rendered.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelLitterBox<T extends MoCEntityLitterBox> extends MoCEntityModel<T> {
         
     @SuppressWarnings("removal")

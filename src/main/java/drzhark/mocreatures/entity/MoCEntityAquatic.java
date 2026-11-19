@@ -55,8 +55,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidType;
 
@@ -1038,7 +1036,6 @@ public boolean isPushedByFluid(FluidType type) {
         this.makeEntityJump();
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public float yawRotationOffset() {
         double wobble = 0F;

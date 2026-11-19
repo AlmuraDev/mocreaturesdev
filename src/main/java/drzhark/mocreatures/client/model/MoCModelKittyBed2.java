@@ -12,11 +12,8 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.client.model.EntityModel;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCModelKittyBed2<T extends MoCEntityKittyBed> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

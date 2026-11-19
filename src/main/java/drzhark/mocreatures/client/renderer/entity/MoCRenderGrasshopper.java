@@ -9,10 +9,7 @@ import drzhark.mocreatures.entity.ambient.MoCEntityGrasshopper;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderGrasshopper extends MoCRenderMoC<MoCEntityGrasshopper, MoCModelGrasshopper<MoCEntityGrasshopper>> {
 
     public MoCRenderGrasshopper(EntityRendererProvider.Context renderManagerIn, MoCModelGrasshopper modelbase) {

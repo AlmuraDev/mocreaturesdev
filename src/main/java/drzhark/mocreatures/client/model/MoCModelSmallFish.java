@@ -15,14 +15,11 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 Forge → 1.20.1 Forge.
  * All ModelRenderer → ModelPart; setRotationAngles(...) → setupAnim(...); render(...) → renderToBuffer(...).
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelSmallFish<T extends MoCEntitySmallFish> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

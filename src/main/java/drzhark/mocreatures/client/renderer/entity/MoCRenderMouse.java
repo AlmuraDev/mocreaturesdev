@@ -9,10 +9,7 @@ import drzhark.mocreatures.client.model.MoCModelMouse;
 import drzhark.mocreatures.entity.passive.MoCEntityMouse;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderMouse extends MoCRenderMoC<MoCEntityMouse, MoCModelMouse<MoCEntityMouse>> {
 
     public MoCRenderMouse(EntityRendererProvider.Context context, MoCModelMouse<MoCEntityMouse> modelbase, float f) {

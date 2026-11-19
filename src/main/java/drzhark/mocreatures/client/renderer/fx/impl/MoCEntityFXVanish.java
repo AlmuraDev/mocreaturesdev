@@ -5,10 +5,7 @@ import net.minecraft.client.particle.SingleQuadParticle;
 import drzhark.mocreatures.client.renderer.fx.data.VanishParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCEntityFXVanish extends SingleQuadParticle {
 
     private final double portalPosX;
@@ -67,7 +64,6 @@ public class MoCEntityFXVanish extends SingleQuadParticle {
         return SingleQuadParticle.Layer.OPAQUE;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Provider implements ParticleProvider<VanishParticleData> {
         private final SpriteSet spriteSet;
 

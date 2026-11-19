@@ -14,19 +14,17 @@ import drzhark.mocreatures.network.message.MoCMessageEntityDive;
 import drzhark.mocreatures.network.message.MoCMessageEntityJump;
 import drzhark.mocreatures.proxy.MoCProxyClient;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 
-@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = MoCConstants.MOD_ID, value = Dist.CLIENT)
 public class MoCInputHandler {
 
     @SubscribeEvent
     public static void onInput(ClientTickEvent.Post event) {
-        Player player = MoCProxyClient.mc.player;
+        Player player = MoCProxyClient.mc().player;
         if (player == null) return;
 
-        boolean kbJump = MoCProxyClient.mc.options.keyJump.isDown();
+        boolean kbJump = MoCProxyClient.mc().options.keyJump.isDown();
         boolean kbDive = MoCKeyHandler.diveBinding.isDown();
 
         if (kbJump && player.getVehicle() != null && player.getVehicle() instanceof IMoCEntity) {

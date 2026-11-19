@@ -25,18 +25,19 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 
 /**
  * Client-side proxy for Mo' Creatures
  */
-@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = "mocreatures", value = Dist.CLIENT)
 public class MoCProxyClient extends MoCProxy {
 
-    public static Minecraft mc = Minecraft.getInstance();
+    /** The client; looked up on use, since it doesn't exist yet when this class loads. */
+    public static Minecraft mc() {
+        return Minecraft.getInstance();
+    }
     public static MoCProxyClient instance;
     public static MoCTextures mocTextures = new MoCTextures();
 
@@ -103,7 +104,7 @@ public class MoCProxyClient extends MoCProxy {
 
     @Override
     public Player getPlayer() {
-        return MoCProxyClient.mc.player;
+        return MoCProxyClient.mc().player;
     }
 
     @Override
@@ -111,7 +112,7 @@ public class MoCProxyClient extends MoCProxy {
         net.minecraft.client.gui.screens.inventory.BookViewScreen.BookAccess access =
                 net.minecraft.client.gui.screens.inventory.BookViewScreen.BookAccess.fromItem(book);
         if (access != null) {
-            mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.BookViewScreen(access));
+            mc().gui.setScreen(new net.minecraft.client.gui.screens.inventory.BookViewScreen(access));
         }
     }
 
@@ -120,7 +121,7 @@ public class MoCProxyClient extends MoCProxy {
      */
     @Override
     public void setName(Player player, IMoCEntity mocanimal) {
-        mc.gui.setScreen(new MoCGUIEntityNamer(mocanimal, mocanimal.getPetName()));
+        mc().gui.setScreen(new MoCGUIEntityNamer(mocanimal, mocanimal.getPetName()));
     }
 
     @Override
@@ -186,7 +187,7 @@ public class MoCProxyClient extends MoCProxy {
         double var2 = entity.level().getRandom().nextGaussian() * 0.02D;
         double var4 = entity.level().getRandom().nextGaussian() * 0.02D;
         double var6 = entity.level().getRandom().nextGaussian() * 0.02D;
-        mc.level.addParticle(ParticleTypes.LAVA, 
+        mc().level.addParticle(ParticleTypes.LAVA, 
             entity.getX() + entity.level().getRandom().nextFloat() * entity.getBbWidth() - entity.getBbWidth(), 
             entity.getY() + 0.5D + entity.level().getRandom().nextFloat() * entity.getBbHeight(), 
             entity.getZ() + entity.level().getRandom().nextFloat() * entity.getBbWidth() - entity.getBbWidth(), 
@@ -366,9 +367,9 @@ public class MoCProxyClient extends MoCProxy {
 
     @Override
     public void printMessageToPlayer(String msg) {
-        if (mc.player != null) {
+        if (mc().player != null) {
             Component chatText = Component.literal(msg);
-            mc.player.sendSystemMessage(chatText);
+            mc().player.sendSystemMessage(chatText);
         }
     }
 }

@@ -15,13 +15,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 MoCModelJellyFish to Minecraft 1.20.1.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelJellyFish<T extends MoCEntityJellyFish> extends MoCEntityModel<T> implements IPartialTransparencyModel<T> {
 
     @SuppressWarnings("removal")

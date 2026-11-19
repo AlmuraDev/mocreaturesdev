@@ -39,8 +39,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.network.MoCMessageHandler;
 import drzhark.mocreatures.network.message.MoCMessageHeart;
@@ -229,7 +227,6 @@ public class MoCEntityTurkey extends MoCEntityTameableAnimal {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void handleEntityEvent(byte id) {
         if (id == 18) {
             for (int i = 0; i < 7; ++i) {

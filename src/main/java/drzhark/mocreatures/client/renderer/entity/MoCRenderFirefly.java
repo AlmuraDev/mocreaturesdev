@@ -18,10 +18,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderFirefly extends MoCRenderInsect<MoCEntityFirefly, MoCModelFirefly<MoCEntityFirefly>> {
 
     public MoCRenderFirefly(EntityRendererProvider.Context renderManagerIn, MoCModelFirefly modelbase) {

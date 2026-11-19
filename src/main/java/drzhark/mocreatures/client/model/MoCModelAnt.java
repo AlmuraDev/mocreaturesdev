@@ -11,11 +11,8 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCModelAnt<T extends MoCEntityAnt> extends MoCEntityModel<T> {
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =

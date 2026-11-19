@@ -9,10 +9,7 @@ import drzhark.mocreatures.entity.hunter.MoCEntitySnake;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderSnake extends MoCRenderMoC<MoCEntitySnake, MoCModelSnake<MoCEntitySnake>> {
 
     public MoCRenderSnake(EntityRendererProvider.Context renderManagerIn, MoCModelSnake modelbase, float f) {

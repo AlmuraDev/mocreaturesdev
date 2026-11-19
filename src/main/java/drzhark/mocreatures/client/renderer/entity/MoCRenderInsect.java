@@ -9,10 +9,7 @@ import drzhark.mocreatures.entity.MoCEntityInsect;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.model.EntityModel;
 import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderInsect<T extends MoCEntityInsect, M extends MoCEntityModel<T>> extends MoCRenderMoC<T, M> {
 
     public MoCRenderInsect(EntityRendererProvider.Context renderManagerIn, M modelbase) {

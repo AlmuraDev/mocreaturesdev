@@ -23,10 +23,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix4f;
 import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderGoat extends MoCLivingRenderer<MoCEntityGoat, MoCModelGoat<MoCEntityGoat>> {
 
     private static final Identifier WHITE_TEXTURE = Identifier.parse("textures/misc/white.png");

@@ -12,13 +12,10 @@ import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelTurkey from 1.16.5 → 1.20.1 Forge.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelTurkey<T extends MoCEntityTurkey> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

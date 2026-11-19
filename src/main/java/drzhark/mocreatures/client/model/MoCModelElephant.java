@@ -11,13 +11,10 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * 1.20.1 port of the old MoCModelElephant (1.16) to ModelPart/LayerDefinition.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelElephant<T extends MoCEntityElephant> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

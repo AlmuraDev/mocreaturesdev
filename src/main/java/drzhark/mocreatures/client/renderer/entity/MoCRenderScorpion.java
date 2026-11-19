@@ -9,10 +9,7 @@ import drzhark.mocreatures.entity.hostile.MoCEntityScorpion;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderScorpion extends MoCRenderMoC<MoCEntityScorpion, MoCModelScorpion<MoCEntityScorpion>> {
 
     public MoCRenderScorpion(EntityRendererProvider.Context renderManagerIn, MoCModelScorpion modelbase, float f) {

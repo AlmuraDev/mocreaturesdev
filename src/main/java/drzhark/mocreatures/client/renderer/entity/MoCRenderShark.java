@@ -19,10 +19,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix4f;
 import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderShark extends MoCLivingRenderer<MoCEntityShark, MoCModelShark<MoCEntityShark>> {
 
     public MoCRenderShark(EntityRendererProvider.Context renderManagerIn, MoCModelShark modelbase, float f) {

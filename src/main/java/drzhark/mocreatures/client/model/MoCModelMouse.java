@@ -16,15 +16,12 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 → 1.20.1. All ModelRenderer fields have become ModelParts,
  * built via createBodyLayer(). Animations moved to setupAnim(...), rendering
  * moved to renderToBuffer(...).
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelMouse<T extends MoCEntityMouse> extends MoCEntityModel<T> {
         
     @SuppressWarnings("removal")

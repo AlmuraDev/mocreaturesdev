@@ -21,8 +21,6 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelGoat (1.16.5) to 1.20.1. Uses ModelPart instead of ModelRenderer,
@@ -30,7 +28,6 @@ import net.neoforged.api.distmarker.OnlyIn;
  * 
  * I think the goatee isn't attached to the chin, but I'm not sure.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelGoat<T extends MoCEntityGoat> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

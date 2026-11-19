@@ -21,10 +21,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCModelRoach<T extends MoCEntityRoach> extends MoCEntityModel<T> implements IPartialTransparencyModel<T> {
 
     @SuppressWarnings("removal")

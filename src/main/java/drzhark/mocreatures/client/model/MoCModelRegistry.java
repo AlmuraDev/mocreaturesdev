@@ -14,7 +14,6 @@ import drzhark.mocreatures.init.MoCEntities;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 
@@ -22,7 +21,6 @@ import net.neoforged.bus.api.SubscribeEvent;
  * Registers all model layers for MoCreatures entities
  */
 @EventBusSubscriber(modid = MoCConstants.MOD_ID, value = Dist.CLIENT)
-@OnlyIn(Dist.CLIENT)
 public class MoCModelRegistry {
 
     // Model layer locations for all entities

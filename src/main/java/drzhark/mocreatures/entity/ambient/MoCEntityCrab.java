@@ -25,8 +25,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -119,7 +117,6 @@ public class MoCEntityCrab extends MoCEntityTameableAnimal {
         return super.doHurtTarget(serverLevel, entity);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public float getSizeFactor() {
         return 0.7F * getMoCAge() * 0.01F;
@@ -130,7 +127,6 @@ public class MoCEntityCrab extends MoCEntityTameableAnimal {
         return true;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public boolean isFleeing() {
         return MoCTools.getMyMovementSpeed(this) > 0.09F;
     }

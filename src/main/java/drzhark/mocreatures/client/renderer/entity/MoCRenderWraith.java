@@ -17,10 +17,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderWraith extends MoCLivingRenderer<MoCEntityWraith, MoCModelWraith<MoCEntityWraith>> {
 
     public MoCRenderWraith(EntityRendererProvider.Context renderManagerIn, MoCModelWraith modelbiped, float f) {

@@ -39,8 +39,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.minecraft.core.registries.BuiltInRegistries;
 
@@ -371,7 +369,6 @@ public class MoCEntityTameableAquatic extends MoCEntityAquatic implements IMoCTa
 
     // Override to fix heart animation on clients
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void handleEntityEvent(byte par1) {
         if (par1 == 2) {
             this.walkAnimation.setSpeed(1.5F);

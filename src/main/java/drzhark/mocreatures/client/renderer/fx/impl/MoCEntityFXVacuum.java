@@ -8,10 +8,7 @@ import net.minecraft.client.particle.SingleQuadParticle;
 import drzhark.mocreatures.client.renderer.fx.data.VacuumParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCEntityFXVacuum extends SingleQuadParticle {
     private final float initialScale;
     private final double startX, startY, startZ;

@@ -10,10 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderRat<T extends MoCEntityRat, M extends MoCModelRat<T>> extends MoCLivingRenderer<T, M> {
 
     public MoCRenderRat(EntityRendererProvider.Context renderManagerIn, M modelbase, float f) {

@@ -9,10 +9,7 @@ import drzhark.mocreatures.entity.passive.MoCEntityBird;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderBird extends MoCRenderMoC<MoCEntityBird, MoCModelBird<MoCEntityBird>> {
 
     public MoCRenderBird(EntityRendererProvider.Context renderManagerIn, MoCModelBird modelbase, float f) {

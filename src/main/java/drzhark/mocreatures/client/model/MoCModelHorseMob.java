@@ -13,14 +13,11 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelHorseMob (1.16.5) to Minecraft 1.20.1.
  * Extends MoCModelAbstractHorse, reusing its horse geometry.
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelHorseMob<T extends MoCEntityHorseMob> extends MoCModelAbstractHorse<T> {
 
     // Reuse the same layer location as the regular horse

@@ -18,8 +18,6 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelGolem (1.16.5) to 1.20.1.
@@ -29,7 +27,6 @@ import net.neoforged.api.distmarker.OnlyIn;
  * 1. setupAnim
  * 2. prepareMobModel
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCModelGolem<T extends MoCEntityGolem> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

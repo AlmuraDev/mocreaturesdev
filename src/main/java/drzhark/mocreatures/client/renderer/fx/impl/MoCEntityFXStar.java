@@ -8,10 +8,7 @@ import net.minecraft.client.particle.SingleQuadParticle;
 import drzhark.mocreatures.client.renderer.fx.data.StarParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCEntityFXStar extends SingleQuadParticle {
 
     public MoCEntityFXStar(ClientLevel world, double posX, double posY, double posZ,

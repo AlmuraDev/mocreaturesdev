@@ -4,7 +4,7 @@
     "minecraft:bread",
     "minecraft:pumpkin_seeds",
     "mocreatures:ratcooked",
-    "minecraft:grass"
+    "minecraft:short_grass"
   ],
   "result": {
     "id": "mocreatures:ratburger"

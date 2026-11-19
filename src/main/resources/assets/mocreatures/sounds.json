@@ -570,7 +570,9 @@
   "grasshopperambient": {
     "category": "neutral",
     "sounds": [
-      "mocreatures:grasshopper_ambient"
+      "mocreatures:grasshopper_chirp1",
+      "mocreatures:grasshopper_chirp2",
+      "mocreatures:grasshopper_chirp3"
     ],
     "subtitle": "subtitles.mocreatures.grasshopperambient"
   },

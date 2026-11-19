@@ -18,14 +18,11 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Legacy scorpion model ported to 1.20.1.  All ModelRenderer pieces are now ModelPart children,
  * and setRotationAngles(...) logic has been moved into setupAnim(...).
  */
-@OnlyIn(Dist.CLIENT)
 public class MoCLegacyModelScorpion<T extends MoCEntityScorpion> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

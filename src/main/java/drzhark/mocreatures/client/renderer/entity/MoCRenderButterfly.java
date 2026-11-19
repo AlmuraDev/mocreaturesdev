@@ -8,10 +8,7 @@ import drzhark.mocreatures.client.model.MoCModelButterfly;
 import drzhark.mocreatures.entity.ambient.MoCEntityButterfly;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderButterfly extends MoCRenderInsect<MoCEntityButterfly, MoCModelButterfly<MoCEntityButterfly>> {
 
     public MoCRenderButterfly(EntityRendererProvider.Context renderManagerIn, MoCModelButterfly modelbase) {

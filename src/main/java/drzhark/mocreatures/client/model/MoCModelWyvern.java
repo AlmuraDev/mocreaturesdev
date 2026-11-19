@@ -17,10 +17,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCModelWyvern<T extends MoCEntityWyvern> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

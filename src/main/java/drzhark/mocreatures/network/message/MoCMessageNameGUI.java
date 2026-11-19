@@ -12,8 +12,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import drzhark.mocreatures.entity.IMoCEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.function.Supplier;
 

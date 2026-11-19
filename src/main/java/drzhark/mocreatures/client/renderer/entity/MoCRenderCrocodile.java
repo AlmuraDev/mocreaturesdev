@@ -13,10 +13,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderCrocodile extends MoCLivingRenderer<MoCEntityCrocodile, MoCModelCrocodile<MoCEntityCrocodile>> {
 
     public MoCModelCrocodile croc;

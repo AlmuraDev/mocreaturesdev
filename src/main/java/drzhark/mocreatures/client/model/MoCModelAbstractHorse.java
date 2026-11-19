@@ -15,10 +15,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class MoCModelAbstractHorse<T extends Entity> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")

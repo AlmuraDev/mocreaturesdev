@@ -10,10 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderTurtle extends MoCRenderMoC<MoCEntityTurtle, MoCModelTurtle<MoCEntityTurtle>> {
 
     public MoCModelTurtle turtly;

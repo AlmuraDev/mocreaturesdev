@@ -22,8 +22,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -35,7 +33,6 @@ import java.util.*;
 
 public class MoCEventHooks {
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onWorldUnload(LevelEvent.Unload event) {
         // if overworld has been deleted or unloaded, reset our flag

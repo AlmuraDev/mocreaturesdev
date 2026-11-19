@@ -10,10 +10,7 @@ package drzhark.mocreatures.client.model;
 
 import drzhark.mocreatures.entity.hostile.MoCEntityScorpion;
 import net.minecraft.client.model.geom.ModelPart;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCModelScorpion<T extends MoCEntityScorpion> extends MoCModelAbstractScorpion<T> {
 
     public MoCModelScorpion(ModelPart root) {

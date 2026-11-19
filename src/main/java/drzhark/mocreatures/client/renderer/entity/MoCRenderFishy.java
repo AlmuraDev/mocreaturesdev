@@ -10,10 +10,7 @@ import drzhark.mocreatures.entity.aquatic.MoCEntityFishy;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderFishy extends MoCLivingRenderer<MoCEntityFishy, MoCModelFishy<MoCEntityFishy>> {
 
     public MoCRenderFishy(EntityRendererProvider.Context renderManagerIn, MoCModelFishy modelbase, float f) {

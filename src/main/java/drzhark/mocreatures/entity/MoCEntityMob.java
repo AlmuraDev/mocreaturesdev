@@ -49,8 +49,6 @@ import net.minecraft.network.syncher.SynchedEntityData;                    // re
 import net.minecraft.world.Difficulty;                                     // same
 import net.minecraft.world.DifficultyInstance;                             // same
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Random;

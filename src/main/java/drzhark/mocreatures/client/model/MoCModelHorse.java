@@ -12,12 +12,9 @@ import drzhark.mocreatures.entity.passive.MoCEntityHorse;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCModelHorse<T extends MoCEntityHorse> extends MoCModelAbstractHorse<T> {
 
     // Model parts

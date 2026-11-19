@@ -8,10 +8,7 @@ import drzhark.mocreatures.client.model.MoCModelBear;
 import drzhark.mocreatures.entity.hunter.MoCEntityBear;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class MoCRenderBear extends MoCRenderMoC<MoCEntityBear, MoCModelBear<MoCEntityBear>> {
 
     public MoCRenderBear(EntityRendererProvider.Context renderManagerIn, MoCModelBear modelbase, float f) {

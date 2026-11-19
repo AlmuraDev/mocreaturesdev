@@ -1,49 +1,47 @@
 {
-  "temperature": 2.0,
-  "downfall": 0.0,
-  "has_precipitation": false,
-  "attributes": {
-    "minecraft:visual/sky_color": "#3300ff",
-    "minecraft:visual/fog_color": "#3300ff",
-    "minecraft:visual/water_fog_color": "#3300ff",
-    "minecraft:audio/background_music": {
-      "default": {
-        "sound": "minecraft:music.overworld.desert",
-        "min_delay": 12000,
-        "max_delay": 24000
-      }
+    "temperature": 2.0,
+    "downfall": 0.0,
+    "has_precipitation": false,
+    "attributes": {
+        "minecraft:visual/sky_color": "#3300ff",
+        "minecraft:visual/fog_color": "#3300ff",
+        "minecraft:visual/water_fog_color": "#3300ff",
+        "minecraft:audio/background_music": {
+            "default": {
+                "sound": "minecraft:music.overworld.desert",
+                "min_delay": 12000,
+                "max_delay": 24000
+            }
+        },
+        "minecraft:audio/ambient_sounds": {
+            "mood": {
+                "sound": "minecraft:ambient.cave",
+                "tick_delay": 6000,
+                "block_search_extent": 8,
+                "offset": 2.0
+            }
+        }
     },
-    "minecraft:audio/ambient_sounds": {
-      "mood": {
-        "sound": "minecraft:ambient.cave",
-        "tick_delay": 6000,
-        "block_search_extent": 8,
-        "offset": 2.0
-      }
-    }
-  },
-  "effects": {
-    "water_color": "#3333ff",
-    "grass_color": "#3300ff",
-    "foliage_color": "#3399ff"
-  },
-  "carvers": [],
-  "features": [
-    [],
-    [],
-    [],
-    [],
-    [],
-    [
-      "mocreatures:firestone_cluster"
-    ],
-    [
-      "minecraft:patch_dead_bush",
-      "minecraft:patch_cactus"
-    ],
-    [
-      "mocreatures:wyvern_nest"
-    ],
-    []
-  ]
+    "effects": {
+        "water_color": "#3333ff",
+        "grass_color": "#3300ff",
+        "foliage_color": "#3399ff"
+    },
+    "carvers": [],
+    "features": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [
+            "mocreatures:firestone_cluster"
+        ],
+        [
+            "minecraft:patch_dead_bush",
+            "minecraft:patch_cactus"
+        ],
+        [],
+        []
+    ]
 }

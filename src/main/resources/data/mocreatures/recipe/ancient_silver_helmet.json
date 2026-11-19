@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "X X"
+  ],
+  "key": {
+    "X": "mocreatures:ancientsilveringot"
+  },
+  "result": {
+    "id": "mocreatures:ancient_silver_helmet"
+  }
+}

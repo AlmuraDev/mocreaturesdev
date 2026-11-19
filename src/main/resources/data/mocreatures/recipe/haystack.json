@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": "minecraft:wheat"
+  },
+  "result": {
+    "id": "mocreatures:haystack"
+  }
+}

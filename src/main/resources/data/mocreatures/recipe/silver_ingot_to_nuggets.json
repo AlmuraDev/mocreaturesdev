@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mocreatures:ancientsilveringot"
+  ],
+  "result": {
+    "id": "mocreatures:ancientsilvernugget",
+    "count": 9
+  }
+}

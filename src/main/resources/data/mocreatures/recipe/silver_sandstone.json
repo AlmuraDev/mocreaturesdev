@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": "mocreatures:silver_sand"
+  },
+  "result": {
+    "id": "mocreatures:silver_sandstone"
+  }
+}

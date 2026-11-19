@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:bread",
+    "minecraft:pumpkin_seeds",
+    "mocreatures:ratcooked",
+    "minecraft:grass"
+  ],
+  "result": {
+    "id": "mocreatures:ratburger"
+  }
+}

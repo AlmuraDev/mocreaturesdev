@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mocreatures:scorpstingundead"
+  ],
+  "result": {
+    "id": "mocreatures:chitinundead"
+  }
+}

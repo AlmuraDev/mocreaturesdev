@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:blaze_powder",
+    "mocreatures:heartfire",
+    "minecraft:glass_bottle"
+  ],
+  "result": {
+    "id": "mocreatures:essencefire"
+  }
+}

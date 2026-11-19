@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  X",
+    " # ",
+    "Z  "
+  ],
+  "key": {
+    "X": "minecraft:ender_eye",
+    "#": "mocreatures:unicornhorn",
+    "Z": "minecraft:blaze_rod"
+  },
+  "result": {
+    "id": "mocreatures:staffportal"
+  }
+}

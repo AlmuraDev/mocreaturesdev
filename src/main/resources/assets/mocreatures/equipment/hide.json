@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "mocreatures:hide"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "mocreatures:hide"
+      }
+    ]
+  }
+}

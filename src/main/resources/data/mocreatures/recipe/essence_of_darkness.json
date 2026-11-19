@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:ender_pearl",
+    "mocreatures:heartdarkness",
+    "minecraft:glass_bottle"
+  ],
+  "result": {
+    "id": "mocreatures:essencedarkness"
+  }
+}

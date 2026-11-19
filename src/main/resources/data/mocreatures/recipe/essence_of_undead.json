@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:rotten_flesh",
+    "mocreatures:heartundead",
+    "minecraft:glass_bottle"
+  ],
+  "result": {
+    "id": "mocreatures:essenceundead"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X  ",
+    "X# ",
+    "XXX"
+  ],
+  "key": {
+    "X": "#c:ingots/iron",
+    "#": "minecraft:lead"
+  },
+  "result": {
+    "id": "mocreatures:tusksiron"
+  }
+}

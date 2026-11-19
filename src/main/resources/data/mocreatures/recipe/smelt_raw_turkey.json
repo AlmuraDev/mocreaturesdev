@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": "mocreatures:turkeyraw",
+  "result": {
+    "id": "mocreatures:turkeycooked"
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

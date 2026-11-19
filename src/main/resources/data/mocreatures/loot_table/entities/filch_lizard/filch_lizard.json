@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:entity",
+  "pools": [],
+  "random_sequence": "mocreatures:entities/filch_lizard/filch_lizard"
+}

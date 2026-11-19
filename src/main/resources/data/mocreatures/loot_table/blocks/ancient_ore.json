@@ -1,0 +1,99 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "mocreatures:ancient_ore",
+              "condition": "minecraft:tool/can_silk_touch"
+            },
+            {
+              "type": "minecraft:group",
+              "children": [
+                {
+                  "type": "minecraft:item",
+                  "weight": 30,
+                  "name": "minecraft:quartz",
+                  "modifier": [
+                    {
+                      "type": "minecraft:apply_bonus",
+                      "enchantment": "minecraft:fortune",
+                      "formula": "minecraft:ore_drops"
+                    },
+                    {
+                      "type": "minecraft:explosion_decay"
+                    }
+                  ]
+                },
+                {
+                  "type": "minecraft:item",
+                  "weight": 20,
+                  "name": "minecraft:coal",
+                  "modifier": [
+                    {
+                      "type": "minecraft:apply_bonus",
+                      "enchantment": "minecraft:fortune",
+                      "formula": "minecraft:ore_drops"
+                    },
+                    {
+                      "type": "minecraft:explosion_decay"
+                    }
+                  ]
+                },
+                {
+                  "type": "minecraft:item",
+                  "weight": 20,
+                  "name": "mocreatures:ancientsilverscrap",
+                  "modifier": [
+                    {
+                      "type": "minecraft:apply_bonus",
+                      "enchantment": "minecraft:fortune",
+                      "formula": "minecraft:ore_drops"
+                    },
+                    {
+                      "type": "minecraft:explosion_decay"
+                    }
+                  ]
+                },
+                {
+                  "type": "minecraft:item",
+                  "weight": 2,
+                  "name": "minecraft:skeleton_skull",
+                  "modifier": [
+                    {
+                      "type": "minecraft:explosion_decay"
+                    }
+                  ]
+                },
+                {
+                  "type": "minecraft:item",
+                  "weight": 28,
+                  "name": "minecraft:bone",
+                  "modifier": [
+                    {
+                      "type": "minecraft:apply_bonus",
+                      "enchantment": "minecraft:fortune",
+                      "formula": "minecraft:ore_drops"
+                    },
+                    {
+                      "type": "minecraft:explosion_decay"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ],
+  "random_sequence": "mocreatures:blocks/ancient_ore"
+}

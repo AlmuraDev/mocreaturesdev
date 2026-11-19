@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "mocreatures:amuletfairy",
+  "pattern": [
+    "#X#",
+    "XZX",
+    "#X#"
+  ],
+  "key": {
+    "X": "#c:nuggets/gold",
+    "#": "minecraft:blaze_powder",
+    "Z": "mocreatures:unicornhorn"
+  },
+  "result": {
+    "id": "mocreatures:amuletfairy"
+  }
+}

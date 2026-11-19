@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mocreatures:gleaming_glass"
+        }
+      ],
+      "condition": "minecraft:tool/can_silk_touch"
+    }
+  ],
+  "random_sequence": "mocreatures:blocks/gleaming_glass"
+}

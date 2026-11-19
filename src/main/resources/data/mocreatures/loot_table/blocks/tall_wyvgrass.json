@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "mocreatures:tall_wyvgrass",
+              "condition": "minecraft:tool/can_shear"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "random_sequence": "mocreatures:blocks/tall_wyvgrass"
+}

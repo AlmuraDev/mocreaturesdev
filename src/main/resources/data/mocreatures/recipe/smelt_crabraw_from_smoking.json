@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": "mocreatures:crabraw",
+  "result": {
+    "id": "mocreatures:crabcooked"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

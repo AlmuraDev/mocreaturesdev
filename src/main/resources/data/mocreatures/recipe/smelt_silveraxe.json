@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": "mocreatures:silveraxe",
+  "result": {
+    "id": "mocreatures:ancientsilvernugget"
+  },
+  "experience": 0.25,
+  "cookingtime": 200
+}

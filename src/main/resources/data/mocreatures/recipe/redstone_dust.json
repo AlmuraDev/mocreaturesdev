@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:gunpowder",
+    "mocreatures:firestonechunk"
+  ],
+  "result": {
+    "id": "minecraft:redstone",
+    "count": 2
+  }
+}

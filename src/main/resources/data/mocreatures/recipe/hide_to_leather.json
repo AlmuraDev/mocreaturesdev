@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mocreatures:hide"
+  ],
+  "result": {
+    "id": "minecraft:leather"
+  }
+}

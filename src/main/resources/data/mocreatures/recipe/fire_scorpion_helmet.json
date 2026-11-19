@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "X*X"
+  ],
+  "key": {
+    "X": "mocreatures:chitinnether",
+    "*": "minecraft:golden_helmet"
+  },
+  "result": {
+    "id": "mocreatures:scorphelmetnether"
+  }
+}

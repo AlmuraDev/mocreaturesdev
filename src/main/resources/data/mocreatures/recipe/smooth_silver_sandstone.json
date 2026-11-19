@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": "mocreatures:silver_sandstone"
+  },
+  "result": {
+    "id": "mocreatures:smooth_silver_sandstone",
+    "count": 4
+  }
+}

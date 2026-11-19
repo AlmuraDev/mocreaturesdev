@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": "mocreatures:venisonraw",
+  "result": {
+    "id": "mocreatures:venisoncooked"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

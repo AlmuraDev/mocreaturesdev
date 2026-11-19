@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "X X"
+  ],
+  "key": {
+    "X": "mocreatures:reptilehide"
+  },
+  "result": {
+    "id": "mocreatures:reptilehelmet"
+  }
+}

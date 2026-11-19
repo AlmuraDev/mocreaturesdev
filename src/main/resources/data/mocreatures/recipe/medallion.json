@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "#*#",
+    " X "
+  ],
+  "key": {
+    "X": "#c:ingots/gold",
+    "#": "minecraft:leather",
+    "*": "minecraft:lapis_lazuli"
+  },
+  "result": {
+    "id": "mocreatures:medallion"
+  }
+}

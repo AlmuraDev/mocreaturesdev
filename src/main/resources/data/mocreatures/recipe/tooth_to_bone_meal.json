@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mocreatures:sharkteeth"
+  ],
+  "result": {
+    "id": "minecraft:bone_meal"
+  }
+}

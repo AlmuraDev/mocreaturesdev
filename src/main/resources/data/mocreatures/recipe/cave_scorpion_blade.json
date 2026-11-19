@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S",
+    "G",
+    "C"
+  ],
+  "key": {
+    "S": "mocreatures:scorpstingcave",
+    "G": "minecraft:golden_sword",
+    "C": "mocreatures:chitinblack"
+  },
+  "result": {
+    "id": "mocreatures:scorpswordcave"
+  }
+}

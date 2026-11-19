@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mocreatures:scorpstingcave"
+  ],
+  "result": {
+    "id": "mocreatures:chitinblack"
+  }
+}

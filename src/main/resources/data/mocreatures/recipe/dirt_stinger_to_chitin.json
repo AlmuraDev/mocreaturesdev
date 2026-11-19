@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mocreatures:scorpstingdirt"
+  ],
+  "result": {
+    "id": "mocreatures:chitin"
+  }
+}

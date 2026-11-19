@@ -36,7 +36,7 @@ furniture mod's `4.0` branch.
 ## Remaining
 
 **The whole mod compiles** and `./gradlew build` produces `build/libs/mocreatures-neoforge-26.3-1.0.0.jar`. Nothing
-has been run in a game yet; the resources below are still in 1.20.1 form.
+has been run in a game yet. The resources are converted to the 26.3 layout (see the resources batch below) but not yet loaded in a game.
 
 | Area | Errors | Main work |
 |---|---|---|
@@ -48,6 +48,7 @@ has been run in a game yet; the resources below are still in 1.20.1 form.
 | Commands (`network/command/**`) | 0 | done, see below |
 | Blocks (`block/**`) | 0 | done, see below |
 | Other (`MoCTools`, events, compat) | 0 | done, see below |
+| Resources (`src/main/resources`) | – | converted, see below; needs a game load to validate |
 
 ### Entities batch: how the 1.20 behaviour was kept
 
@@ -203,12 +204,31 @@ has been run in a game yet; the resources below are still in 1.20.1 form.
   loads to send them, only call it from the lambda that runs on the client. A constant-pool scan of the jar finds no
   other client class referenced from code a dedicated server loads.
 
-Resources are untouched so far:
-- data pack folder renames (`loot_tables` to `loot_table`, `recipes` to `recipe`, `tags/items` to `tags/item`, and so on), plus the recipe and loot JSON formats
-- `data/forge` to `data/c` tags
-- client item definitions (`assets/mocreatures/items/*.json`)
-- equipment assets for the armour
-- spawn egg textures (the old egg colours are still in `MoCSpawnEggs`)
+### Resources batch
+
+- **Data pack layout:** `loot_tables` to `loot_table`, `recipes` to `recipe`, `tags/items` and `tags/blocks` to
+  `tags/item` and `tags/block`. The `data/forge` tags moved to `data/c` (ores) or to `data/mocreatures` (`raw_fishes`,
+  `cooked_fishes`, `chitinscorpion`, which `MoCTags` now reads from the `mocreatures` namespace). Unused
+  `minecraft` biome and item tags, the old structure and processor folders and `worldgen/biome_effects` are gone.
+- **Recipes:** `forge:` ingredient tags point at the `c:` or vanilla tags.
+- **Loot tables:** 26.3 condition and function names. `set_nbt {EggType:N}` became `set_components` with
+  `mocreatures:egg_type`; looting chances use `random_chance_with_enchanted_bonus` and `enchanted_count_increase`;
+  shears and silk touch checks use the `minecraft:tool/can_shear` and `can_silk_touch` item tags.
+- **Item definitions:** `assets/mocreatures/items/<id>.json` for all 266 registered items and block items. Eight
+  1.20.1 item models with no registered item (`builderhammer`, `staffteleport`, `wyvern_*`) are deleted.
+- **Spawn eggs:** 26.3 has no egg template, so all 88 eggs share `models/item/spawn_egg.json` with two new
+  greyscale textures (`textures/item/spawn_egg.png` and `spawn_egg_overlay.png`), tinted in each item definition with
+  the old egg colours from `MoCSpawnEggs`.
+- **Armour:** `assets/mocreatures/equipment/<material>.json` for the nine materials. The `layer_1`/`layer_2`
+  textures moved to `textures/entity/equipment/humanoid/` and `humanoid_leggings/`.
+- **Lang:** the 1.12 `.lang` files (German, French, Russian) are now `de_de.json`, `fr_fr.json` and `ru_ru.json`, with
+  the old keys mapped to the current ones; every old key found a match. `en_us.json` gained the horse guide name.
+- **Other:** the `forge_marker` in `blockstates/tall_wyvgrass.json` and the 1.16 `pack.mcmeta` are gone (NeoForge
+  provides the pack metadata for mods). Villager trades, fuel burn times and the zebra disc were already in 26.3 form
+  from the registration batch. All JSON under `src/main/resources` parses and every model parent, texture and
+  blockstate model it names exists.
+- **Not checked yet:** nothing has loaded these files in a game. The data loader may still reject individual
+  loot tables, recipes or worldgen files; the game log will name them.
 
 ## Almura changes to re-apply
 

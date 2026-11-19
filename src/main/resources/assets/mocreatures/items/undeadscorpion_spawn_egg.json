@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "mocreatures:item/spawn_egg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -15066598
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -15921907
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": "mocreatures:mocegg",
+  "result": {
+    "id": "mocreatures:omelet"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

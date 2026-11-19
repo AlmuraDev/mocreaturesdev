@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "mocreatures:scrolloffreedom",
+  "ingredients": [
+    "minecraft:paper",
+    "minecraft:red_dye",
+    "minecraft:feather"
+  ],
+  "result": {
+    "id": "mocreatures:scrolloffreedom"
+  }
+}

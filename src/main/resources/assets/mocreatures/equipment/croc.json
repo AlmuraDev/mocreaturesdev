@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "mocreatures:croc"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "mocreatures:croc"
+      }
+    ]
+  }
+}

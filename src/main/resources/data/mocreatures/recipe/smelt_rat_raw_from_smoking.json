@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": "mocreatures:ratraw",
+  "result": {
+    "id": "mocreatures:ratcooked"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

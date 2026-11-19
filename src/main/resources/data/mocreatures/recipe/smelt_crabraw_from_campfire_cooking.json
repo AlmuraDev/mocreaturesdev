@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": "mocreatures:crabraw",
+  "result": {
+    "id": "mocreatures:crabcooked"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

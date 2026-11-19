@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SC",
+    "CG",
+    " C"
+  ],
+  "key": {
+    "S": "mocreatures:scorpstingdirt",
+    "G": "minecraft:golden_axe",
+    "C": "mocreatures:chitin"
+  },
+  "result": {
+    "id": "mocreatures:scorpaxedirt"
+  }
+}

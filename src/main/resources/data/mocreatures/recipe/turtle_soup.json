@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:bowl",
+    "mocreatures:turtlecooked",
+    "minecraft:baked_potato",
+    "minecraft:dandelion"
+  ],
+  "result": {
+    "id": "mocreatures:turtlesoup"
+  }
+}

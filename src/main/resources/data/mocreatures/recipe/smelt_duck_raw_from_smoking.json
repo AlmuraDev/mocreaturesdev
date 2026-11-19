@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": "mocreatures:duckraw",
+  "result": {
+    "id": "mocreatures:duckcooked"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

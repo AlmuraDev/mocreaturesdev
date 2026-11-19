@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "***",
+    "FMF",
+    "###"
+  ],
+  "key": {
+    "#": "#minecraft:wool",
+    "F": "mocreatures:fur",
+    "M": "mocreatures:medallion",
+    "*": "#c:nuggets/gold"
+  },
+  "result": {
+    "id": "mocreatures:elephantgarment"
+  }
+}

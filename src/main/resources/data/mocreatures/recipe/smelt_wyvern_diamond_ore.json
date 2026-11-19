@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": "mocreatures:wyvern_diamond_ore",
+  "result": {
+    "id": "minecraft:diamond"
+  },
+  "experience": 1.0,
+  "cookingtime": 200
+}

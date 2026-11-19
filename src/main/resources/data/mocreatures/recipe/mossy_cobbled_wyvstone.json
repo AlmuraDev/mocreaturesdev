@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mocreatures:cobbled_wyvstone",
+    "mocreatures:tall_wyvgrass"
+  ],
+  "result": {
+    "id": "mocreatures:mossy_cobbled_wyvstone"
+  }
+}

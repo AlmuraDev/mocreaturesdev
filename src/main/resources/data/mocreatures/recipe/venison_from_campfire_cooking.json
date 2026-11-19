@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": "mocreatures:venisonraw",
+  "result": {
+    "id": "mocreatures:venisoncooked"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

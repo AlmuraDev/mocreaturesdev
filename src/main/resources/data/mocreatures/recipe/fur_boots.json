@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X X",
+    "X X"
+  ],
+  "key": {
+    "X": "mocreatures:fur"
+  },
+  "result": {
+    "id": "mocreatures:furboots"
+  }
+}

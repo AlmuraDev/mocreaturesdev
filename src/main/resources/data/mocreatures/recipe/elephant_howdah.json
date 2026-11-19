@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RRR",
+    "X#X",
+    "XRX"
+  ],
+  "key": {
+    "X": "#minecraft:planks",
+    "#": "#c:ingots/gold",
+    "R": "#minecraft:wool"
+  },
+  "result": {
+    "id": "mocreatures:elephanthowdah"
+  }
+}

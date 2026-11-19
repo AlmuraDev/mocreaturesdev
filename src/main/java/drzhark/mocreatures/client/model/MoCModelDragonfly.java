@@ -1,7 +1,6 @@
 package drzhark.mocreatures.client.model;
 
 import net.minecraft.util.ARGB;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.ambient.MoCEntityDragonfly;
@@ -206,13 +205,9 @@ public class MoCModelDragonfly<T extends MoCEntityDragonfly> extends MoCEntityMo
         
         // Render transparent parts with blending
         poseStack.pushPose();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.clearColor(getTransparencyColor()[0], getTransparencyColor()[1], getTransparencyColor()[2], getTransparencyValue());
         
         renderTransparentParts(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         
-        RenderSystem.disableBlend();
         poseStack.popPose();
     }
     

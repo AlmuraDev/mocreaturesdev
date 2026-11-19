@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client.renderer.state;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.Entity;
@@ -19,4 +20,6 @@ public class MoCRenderState extends LivingEntityRenderState {
     /** Mirrors the 1.20 EntityModel fields the models still read. */
     public boolean isPassenger;
     public float attackTime;
+    /** An item the creature holds, for renderers that draw one (the filch lizard's loot). */
+    public final ItemStackRenderState heldItem = new ItemStackRenderState();
 }

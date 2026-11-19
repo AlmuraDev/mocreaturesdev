@@ -2,6 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client.renderer.entity;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import drzhark.mocreatures.client.renderer.state.MoCRenderState;
 
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,7 +13,6 @@ import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.client.model.MoCModelShark;
 import drzhark.mocreatures.entity.aquatic.MoCEntityShark;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -27,75 +29,15 @@ public class MoCRenderShark extends MoCLivingRenderer<MoCEntityShark, MoCModelSh
         super(renderManagerIn, modelbase, f);
     }
 
-    @SuppressWarnings("removal")
     @Override
-    public void render(MoCEntityShark entityshark, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLightIn) {
-        super.render(entityshark, entityYaw, partialTicks, poseStack, buffer, packedLightIn);
-        boolean flag = MoCreatures.proxy.getDisplayPetName() && !(entityshark.getPetName().isEmpty());
-        boolean flag1 = MoCreatures.proxy.getDisplayPetHealth();
-        if (entityshark.getIsTamed()) {
-            float f2 = 1.6F;
-            float f3 = 0.01666667F * f2;
-            float f4 = entityshark.distanceTo(this.entityRenderDispatcher.camera.getEntity());
-            if (f4 < 16F) {
-                String s = entityshark.getPetName();
-                float f5 = 0.1F;
-                Font font = this.getFont();
-                
-                poseStack.pushPose();
-                poseStack.translate(0.0F, f5, 0.0F);
-                poseStack.rotate(Axis.YP.rotationDegrees(-this.entityRenderDispatcher.camera.getYRot()));
-                poseStack.scale(-f3, -f3, f3);
-
-                byte byte0 = -50;
-                if (flag1) {
-                    if (!flag) {
-                        byte0 += 8;
-                    }
-                    
-                    // Render health bar
-                    Matrix4f matrix4f = poseStack.last().pose();
-                    float f6 = entityshark.getHealth();
-                    float f7 = entityshark.getMaxHealth();
-                    float f8 = f6 / f7;
-                    float f9 = 40F * f8;
-                    
-                    // Red background
-                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderTypes.text(Identifier.parse("textures/misc/white.png")));
-                    vertexconsumer.vertex(matrix4f, -20F + f9, -10 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 0).uv2(packedLightIn).endVertex();
-                    vertexconsumer.vertex(matrix4f, -20F + f9, -6 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 1).uv2(packedLightIn).endVertex();
-                    vertexconsumer.vertex(matrix4f, 20F, -6 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 1).uv2(packedLightIn).endVertex();
-                    vertexconsumer.vertex(matrix4f, 20F, -10 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 0).uv2(packedLightIn).endVertex();
-                    
-                    // Green health
-                    vertexconsumer = buffer.getBuffer(RenderTypes.text(Identifier.parse("textures/misc/white.png")));
-                    vertexconsumer.vertex(matrix4f, -20F, -10 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 0).uv2(packedLightIn).endVertex();
-                    vertexconsumer.vertex(matrix4f, -20F, -6 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 1).uv2(packedLightIn).endVertex();
-                    vertexconsumer.vertex(matrix4f, f9 - 20F, -6 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(1, 1).uv2(packedLightIn).endVertex();
-                    vertexconsumer.vertex(matrix4f, f9 - 20F, -10 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(1, 0).uv2(packedLightIn).endVertex();
-                }
-                
-                if (flag) {
-                    // Render pet name
-                    int textWidth = font.width(s);
-                    float textX = -textWidth / 2.0f;
-                    float textY = byte0;
-                    
-                    // Name background
-                    Matrix4f matrix4f = poseStack.last().pose();
-                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderTypes.textBackground());
-                    vertexconsumer.vertex(matrix4f, textX - 1, textY - 1, 0.0F).color(0.0F, 0.0F, 0.0F, 0.25F).uv2(packedLightIn).endVertex();
-                    vertexconsumer.vertex(matrix4f, textX - 1, textY + 8, 0.0F).color(0.0F, 0.0F, 0.0F, 0.25F).uv2(packedLightIn).endVertex();
-                    vertexconsumer.vertex(matrix4f, textX + textWidth + 1, textY + 8, 0.0F).color(0.0F, 0.0F, 0.0F, 0.25F).uv2(packedLightIn).endVertex();
-                    vertexconsumer.vertex(matrix4f, textX + textWidth + 1, textY - 1, 0.0F).color(0.0F, 0.0F, 0.0F, 0.25F).uv2(packedLightIn).endVertex();
-                    
-                    // Render text
-                    font.drawInBatch(s, textX, textY, 0x20ffffff, false, matrix4f, buffer, Font.DisplayMode.SEE_THROUGH, 0, packedLightIn);
-                    font.drawInBatch(s, textX, textY, -1, false, matrix4f, buffer, Font.DisplayMode.NORMAL, 0, packedLightIn);
-                }
-
-                poseStack.popPose();
-            }
+    public void submit(MoCRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        super.submit(state, poseStack, collector, camera);
+        MoCEntityShark entityshark = this.entity(state);
+        if (entityshark != null && entityshark.getIsTamed() && state.distanceToCameraSq < 256.0D) {
+            boolean showName = MoCreatures.proxy.getDisplayPetName() && !entityshark.getPetName().isEmpty();
+            boolean showHealth = MoCreatures.proxy.getDisplayPetHealth();
+            MoCPetLabel.submit(poseStack, collector, camera, this.getFont(), state.lightCoords, entityshark, entityshark.getPetName(),
+                    showName, showHealth, 0.1F, -50, true);
         }
     }
 

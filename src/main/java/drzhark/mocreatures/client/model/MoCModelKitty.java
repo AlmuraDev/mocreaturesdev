@@ -42,20 +42,6 @@ public class MoCModelKitty<T extends MoCEntityKitty> extends MoCEntityModel<T> {
     /**
      * Constructor matching original, delegates to createLayerDefinition
      */
-    public MoCModelKitty() {
-        this(0.0F);
-    }
-
-    /**
-     * Constructor matching original, delegates to createLayerDefinition
-     */
-    public MoCModelKitty(float limbSwing) {
-        // In a real implementation, this would be done via EntityRenderers.register
-        // For now, we directly create the parts
-        ModelPart root = createBodyLayer().bakeRoot();
-        setupParts(root);
-    }
-
     /**
      * Constructor for use with EntityRendererProvider, loads from baked model
      */

@@ -1,7 +1,6 @@
 package drzhark.mocreatures.client.model;
 
 import net.minecraft.util.ARGB;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.ambient.MoCEntityCricket;
@@ -269,10 +268,6 @@ public class MoCModelCricket<T extends MoCEntityCricket> extends MoCEntityModel<
             // (I had a translucent‐wing‐like blend around here; removed because Crickets don’t have wings)
             // If I ever want to reintroduce blending:
             poseStack.pushPose();
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.clearColor(0.8F, 0.8F, 0.8F, 0.6F);
-            RenderSystem.disableBlend();
             poseStack.popPose();
         }
     }

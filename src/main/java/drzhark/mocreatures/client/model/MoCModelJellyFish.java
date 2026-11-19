@@ -5,7 +5,6 @@ package drzhark.mocreatures.client.model;
 
 import net.minecraft.util.ARGB;
 import com.mojang.renderpearl.backend.opengl.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;

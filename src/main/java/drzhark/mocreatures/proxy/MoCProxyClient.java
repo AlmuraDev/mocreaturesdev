@@ -106,12 +106,21 @@ public class MoCProxyClient extends MoCProxy {
         return MoCProxyClient.mc.player;
     }
 
+    @Override
+    public void openBook(net.minecraft.world.item.ItemStack book) {
+        net.minecraft.client.gui.screens.inventory.BookViewScreen.BookAccess access =
+                net.minecraft.client.gui.screens.inventory.BookViewScreen.BookAccess.fromItem(book);
+        if (access != null) {
+            mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.BookViewScreen(access));
+        }
+    }
+
     /**
      * Sets the name client side. Name is synchronized with data watchers
      */
     @Override
     public void setName(Player player, IMoCEntity mocanimal) {
-        mc.setScreen(new MoCGUIEntityNamer(mocanimal, mocanimal.getPetName()));
+        mc.gui.setScreen(new MoCGUIEntityNamer(mocanimal, mocanimal.getPetName()));
     }
 
     @Override

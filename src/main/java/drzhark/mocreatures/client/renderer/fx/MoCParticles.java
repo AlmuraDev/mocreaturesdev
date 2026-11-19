@@ -1,8 +1,10 @@
 package drzhark.mocreatures.client.renderer.fx;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.registries.Registries;
 import net.neoforged.fml.common.EventBusSubscriber;
-import com.mojang.serialization.Codec;
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.client.renderer.fx.data.StarParticleData;
 import drzhark.mocreatures.client.renderer.fx.data.VacuumParticleData;
@@ -22,26 +24,41 @@ public class MoCParticles {
             PARTICLES.register("undead_fx", () -> new SimpleParticleType(false));
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<VanishParticleData>> VANISH_FX =
-            PARTICLES.register("vanish_fx", () -> new ParticleType<VanishParticleData>(false, VanishParticleData.DESERIALIZER) {
+            PARTICLES.register("vanish_fx", () -> new ParticleType<VanishParticleData>(false) {
                 @Override
-                public Codec<VanishParticleData> codec() {
-                    return Codec.unit(new VanishParticleData(1.0F, 1.0F, 1.0F, false));
+                public MapCodec<VanishParticleData> codec() {
+                    return VanishParticleData.CODEC;
+                }
+
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, VanishParticleData> streamCodec() {
+                    return VanishParticleData.STREAM_CODEC;
                 }
             });
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<StarParticleData>> STAR_FX =
-            PARTICLES.register("star_fx", () -> new ParticleType<StarParticleData>(false, StarParticleData.DESERIALIZER) {
+            PARTICLES.register("star_fx", () -> new ParticleType<StarParticleData>(false) {
                 @Override
-                public Codec<StarParticleData> codec() {
-                    return Codec.unit(new StarParticleData(1.0F, 1.0F, 1.0F)); // default white
+                public MapCodec<StarParticleData> codec() {
+                    return StarParticleData.CODEC;
+                }
+
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, StarParticleData> streamCodec() {
+                    return StarParticleData.STREAM_CODEC;
                 }
             });
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<VacuumParticleData>> VACUUM_FX =
-            PARTICLES.register("vacuum_fx", () -> new ParticleType<VacuumParticleData>(false, VacuumParticleData.DESERIALIZER) {
+            PARTICLES.register("vacuum_fx", () -> new ParticleType<VacuumParticleData>(false) {
                 @Override
-                public Codec<VacuumParticleData> codec() {
-                    return Codec.unit(new VacuumParticleData(1.0F, 1.0F, 1.0F));
+                public MapCodec<VacuumParticleData> codec() {
+                    return VacuumParticleData.CODEC;
+                }
+
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, VacuumParticleData> streamCodec() {
+                    return VacuumParticleData.STREAM_CODEC;
                 }
             });
 }

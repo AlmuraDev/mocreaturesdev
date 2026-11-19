@@ -1,8 +1,7 @@
 package drzhark.mocreatures.item;
+import drzhark.mocreatures.MoCreatures;
 
 import drzhark.mocreatures.init.MoCItems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -31,15 +30,11 @@ public class ItemHorseGuide extends Item {
 		if (level.isClientSide()) {
 			// Create a temporary written book stack with our content
 			ItemStack bookStack = createBookStack();
-			openClientBookScreen(bookStack);
+			MoCreatures.proxy.openBook(bookStack);
 		}
 		return InteractionResultHolder.success(stack);
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	private void openClientBookScreen(ItemStack bookStack) {
-		Minecraft.getInstance().setScreen(new BookViewScreen(new BookViewScreen.WrittenBookAccess(bookStack)));
-	}
 
 	/**
 	 * Creates a properly formatted written book ItemStack for 1.20.1

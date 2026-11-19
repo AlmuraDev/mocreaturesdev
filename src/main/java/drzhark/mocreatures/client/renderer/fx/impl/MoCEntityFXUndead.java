@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client.renderer.fx.impl;
+import net.minecraft.util.RandomSource;
+import net.minecraft.client.particle.SingleQuadParticle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
@@ -11,12 +13,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCEntityFXUndead extends TextureSheetParticle {
+public class MoCEntityFXUndead extends SingleQuadParticle {
     private final TextureAtlasSprite spriteAir;
     private final TextureAtlasSprite spriteGround;
 
     public MoCEntityFXUndead(ClientLevel world, double x, double y, double z, SpriteSet spriteSet) {
-        super(world, x, y, z, 0, 0, 0);
+        super(world, x, y, z, 0, 0, 0, spriteSet.first());
 
         this.gravity = 0.06F;
         this.lifetime = (int)(32.0D / (Math.random() * 0.8D + 0.2D));
@@ -35,8 +37,8 @@ public class MoCEntityFXUndead extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_LIT;
+    protected SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.OPAQUE;
     }
 
     public static class Factory implements ParticleProvider<SimpleParticleType> {
@@ -48,7 +50,7 @@ public class MoCEntityFXUndead extends TextureSheetParticle {
 
         @Override
         public Particle createParticle(SimpleParticleType type, ClientLevel world, double x, double y, double z,
-                                     double xSpeed, double ySpeed, double zSpeed) {
+                                     double xSpeed, double ySpeed, double zSpeed, RandomSource random) {
             return new MoCEntityFXUndead(world, x, y, z, spriteSet);
         }
     }

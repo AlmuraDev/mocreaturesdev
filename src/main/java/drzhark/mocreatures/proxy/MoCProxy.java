@@ -99,6 +99,10 @@ public class MoCProxy {
     public MoCConfiguration mocEntityConfig;
 
 
+    /** Opens a written book screen; only the client proxy does anything. */
+    public void openBook(net.minecraft.world.item.ItemStack book) {
+    }
+
     public void resetAllData() {
         this.readGlobalConfigValues();
     }
@@ -250,7 +254,7 @@ public class MoCProxy {
                 // Try to create a fallback tag if the original fails
                 try {
                     String fallback = biomeName.replaceAll("[^a-z0-9_/:-]", "").toLowerCase();
-                    if (fallback.contains(":") && Identifier.isValidResourceLocation(fallback)) {
+                    if (fallback.contains(":") && Identifier.tryParse(fallback) != null) {
                         TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, Identifier.parse(fallback));
                         biomeTypes.add(biomeTag);
                         MoCreatures.LOGGER.info("Using fallback biome tag: {} -> {}", biomeName, fallback);
@@ -628,11 +632,11 @@ public class MoCProxy {
         
         // Create SpawnerData
         net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData spawnerData = 
-            new net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData(entityType, weight, minCount, maxCount);
+            new net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData(entityType, net.minecraft.util.valueproviders.UniformInt.of(minCount, maxCount));
         
         // Create MoCEntityData
         drzhark.mocreatures.entity.MoCEntityData entityData = new drzhark.mocreatures.entity.MoCEntityData(
-            name, 4, dimensions, category, spawnerData, validBiomeTags);
+            name, 4, dimensions, category, spawnerData, weight, validBiomeTags);
         
         // Set blocked biome tags
         entityData.setBlockedBiomeTags(validBlockedBiomeTags);

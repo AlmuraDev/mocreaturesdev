@@ -348,8 +348,8 @@ public class MoCLegacyModelBigCat2<T extends MoCEntityBigCat> extends MoCEntityM
     }
 
     public void copyManePose(ModelPart maneHead, ModelPart maneBody) {
-        maneHead.copyFrom(this.head);
-        maneBody.copyFrom(this.body);
+        maneHead.loadPose(this.head.storePose());
+        maneBody.loadPose(this.body.storePose());
     }
 
     @Override

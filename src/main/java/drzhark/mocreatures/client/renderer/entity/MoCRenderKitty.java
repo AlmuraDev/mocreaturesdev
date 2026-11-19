@@ -2,6 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client.renderer.entity;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import drzhark.mocreatures.client.renderer.state.MoCRenderState;
 
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -35,73 +38,39 @@ public class MoCRenderKitty extends MoCRenderMoC<MoCEntityKitty, MoCModelKitty<M
         return entitykitty.getTexture();
     }
 
+    /** The kitty's mood icon floats above a tamed kitty when pet icons are on. */
     @Override
-    public void render(MoCEntityKitty entitykitty, float entityYaw, float partialTicks, PoseStack poseStack,
-            MultiBufferSource buffer, int packedLightIn) {
-        super.render(entitykitty, entityYaw, partialTicks, poseStack, buffer, packedLightIn);
-        boolean displayPetIcons = MoCreatures.proxy.getDisplayPetIcons();
-        if (entitykitty.getIsTamed()) {
-            float f2 = 1.6F;
-            float f3 = 0.01666667F * f2;
-            float f4 = entitykitty.distanceTo(this.entityRenderDispatcher.camera.getEntity());
-            if (f4 < 12F) {
-                float f5 = 0.2F;
-                if (entitykitty.getIsSitting()) {
-                    f5 = 0.4F;
-                }
-
-                poseStack.pushPose();
-                poseStack.translate(0.0F, f5, 0.0F);
-                poseStack.rotate(Axis.YP.rotationDegrees(-this.entityRenderDispatcher.camera.getYRot()));
-                poseStack.scale(-f3, -f3, f3);
-
-                if (displayPetIcons && entitykitty.getShowEmoteIcon()) {
-                    int i = -90;
-                    int k = 32;
-                    int l = (k / 2) * -1;
-                    Matrix4f matrix = poseStack.last().pose();
-                    VertexConsumer vc = buffer.getBuffer(RenderTypes.text(entitykitty.getEmoteIcon()));
-
-                    // white tint, no overlay, full bright
-                    int packedLight = 0xF000F0;
-                    int packedOverlay = OverlayTexture.NO_OVERLAY;
-
-                    // lower-left
-                    vc.vertex(matrix, l, i + k, 0f)
-                            .color(255, 255, 255, 255)
-                            .uv(0.0F, 1.0F)
-                            .overlayCoords(packedOverlay)
-                            .uv2(packedLight)
-                            .endVertex();
-
-                    // lower-right
-                    vc.vertex(matrix, l + k, i + k, 0f)
-                            .color(255, 255, 255, 255)
-                            .uv(1.0F, 1.0F)
-                            .overlayCoords(packedOverlay)
-                            .uv2(packedLight)
-                            .endVertex();
-
-                    // upper-right
-                    vc.vertex(matrix, l + k, i, 0f)
-                            .color(255, 255, 255, 255)
-                            .uv(1.0F, 0.0F)
-                            .overlayCoords(packedOverlay)
-                            .uv2(packedLight)
-                            .endVertex();
-
-                    // upper-left
-                    vc.vertex(matrix, l, i, 0f)
-                            .color(255, 255, 255, 255)
-                            .uv(0.0F, 0.0F)
-                            .overlayCoords(packedOverlay)
-                            .uv2(packedLight)
-                            .endVertex();
-                }
-
-                poseStack.popPose();
-            }
+    public void submit(MoCRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        super.submit(state, poseStack, collector, camera);
+        MoCEntityKitty entitykitty = this.entity(state);
+        if (entitykitty == null || !entitykitty.getIsTamed() || state.distanceToCameraSq >= 144.0D
+                || !MoCreatures.proxy.getDisplayPetIcons() || !entitykitty.getShowEmoteIcon()) {
+            return;
         }
+        float scale = 0.01666667F * 1.6F;
+        poseStack.pushPose();
+        poseStack.translate(0.0F, entitykitty.getIsSitting() ? 0.4F : 0.2F, 0.0F);
+        poseStack.rotate(Axis.YP.rotationDegrees(-camera.yRot));
+        poseStack.scale(-scale, -scale, scale);
+        int top = -90;
+        int size = 32;
+        int left = -size / 2;
+        collector.submitCustomGeometry(poseStack, RenderTypes.text(entitykitty.getEmoteIcon()), (pose, vc) -> {
+            int light = 0xF000F0;
+            vc.addVertex(pose, left, top + size, 0F).setColor(255, 255, 255, 255).setUv(0.0F, 1.0F).setLight(light);
+            vc.addVertex(pose, left + size, top + size, 0F).setColor(255, 255, 255, 255).setUv(1.0F, 1.0F).setLight(light);
+            vc.addVertex(pose, left + size, top, 0F).setColor(255, 255, 255, 255).setUv(1.0F, 0.0F).setLight(light);
+            vc.addVertex(pose, left, top, 0F).setColor(255, 255, 255, 255).setUv(0.0F, 0.0F).setLight(light);
+        });
+        poseStack.popPose();
+    }
+
+    @Override
+    protected void prepareModel(MoCEntityKitty entitykitty, MoCModelKitty<MoCEntityKitty> model) {
+        model.isSitting = entitykitty.getIsSitting();
+        model.isSwinging = entitykitty.getIsSwinging();
+        model.swingProgress = entitykitty.attackAnim;
+        model.kittystate = entitykitty.getKittyState();
     }
 
     protected void onMaBack(MoCEntityKitty entitykitty, PoseStack poseStack) {
@@ -120,12 +89,6 @@ public class MoCRenderKitty extends MoCRenderMoC<MoCEntityKitty, MoCModelKitty<M
 
     @Override
     protected void scale(MoCEntityKitty entitykitty, PoseStack poseStack, float f) {
-        // Update model state from entity - direct field access like original
-        this.kitty.isSitting = entitykitty.getIsSitting();
-        this.kitty.isSwinging = entitykitty.getIsSwinging();
-        this.kitty.swingProgress = entitykitty.attackAnim;
-        this.kitty.kittystate = entitykitty.getKittyState();
-
         if (!entitykitty.getIsAdult()) {
             stretch(entitykitty, poseStack);
         }

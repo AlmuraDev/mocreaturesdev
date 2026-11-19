@@ -1,4 +1,6 @@
 package drzhark.mocreatures.world;
+import net.minecraft.core.RegistryAccess;
+import com.mojang.serialization.MapCodec;
 
 import com.mojang.serialization.Codec;
 
@@ -9,16 +11,16 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class MoCSpawnBiomeModifier implements BiomeModifier {
-    private static final DeferredHolder<Codec, Codec<? extends BiomeModifier>> SERIALIZER = RegistryObject.create(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "moc_spawns"), ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MoCConstants.MOD_ID);
+    /** One codec instance, registered as mocreatures:moc_spawns in MoCreatures. */
+    private static final MapCodec<MoCSpawnBiomeModifier> CODEC = MapCodec.unit(MoCSpawnBiomeModifier::new);
 
     public MoCSpawnBiomeModifier() {
     }
 
-    public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+    @Override
+    public void modify(RegistryAccess registryAccess, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
         if (phase == Phase.ADD) {
             String biomeName = biome.unwrap().map(key -> key.identifier().toString(), obj -> "unknown");
             MoCreatures.LOGGER.debug("MoCSpawnBiomeModifier: Processing biome {} in phase {}", biomeName, phase);
@@ -26,12 +28,13 @@ public class MoCSpawnBiomeModifier implements BiomeModifier {
         }
     }
 
-    public Codec<? extends BiomeModifier> codec() {
-        return (Codec)SERIALIZER.get();
+    @Override
+    public MapCodec<? extends BiomeModifier> codec() {
+        return CODEC;
     }
 
-    public static Codec<MoCSpawnBiomeModifier> makeCodec() {
+    public static MapCodec<MoCSpawnBiomeModifier> makeCodec() {
         MoCreatures.LOGGER.info("Making MoCSpawnBiomeModifier codec");
-        return Codec.unit(MoCSpawnBiomeModifier::new);
+        return CODEC;
     }
 }

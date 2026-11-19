@@ -11,8 +11,6 @@ import drzhark.mocreatures.client.renderer.fx.MoCParticles;
 import drzhark.mocreatures.init.MoCBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,7 +25,7 @@ public class MoCClientEvents {
     public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
         // Register particle providers using the new 1.20.1 API
         try {
-            Minecraft.getInstance().particleEngine.register(
+            event.registerSpriteSet(
                 MoCParticles.UNDEAD_FX.get(), 
                 (spriteSet) -> {
                     UNDEAD_SPRITE_SET = spriteSet;
@@ -35,7 +33,7 @@ public class MoCClientEvents {
                 }
             );
 
-            Minecraft.getInstance().particleEngine.register(
+            event.registerSpriteSet(
                 MoCParticles.VANISH_FX.get(), 
                 (spriteSet) -> {
                     VANISH_SPRITE_SET = spriteSet;
@@ -43,7 +41,7 @@ public class MoCClientEvents {
                 }
             );
 
-            Minecraft.getInstance().particleEngine.register(
+            event.registerSpriteSet(
                 MoCParticles.STAR_FX.get(), 
                 (spriteSet) -> {
                     STAR_SPRITE_SET = spriteSet;
@@ -51,7 +49,7 @@ public class MoCClientEvents {
                 }
             );
 
-            Minecraft.getInstance().particleEngine.register(
+            event.registerSpriteSet(
                 MoCParticles.VACUUM_FX.get(), 
                 (spriteSet) -> {
                     VACUUM_SPRITE_SET = spriteSet;

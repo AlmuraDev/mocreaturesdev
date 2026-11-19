@@ -1,4 +1,7 @@
 package drzhark.mocreatures;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import com.mojang.serialization.MapCodec;
+import net.neoforged.api.distmarker.Dist;
 import drzhark.mocreatures.init.MoCDataComponents;
 
 import com.mojang.authlib.GameProfile;
@@ -19,7 +22,6 @@ import drzhark.mocreatures.init.MoCSoundEvents;
 import drzhark.mocreatures.init.MoCSpawnEggs;
 import drzhark.mocreatures.network.MoCMessageHandler;
 import drzhark.mocreatures.proxy.MoCProxy;
-import drzhark.mocreatures.proxy.MoCProxyClient;
 import drzhark.mocreatures.registry.MoCPOI;
 import drzhark.mocreatures.world.MoCSpawnBiomeModifier;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -32,7 +34,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.DistExecutor;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.ModContainer;
@@ -66,13 +67,11 @@ public class MoCreatures {
     public static Int2ObjectOpenHashMap<Class<? extends Mob>> instaSpawnerMap = new Int2ObjectOpenHashMap<>();
     public MoCPetMapData mapData;
 
-    @SuppressWarnings("removal")
-    public MoCreatures() {
+    public MoCreatures(IEventBus eventBus, ModContainer container, Dist dist) {
         instance = this;
 
-        // Register for config events
-        this.proxy = DistExecutor.unsafeRunForDist(() -> MoCProxyClient::new, () -> MoCProxy::new);
-        final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        // The client proxy is loaded by name so the dedicated server never loads client classes.
+        this.proxy = dist.isClient() ? createClientProxy() : new MoCProxy();
         eventBus.addListener(this::setup);
         NeoForge.EVENT_BUS.register(new MoCEventHooks());
 
@@ -90,11 +89,19 @@ public class MoCreatures {
 
         // Don't init BiomeConfig here - wait for config event
         
-        final DeferredRegister<Codec<? extends BiomeModifier>> biomeModifiers = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MoCConstants.MOD_ID);
+        final DeferredRegister<MapCodec<? extends BiomeModifier>> biomeModifiers = DeferredRegister.create(NeoForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MoCConstants.MOD_ID);
         biomeModifiers.register(eventBus);
         biomeModifiers.register("moc_spawns", MoCSpawnBiomeModifier::makeCodec);
     }
     
+    private static MoCProxy createClientProxy() {
+        try {
+            return (MoCProxy) Class.forName("drzhark.mocreatures.proxy.MoCProxyClient").getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Could not create the Mo' Creatures client proxy", e);
+        }
+    }
+
     private void setup(final FMLCommonSetupEvent event) {
         // This is called after registry events - safe to build spawn lists
         event.enqueueWork(() -> {

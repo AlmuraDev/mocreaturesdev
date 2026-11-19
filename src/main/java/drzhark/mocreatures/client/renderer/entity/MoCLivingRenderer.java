@@ -49,6 +49,23 @@ public abstract class MoCLivingRenderer<T extends Mob, M extends MoCEntityModel<
         state.entity = entity;
         state.isPassenger = entity.isPassenger();
         state.attackTime = entity.getSwingAnimation(partialTicks);
+        state.ageInTicks = this.getBob(entity, partialTicks);
+    }
+
+    /** 1.20 {@code getBob}: the animation clock the model gets as ageInTicks. */
+    protected float getBob(T entity, float partialTicks) {
+        return entity.tickCount + partialTicks;
+    }
+
+    @Override
+    protected final float getFlipDegrees() {
+        T entity = this.currentState != null ? this.entity(this.currentState) : null;
+        return entity != null ? this.getFlipDegrees(entity) : super.getFlipDegrees();
+    }
+
+    /** 1.20 {@code getFlipDegrees}: how far the body turns over when the creature dies. */
+    protected float getFlipDegrees(T entity) {
+        return 90.0F;
     }
 
     @SuppressWarnings("unchecked")
@@ -96,6 +113,13 @@ public abstract class MoCLivingRenderer<T extends Mob, M extends MoCEntityModel<
         return null;
     }
 
+    /**
+     * Copies per-entity values into the model right before it is drawn. Models are shared by every entity of a type and
+     * drawn later in the frame, so anything a renderer used to set on the model while rendering belongs here.
+     */
+    protected void prepareModel(T entity, M model) {
+    }
+
     /** Opacity of the whole body; below 1 the body is drawn translucent. */
     protected float getBodyAlpha(T entity) {
         return 1.0F;
@@ -133,11 +157,13 @@ public abstract class MoCLivingRenderer<T extends Mob, M extends MoCEntityModel<
             float[] partColor = partial.getTransparencyColor();
             collector.submitCustomGeometry(poseStack, this.getOpaqueRenderType(texture), (pose, buffer) -> {
                 PoseStack stack = poseFrom(pose);
+                this.prepareModel(entity, model);
                 model.setupAnim(state);
                 partial.renderOpaqueParts(stack, buffer, light, overlay, color[0], color[1], color[2], alpha);
             });
             collector.submitCustomGeometry(poseStack, RenderTypes.entityTranslucent(texture), (pose, buffer) -> {
                 PoseStack stack = poseFrom(pose);
+                this.prepareModel(entity, model);
                 model.setupAnim(state);
                 partial.renderTransparentParts(stack, buffer, light, overlay, partColor[0], partColor[1], partColor[2], partAlpha);
             });
@@ -147,8 +173,27 @@ public abstract class MoCLivingRenderer<T extends Mob, M extends MoCEntityModel<
         RenderType renderType = alpha < 1.0F ? RenderTypes.entityTranslucent(texture) : this.getOpaqueRenderType(texture);
         collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) -> {
             PoseStack stack = poseFrom(pose);
+            this.prepareModel(entity, model);
             model.setupAnim(state);
             model.renderToBuffer(stack, buffer, light, overlay, color[0], color[1], color[2], alpha);
+        });
+    }
+
+    /** Draws the model again with another render type and tint, for glow and effect layers. */
+    public void submitModelPass(PoseStack poseStack, SubmitNodeCollector collector, MoCRenderState state, RenderType renderType,
+                                float red, float green, float blue, float alpha) {
+        T entity = this.entity(state);
+        if (entity == null) {
+            return;
+        }
+        int light = state.lightCoords;
+        int overlay = getOverlayCoords(state, this.getWhiteOverlayProgress(state));
+        M model = this.model;
+        collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) -> {
+            PoseStack stack = poseFrom(pose);
+            this.prepareModel(entity, model);
+            model.setupAnim(state);
+            model.renderToBuffer(stack, buffer, light, overlay, red, green, blue, alpha);
         });
     }
 

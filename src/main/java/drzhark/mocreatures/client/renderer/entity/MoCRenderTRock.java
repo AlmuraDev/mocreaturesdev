@@ -4,23 +4,23 @@
 package drzhark.mocreatures.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.math.Axis;
 import drzhark.mocreatures.entity.item.MoCEntityThrowableRock;
-import drzhark.mocreatures.MoCreatures;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.block.state.BlockState;
-import com.mojang.math.Axis;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.client.renderer.entity.state.FallingBlockRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.RenderShape;
 
-@OnlyIn(Dist.CLIENT)
-public class MoCRenderTRock extends EntityRenderer<MoCEntityThrowableRock> {
+/** A block thrown by a golem, spinning as it slows down. */
+public class MoCRenderTRock extends EntityRenderer<MoCEntityThrowableRock, MoCRenderTRock.State> {
+
+    public static class State extends FallingBlockRenderState {
+        public float spin;
+    }
 
     public MoCRenderTRock(EntityRendererProvider.Context renderManagerIn) {
         super(renderManagerIn);
@@ -28,27 +28,34 @@ public class MoCRenderTRock extends EntityRenderer<MoCEntityThrowableRock> {
     }
 
     @Override
-    public void render(MoCEntityThrowableRock entitytrock, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLightIn) {
-        poseStack.pushPose();
-        BlockState state = entitytrock.getState();
-        poseStack.translate(-0.5F, 0.25F, -0.5F);
-        poseStack.rotate(Axis.YN.rotationDegrees(((100 - entitytrock.acceleration) / 10F) * 36F));
-        RenderSystem.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
-        
-        // Render the block state
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
-            state, 
-            poseStack, 
-            buffer, 
-            packedLightIn,
-            OverlayTexture.NO_OVERLAY
-        );
-        
-        poseStack.popPose();
+    public State createRenderState() {
+        return new State();
     }
 
     @Override
-    public Identifier getTextureLocation(MoCEntityThrowableRock par1Entity) {
-        return TextureAtlas.LOCATION_BLOCKS;
+    public void extractRenderState(MoCEntityThrowableRock entity, State state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        BlockPos pos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
+        state.movingBlockRenderState.randomSeedPos = entity.blockPosition();
+        state.movingBlockRenderState.blockPos = pos;
+        state.movingBlockRenderState.blockState = entity.getState();
+        if (entity.level() instanceof ClientLevel clientLevel) {
+            state.movingBlockRenderState.biome = clientLevel.getBiome(pos);
+            state.movingBlockRenderState.cardinalLighting = clientLevel.cardinalLighting();
+            state.movingBlockRenderState.lightEngine = clientLevel.getLightEngine();
+        }
+        state.spin = ((100 - entity.acceleration) / 10F) * 36F;
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.movingBlockRenderState.blockState.getRenderShape() == RenderShape.MODEL) {
+            poseStack.pushPose();
+            poseStack.translate(-0.5F, 0.25F, -0.5F);
+            poseStack.rotate(Axis.YN.rotationDegrees(state.spin));
+            collector.submitMovingBlock(poseStack, state.movingBlockRenderState, state.outlineColor);
+            poseStack.popPose();
+        }
+        super.submit(state, poseStack, collector, camera);
     }
 }

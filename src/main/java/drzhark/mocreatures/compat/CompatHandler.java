@@ -8,7 +8,6 @@ import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.compat.industrialforegoing.IndustrialForegoingIntegration;
 import drzhark.mocreatures.compat.jer.JERIntegration;
 import drzhark.mocreatures.compat.morph.MorphIntegration;
-import net.minecraft.client.Minecraft;
 import net.neoforged.fml.ModList;
 
 import java.io.*;

@@ -14,7 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelWerehuman<T extends MoCEntityWerewolf> extends HumanoidModel<T> {
+public class MoCModelWerehuman<T extends MoCEntityWerewolf> extends MoCHumanoidModel<T> {
     
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =

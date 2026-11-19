@@ -2,16 +2,16 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client.renderer.entity;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import drzhark.mocreatures.client.renderer.state.MoCRenderState;
 
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.renderpearl.backend.opengl.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.client.model.MoCModelFirefly;
 import drzhark.mocreatures.entity.ambient.MoCEntityFirefly;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -47,7 +47,8 @@ public class MoCRenderFirefly extends MoCRenderInsect<MoCEntityFirefly, MoCModel
         return entityfirefly.getTexture();
     }
 
-    private class LayerMoCFirefly extends RenderLayer<MoCEntityFirefly, MoCModelFirefly<MoCEntityFirefly>> {
+    /** The glowing tail: the model drawn again with the glow texture. */
+    private class LayerMoCFirefly extends RenderLayer<MoCRenderState, MoCModelFirefly<MoCEntityFirefly>> {
         private final MoCRenderFirefly mocRenderer;
 
         public LayerMoCFirefly(MoCRenderFirefly renderer) {
@@ -56,22 +57,9 @@ public class MoCRenderFirefly extends MoCRenderInsect<MoCEntityFirefly, MoCModel
         }
 
         @Override
-        public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLightIn, MoCEntityFirefly entity, 
-                           float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, 
-                           float netHeadYaw, float headPitch) {
-            this.setTailBrightness(poseStack, entity, partialTicks);
-            VertexConsumer vertexConsumer = buffer.getBuffer(RenderTypes.entityCutoutNoCull(
-                    MoCreatures.proxy.getModelTexture("firefly_glow.png")));
-            
-            // Use the parent model directly - it will have already been set up with the right properties
-            this.getParentModel().renderToBuffer(poseStack, vertexConsumer, packedLightIn, 
-                    OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        }
-
-        protected void setTailBrightness(PoseStack poseStack, MoCEntityFirefly entityliving, float partialTicks) {
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
+        public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, MoCRenderState state, float yRot, float xRot) {
+            this.mocRenderer.submitModelPass(poseStack, collector, state,
+                    RenderTypes.entityTranslucentEmissive(MoCreatures.proxy.getModelTexture("firefly_glow.png")), 1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 }

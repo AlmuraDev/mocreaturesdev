@@ -33,17 +33,18 @@ furniture mod's `4.0` branch.
   `getBaseExperienceReward`; `snapTo`, `igniteForSeconds`, `isBrightOutside`, step height as an attribute; renamed
   `MobEffects`.
 
-## Remaining (compile errors as of the last pass: about 2,000 unique)
+## Remaining
 
-After the entities batch: about 1,130 unique errors, none in `entity/**` or the network messages.
+After the client rendering batch: about 630 unique errors. `entity/**`, `client/**`, the proxies, the network
+messages and the mod class compile.
 
 | Area | Errors | Main work |
 |---|---|---|
 | Entities (`entity/**`) | 0 | done, see below; needs in-game testing |
-| Client rendering (`client/**`, 58 files) | ~480 | custom quads (`vertex(...)` chains, `MultiBufferSource`, `RenderSystem` blend state) to `SubmitNodeCollector`; the six `RenderLayer`s to `submit`; renderers with their own `render(...)` override; name and health bar rendering; particles (`fx/impl`); the werewolf, wraith and legacy big cat renderers |
+| Client rendering (`client/**`) | 0 | done, see below; needs in-game testing |
 | Registration (`init/**`) | ~195 | `EntityType.Builder.build(ResourceKey)`; spawn placements; creative tabs; villager trades; worldgen registration |
 | Items (`item/**`) | ~160 | tools and armour to `ToolMaterial` / `Item.Properties.sword()/humanoidArmor()` with an equipment asset; `use` returning `InteractionResult`; NBT to data components; `RecordItem` to a jukebox song |
-| World / worldgen / dimension | ~135 | 26.3 features are codec records (`Feature.place(level, generator, random, origin)`); `MobSpawnSettings.SpawnerData` changed; biome modifier codecs |
+| World / worldgen / dimension | ~125 | 26.3 features are codec records (`Feature.place(level, generator, random, origin)`); `MobSpawnSettings.SpawnerData` changed |
 | Commands (`network/command/**`) | ~30 | permission checks; teleporting between dimensions; pet listing NBT |
 | Other (events, util, compat, blocks) | ~160 | removed events (`TickEvent`, `BlockEvent.BreakEvent` moves, `MissingMappingsEvent`), `IPlantable`, `GlassBlock`, data fixers |
 
@@ -76,6 +77,34 @@ After the entities batch: about 1,130 unique errors, none in `entity/**` or the 
   weapon's attack damage), `ultraWarm` dimensions (now "water evaporates"), glowing outline (not drawn).
 - **Server safety:** entity code no longer uses `I18n` or `Minecraft`; verbose names use `Language`, and client-only
   lookups go through the proxy.
+
+### Client rendering batch
+
+- **Drawing happens later in the frame.** The 26.3 renderer only records what to draw; models are shared by every
+  entity of a type. Anything a renderer used to set on a model while rendering (crocodile bite, goat bleat, kitty
+  pose, kitty bed contents, big cat sitting, werewolf hunch) moved into `prepareModel(entity, model)`, which
+  `MoCLivingRenderer` calls right before each draw.
+- **Pet name and health bar:** one helper, `MoCPetLabel`, submits the text and bar quads. `MoCRenderMoC` uses it for
+  most creatures; the dolphin, shark, goat and legacy big cat keep their own offsets and distance limits.
+- **Translucency:** ghosts, vanishing horses and wraiths go through `getBodyAlpha`/`getBodyColor`. GL blend calls
+  (`RenderSystem.enableBlend` etc.) can't be used any more. The insects with see-through wings already split their
+  parts (`IPartialTransparencyModel`), so the bridge draws those parts translucent. The horse, wyvern, big cat,
+  firefly and maggot models use a translucent render type for the whole model. Their old `clearColor` calls never
+  tinted anything, so only texture alpha matters.
+- **Layers** are `RenderLayer<MoCRenderState, M>` with `submit(...)`. Glow and effect layers (firefly, golem) redraw the
+  model through `submitModelPass`; the filch lizard's stolen item goes through an item render state; the werewolf's
+  human form, the kitty bed sheet and the legacy big cat mane draw their second model as custom geometry.
+- **Humanoid models** (wraith, werehuman) extend `MoCHumanoidModel`, which keeps vanilla's humanoid mesh and the 1.20
+  walk, ride, swing and crouch animation.
+- **Thrown rocks** are drawn like falling blocks (`submitMovingBlock`), spinning as before.
+- **Particles** use codecs for their options and `SingleQuadParticle`; providers register through
+  `RegisterParticleProvidersEvent.registerSpriteSet`.
+- **Pet naming screen, dive key and ride controls** use the 26.3 screen, key mapping (own "Mo' Creatures" category) and
+  client tick APIs.
+- **Server safety:** the proxy is picked from the mod constructor's `Dist`, and the client proxy is loaded by name, so a
+  dedicated server never loads it. The horse guide opens its book through the proxy.
+- **Check in game:** pet name and health bar placement, see-through wings and ghosts, the firefly glow (now emissive
+  translucent), the filch lizard's held item and the kitty mood icons.
 
 Resources are untouched so far:
 - data pack folder renames (`loot_tables` to `loot_table`, `recipes` to `recipe`, `tags/items` to `tags/item`, and so on), plus the recipe and loot JSON formats

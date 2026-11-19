@@ -1,4 +1,5 @@
 package drzhark.mocreatures.client.model;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -52,7 +53,11 @@ public abstract class MoCModelAbstractHorse<T extends Entity> extends MoCEntityM
     protected boolean floating;
 
     public MoCModelAbstractHorse(ModelPart root) {
-        super(root);
+        this(root, RenderTypes::entityCutout);
+    }
+
+    public MoCModelAbstractHorse(ModelPart root, java.util.function.Function<net.minecraft.resources.Identifier, net.minecraft.client.renderer.rendertype.RenderType> renderType) {
+        super(root, renderType);
         this.body              = root.getChild("body");
         this.tailA             = root.getChild("tailA");
         this.tailB             = root.getChild("tailB");

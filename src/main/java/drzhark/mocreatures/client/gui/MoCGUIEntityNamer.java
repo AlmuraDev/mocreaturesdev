@@ -1,4 +1,7 @@
 package drzhark.mocreatures.client.gui;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import drzhark.mocreatures.client.MoCClientPackets;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -8,7 +11,6 @@ import drzhark.mocreatures.entity.IMoCEntity;
 import drzhark.mocreatures.entity.tameable.IMoCTameable;
 import drzhark.mocreatures.network.MoCMessageHandler;
 import drzhark.mocreatures.network.message.MoCMessageUpdatePetName;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -16,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Mob;
 
-@net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
 public class MoCGUIEntityNamer extends Screen {
 
     @SuppressWarnings("removal")
@@ -66,26 +67,27 @@ public class MoCGUIEntityNamer extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics poseStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(poseStack);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         int centerX = (this.width - imageWidth) / 2;
         int centerY = (this.height - imageHeight) / 2;
-
-        poseStack.blit(TEXTURE, centerX, centerY, 0, 0, imageWidth, imageHeight);
-
-        poseStack.drawCenteredString(this.font, this.title, this.width / 2, centerY + 30, 0xFFFFFF);
-        nameInput.render(poseStack, mouseX, mouseY, partialTicks);
-
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, centerX, centerY, 0, 0, imageWidth, imageHeight, 256, 256);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 257 || keyCode == 335) { // Enter or Numpad Enter
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        int centerY = (this.height - imageHeight) / 2;
+        graphics.centeredText(this.font, this.title, this.width / 2, centerY + 30, 0xFFFFFFFF);
+    }
+
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        if (event.key() == 257 || event.key() == 335) { // Enter or Numpad Enter
             updateName();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override

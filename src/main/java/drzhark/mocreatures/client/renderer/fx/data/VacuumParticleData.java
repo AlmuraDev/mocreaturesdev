@@ -1,51 +1,36 @@
+/*
+ * GNU GENERAL PUBLIC LICENSE Version 3
+ */
 package drzhark.mocreatures.client.renderer.fx.data;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import drzhark.mocreatures.client.renderer.fx.MoCParticles;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
-import java.util.Locale;
-
+/** Particle options for {@link MoCParticles#VACUUM_FX}; 26.3 particle options are read and sent with codecs. */
 public class VacuumParticleData implements ParticleOptions {
-    public static final ParticleOptions.Deserializer<VacuumParticleData> DESERIALIZER = new ParticleOptions.Deserializer<VacuumParticleData>() {
-        @Override
-        public VacuumParticleData fromCommand(ParticleType<VacuumParticleData> type, StringReader reader) throws CommandSyntaxException {
-            reader.expect(' ');
-            float r = reader.readFloat();
-            reader.expect(' ');
-            float g = reader.readFloat();
-            reader.expect(' ');
-            float b = reader.readFloat();
-            return new VacuumParticleData(r, g, b);
-        }
 
-        @Override
-        public VacuumParticleData fromNetwork(ParticleType<VacuumParticleData> type, FriendlyByteBuf buffer) {
-            return new VacuumParticleData(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
-        }
-    };
+    public static final MapCodec<VacuumParticleData> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                    Codec.FLOAT.fieldOf("red").forGetter(d -> d.red),
+                    Codec.FLOAT.fieldOf("green").forGetter(d -> d.green),
+                    Codec.FLOAT.fieldOf("blue").forGetter(d -> d.blue)
+            ).apply(instance, VacuumParticleData::new));
+    public static final StreamCodec<ByteBuf, VacuumParticleData> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.FLOAT, d -> d.red, ByteBufCodecs.FLOAT, d -> d.green, ByteBufCodecs.FLOAT, d -> d.blue, VacuumParticleData::new);
 
-    public final float red, green, blue;
+    public final float red;
+    public final float green;
+    public final float blue;
 
     public VacuumParticleData(float red, float green, float blue) {
         this.red = red;
         this.green = green;
         this.blue = blue;
-    }
-
-    @Override
-    public void writeToNetwork(FriendlyByteBuf buffer) {
-        buffer.writeFloat(red);
-        buffer.writeFloat(green);
-        buffer.writeFloat(blue);
-    }
-
-    @Override
-    public String writeToString() {
-        return String.format(Locale.ROOT, "%s %.2f %.2f %.2f", getType(), red, green, blue);
     }
 
     @Override

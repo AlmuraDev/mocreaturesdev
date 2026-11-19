@@ -3,7 +3,6 @@ package drzhark.mocreatures.client.model;
 import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.systems.RenderSystem;
 import drzhark.mocreatures.entity.ambient.MoCEntityBee;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -245,13 +244,9 @@ public class MoCModelBee<T extends MoCEntityBee> extends MoCEntityModel<T> imple
         // Render transparent parts with blending if needed
         if (shouldRenderPartialTransparency()) {
             poseStack.pushPose();
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.clearColor(getTransparencyColor()[0], getTransparencyColor()[1], getTransparencyColor()[2], getTransparencyValue());
             
             renderTransparentParts(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             
-            RenderSystem.disableBlend();
             poseStack.popPose();
         } else {
             // Render folded wings as opaque when not flying

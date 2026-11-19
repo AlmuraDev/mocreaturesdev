@@ -1,4 +1,6 @@
 package drzhark.mocreatures.client.renderer.fx.impl;
+import net.minecraft.util.RandomSource;
+import net.minecraft.client.particle.SingleQuadParticle;
 
 import drzhark.mocreatures.client.renderer.fx.data.VanishParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -7,7 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCEntityFXVanish extends TextureSheetParticle {
+public class MoCEntityFXVanish extends SingleQuadParticle {
 
     private final double portalPosX;
     private final double portalPosY;
@@ -16,7 +18,7 @@ public class MoCEntityFXVanish extends TextureSheetParticle {
 
     public MoCEntityFXVanish(ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed,
                              float red, float green, float blue, boolean implode, SpriteSet spriteSet) {
-        super(world, x, y, z, 0, 0, 0);
+        super(world, x, y, z, 0, 0, 0, spriteSet.first());
 
         this.xd = xSpeed;
         this.yd = ySpeed * 5D;
@@ -61,8 +63,8 @@ public class MoCEntityFXVanish extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_LIT;
+    protected SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.OPAQUE;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -76,7 +78,7 @@ public class MoCEntityFXVanish extends TextureSheetParticle {
         @Override
         public Particle createParticle(VanishParticleData data, ClientLevel world,
                                      double x, double y, double z,
-                                     double xSpeed, double ySpeed, double zSpeed) {
+                                     double xSpeed, double ySpeed, double zSpeed, RandomSource random) {
             return new MoCEntityFXVanish(world, x, y, z,
                     xSpeed, ySpeed, zSpeed,
                     data.red, data.green, data.blue, data.implode,

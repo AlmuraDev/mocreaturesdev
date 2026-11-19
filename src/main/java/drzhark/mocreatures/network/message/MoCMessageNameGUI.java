@@ -58,7 +58,7 @@ public class MoCMessageNameGUI implements CustomPacketPayload {
         Entity ent = mc.level.getEntity(message.entityId);
         if (ent instanceof IMoCEntity) {
             IMoCEntity mocEntity = (IMoCEntity) ent;
-            mc.setScreen(new MoCGUIEntityNamer(mocEntity, mocEntity.getPetName()));
+            mc.gui.setScreen(new MoCGUIEntityNamer(mocEntity, mocEntity.getPetName()));
         }
     }
 

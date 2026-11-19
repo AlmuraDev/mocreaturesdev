@@ -6,7 +6,6 @@ package drzhark.mocreatures.client.renderer.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelRat;
 import drzhark.mocreatures.entity.hostile.MoCEntityRat;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
@@ -21,10 +20,6 @@ public class MoCRenderRat<T extends MoCEntityRat, M extends MoCModelRat<T>> exte
         super(renderManagerIn, modelbase, f);
     }
 
-    @Override
-    public void render(T entityrat, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLightIn) {
-        super.render(entityrat, entityYaw, partialTicks, poseStack, buffer, packedLightIn);
-    }
 
     @Override
     protected void scale(T entityrat, PoseStack poseStack, float f) {

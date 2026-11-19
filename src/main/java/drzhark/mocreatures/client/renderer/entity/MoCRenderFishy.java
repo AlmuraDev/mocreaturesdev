@@ -2,11 +2,11 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client.renderer.entity;
+import drzhark.mocreatures.client.renderer.state.MoCRenderState;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelFishy;
 import drzhark.mocreatures.entity.aquatic.MoCEntityFishy;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
@@ -20,12 +20,13 @@ public class MoCRenderFishy extends MoCLivingRenderer<MoCEntityFishy, MoCModelFi
         super(renderManagerIn, modelbase, f);
     }
 
+
     @Override
-    public void render(MoCEntityFishy entityfishy, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLightIn) {
-        if (entityfishy.getTypeMoC() == 0) { // && !MoCreatures.mc.isMultiplayerWorld())
+    public void extractRenderState(MoCEntityFishy entityfishy, MoCRenderState state, float partialTicks) {
+        if (entityfishy.getTypeMoC() == 0) {
             entityfishy.selectType();
         }
-        super.render(entityfishy, entityYaw, partialTicks, poseStack, buffer, packedLightIn);
+        super.extractRenderState(entityfishy, state, partialTicks);
     }
 
     @Override

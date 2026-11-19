@@ -6,7 +6,6 @@ package drzhark.mocreatures.client.renderer.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelCrocodile;
 import drzhark.mocreatures.entity.hunter.MoCEntityCrocodile;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.tags.FluidTags;
@@ -32,16 +31,16 @@ public class MoCRenderCrocodile extends MoCLivingRenderer<MoCEntityCrocodile, Mo
         return entitycrocodile.getTexture();
     }
 
+
     @Override
-    public void render(MoCEntityCrocodile entitycrocodile, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLightIn) {
-        super.render(entitycrocodile, entityYaw, partialTicks, poseStack, buffer, packedLightIn);
+    protected void prepareModel(MoCEntityCrocodile entitycrocodile, MoCModelCrocodile<MoCEntityCrocodile> model) {
+        model.biteProgress = entitycrocodile.biteProgress;
+        model.swimming = entitycrocodile.isSwimming();
+        model.resting = entitycrocodile.getIsSitting();
     }
 
     @Override
     protected void scale(MoCEntityCrocodile entitycrocodile, PoseStack poseStack, float f) {
-        this.croc.biteProgress = entitycrocodile.biteProgress;
-        this.croc.swimming = entitycrocodile.isSwimming();
-        this.croc.resting = entitycrocodile.getIsSitting();
         if (entitycrocodile.isSpinning()) {
             spinCroc(entitycrocodile, (Mob) entitycrocodile.getVehicle(), poseStack);
         }

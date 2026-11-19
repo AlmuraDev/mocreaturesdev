@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 import drzhark.mocreatures.client.MoCClientPackets;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -13,7 +15,6 @@ import drzhark.mocreatures.network.message.MoCMessageEntityJump;
 import drzhark.mocreatures.proxy.MoCProxyClient;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 
 @OnlyIn(Dist.CLIENT)
@@ -21,21 +22,22 @@ import net.neoforged.bus.api.SubscribeEvent;
 public class MoCInputHandler {
 
     @SubscribeEvent
-    public static void onInput(TickEvent.PlayerTickEvent e) {
-        if (e.phase != TickEvent.Phase.END) return;
+    public static void onInput(ClientTickEvent.Post event) {
+        Player player = MoCProxyClient.mc.player;
+        if (player == null) return;
 
         boolean kbJump = MoCProxyClient.mc.options.keyJump.isDown();
         boolean kbDive = MoCKeyHandler.diveBinding.isDown();
 
-        if (kbJump && e.player.getVehicle() != null && e.player.getVehicle() instanceof IMoCEntity) {
+        if (kbJump && player.getVehicle() != null && player.getVehicle() instanceof IMoCEntity) {
             // jump code needs to be executed client/server simultaneously to take
-            ((IMoCEntity) e.player.getVehicle()).makeEntityJump();
+            ((IMoCEntity) player.getVehicle()).makeEntityJump();
             MoCClientPackets.sendToServer(new MoCMessageEntityJump());
         }
 
-        if (kbDive && e.player.getVehicle() != null && e.player.getVehicle() instanceof IMoCEntity) {
+        if (kbDive && player.getVehicle() != null && player.getVehicle() instanceof IMoCEntity) {
             // dive code needs to be executed client/server simultaneously to take
-            ((IMoCEntity) e.player.getVehicle()).makeEntityDive();
+            ((IMoCEntity) player.getVehicle()).makeEntityDive();
             MoCClientPackets.sendToServer(new MoCMessageEntityDive());
         }
     }

@@ -21,7 +21,7 @@ import net.neoforged.api.distmarker.OnlyIn;
  * Port of MoCModelWraith from 1.16.5’s BipedModel to 1.20.1’s HumanoidModel.
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelWraith<T extends MoCEntityWraith> extends HumanoidModel<T> {
+public class MoCModelWraith<T extends MoCEntityWraith> extends MoCHumanoidModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
@@ -33,6 +33,7 @@ public class MoCModelWraith<T extends MoCEntityWraith> extends HumanoidModel<T> 
 
     public MoCModelWraith(ModelPart root) {
         super(root);
+        this.hat.visible = false; // the wraith never drew the hat layer
     }
 
     /**
@@ -54,7 +55,7 @@ public class MoCModelWraith<T extends MoCEntityWraith> extends HumanoidModel<T> 
      */
     @Override
     public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
-        this.isSneaking    = entity.isCrouching();
+        this.isSneaking = entity.isCrouching();
         this.attackCounter = entity.attackCounter;
     }
 

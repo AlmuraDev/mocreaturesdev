@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client.renderer.fx.impl;
+import net.minecraft.util.RandomSource;
+import net.minecraft.client.particle.SingleQuadParticle;
 
 import drzhark.mocreatures.client.renderer.fx.data.StarParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -10,11 +12,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCEntityFXStar extends TextureSheetParticle {
+public class MoCEntityFXStar extends SingleQuadParticle {
 
     public MoCEntityFXStar(ClientLevel world, double posX, double posY, double posZ,
                            float red, float green, float blue, SpriteSet spriteSet) {
-        super(world, posX, posY, posZ, 0.0D, 0.0D, 0.0D);
+        super(world, posX, posY, posZ, 0.0D, 0.0D, 0.0D, spriteSet.first());
 
         this.xd *= 0.8D;
         this.yd = this.random.nextFloat() * 0.4F + 0.05F;
@@ -57,8 +59,8 @@ public class MoCEntityFXStar extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_LIT;
+    protected SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.OPAQUE;
     }
 
     public static class Factory implements ParticleProvider<StarParticleData> {
@@ -70,7 +72,7 @@ public class MoCEntityFXStar extends TextureSheetParticle {
 
         @Override
         public Particle createParticle(StarParticleData data, ClientLevel world, double x, double y, double z,
-                                     double xSpeed, double ySpeed, double zSpeed) {
+                                     double xSpeed, double ySpeed, double zSpeed, RandomSource random) {
             return new MoCEntityFXStar(world, x, y, z, data.red, data.green, data.blue, spriteSet);
         }
     }

@@ -1,7 +1,7 @@
 package drzhark.mocreatures.client.model;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 import net.minecraft.util.ARGB;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.MoCTools;
@@ -162,7 +162,7 @@ public class MoCModelWyvern<T extends MoCEntityWyvern> extends MoCEntityModel<T>
     private float transparency;
 
     public MoCModelWyvern(ModelPart root) {
-        super(root);
+        super(root, RenderTypes::entityTranslucent);
         this.Tail                   = root.getChild("Tail");
         this.back1                  = Tail.getChild("back1");
         this.tail1                  = Tail.getChild("tail1");
@@ -1373,9 +1373,6 @@ public class MoCModelWyvern<T extends MoCEntityWyvern> extends MoCEntityModel<T>
 
         // If ghost, enable translucent blending:
         if (isGhost) {
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.clearColor(0.8F, 0.8F, 0.8F, transparency);
         }
 
         // Render spine+tail+chest in order:
@@ -1509,7 +1506,6 @@ public class MoCModelWyvern<T extends MoCEntityWyvern> extends MoCEntityModel<T>
 
         // If ghost, disable blending so future renders aren’t translucent:
         if (isGhost) {
-            RenderSystem.disableBlend();
         }
         poseStack.popPose();
     }

@@ -3,6 +3,7 @@
  */
 
 package drzhark.mocreatures.client.model;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -81,7 +82,7 @@ public class MoCModelHorse<T extends MoCEntityHorse> extends MoCModelAbstractHor
     private boolean openMouth;
     
     public MoCModelHorse(ModelPart root) {
-        super(root);
+        super(root, RenderTypes::entityTranslucent);
         
         // Initialize model parts from the provided root
         this.headSaddle = root.getChild("headSaddle");
@@ -276,23 +277,16 @@ public class MoCModelHorse<T extends MoCEntityHorse> extends MoCModelAbstractHor
                 this.outerWingR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             } else if (type > 44 && type < 60) { //fairys
                 poseStack.pushPose();
-                com.mojang.blaze3d.systems.RenderSystem.enableBlend();
                 float transparencyVal = 0.7F;
-                com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
-                com.mojang.blaze3d.systems.RenderSystem.clearColor(1.2F, 1.2F, 1.2F, transparencyVal);
                 poseStack.scale(1.3F, 1.0F, 1.3F);
                 this.butterflyL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                 this.butterflyR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
-                com.mojang.blaze3d.systems.RenderSystem.disableBlend();
                 poseStack.popPose();
             }
         } else
         //rendering a ghost or vanishing
         {
             poseStack.pushPose();
-            com.mojang.blaze3d.systems.RenderSystem.enableBlend();
-            com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
-            com.mojang.blaze3d.systems.RenderSystem.clearColor(0.8F, 0.8F, 0.8F, transparency);
             poseStack.scale(1.3F, 1.0F, 1.3F);
 
             this.ear1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
@@ -360,7 +354,6 @@ public class MoCModelHorse<T extends MoCEntityHorse> extends MoCModelAbstractHor
                 }
             }
 
-            com.mojang.blaze3d.systems.RenderSystem.disableBlend();
             poseStack.popPose();
 
             if (type == 21 || type == 22)//|| (type >=50 && type <60))
@@ -373,13 +366,9 @@ public class MoCModelHorse<T extends MoCEntityHorse> extends MoCModelAbstractHor
                     wingTransparency = transparency;
                 }
                 poseStack.pushPose();
-                com.mojang.blaze3d.systems.RenderSystem.enableBlend();
-                com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
-                com.mojang.blaze3d.systems.RenderSystem.clearColor(0.8F, 0.8F, 0.8F, wingTransparency);
                 poseStack.scale(1.3F, 1.0F, 1.3F);
                 this.butterflyL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                 this.butterflyR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
-                com.mojang.blaze3d.systems.RenderSystem.disableBlend();
                 poseStack.popPose();
             }
         }

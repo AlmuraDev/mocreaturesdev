@@ -1,10 +1,10 @@
 package drzhark.mocreatures.client.model;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.renderpearl.backend.opengl.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import drzhark.mocreatures.entity.ambient.MoCEntityFirefly;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -47,7 +47,7 @@ public class MoCModelFirefly<T extends MoCEntityFirefly> extends MoCEntityModel<
     private boolean day;
 
     public MoCModelFirefly(ModelPart root) {
-        super(root);
+        super(root, RenderTypes::entityTranslucent);
         this.head            = root.getChild("head");
         this.antenna         = root.getChild("antenna");
         this.thorax          = root.getChild("thorax");
@@ -141,27 +141,18 @@ public class MoCModelFirefly<T extends MoCEntityFirefly> extends MoCEntityModel<
             this.leftShellOpen.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
             poseStack.pushPose();
-            RenderSystem.enableBlend();
             float transparency = 0.6F;
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.clearColor(0.8F, 0.8F, 0.8F, transparency);
             this.leftWing.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             this.rightWing.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
-            RenderSystem.disableBlend();
             poseStack.popPose();
         }
 
         // Glow/alpha effect: if it is nighttime, wing/tail glow is more transparent; else use additive
         poseStack.pushPose();
-        RenderSystem.enableBlend();
         if (!this.day) {
             float alphaGlow = 0.4F;
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.clearColor(0.8F, 0.8F, 0.8F, alphaGlow);
         } else {
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
         }
-        RenderSystem.disableBlend();
         poseStack.popPose();
     }
 

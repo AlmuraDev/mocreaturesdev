@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client.renderer.fx.impl;
+import net.minecraft.util.RandomSource;
+import net.minecraft.client.particle.SingleQuadParticle;
 
 import drzhark.mocreatures.client.renderer.fx.data.VacuumParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -10,7 +12,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCEntityFXVacuum extends TextureSheetParticle {
+public class MoCEntityFXVacuum extends SingleQuadParticle {
     private final float initialScale;
     private final double startX, startY, startZ;
 
@@ -18,7 +20,7 @@ public class MoCEntityFXVacuum extends TextureSheetParticle {
                              double xSpeed, double ySpeed, double zSpeed,
                              float red, float green, float blue,
                              SpriteSet spriteSet) {
-        super(world, x, y, z, xSpeed, ySpeed, zSpeed);
+        super(world, x, y, z, xSpeed, ySpeed, zSpeed, spriteSet.first());
 
         this.rCol = red;
         this.gCol = green;
@@ -53,8 +55,8 @@ public class MoCEntityFXVacuum extends TextureSheetParticle {
     }
 
     @Override
-    public int getLightColor(float partialTick) {
-        int base = super.getLightColor(partialTick);
+    protected int getLightCoords(float partialTick) {
+        int base = super.getLightCoords(partialTick);
         float t = (float)this.age / (float)this.lifetime;
         t = t * t * t;
         int low = base & 255;
@@ -74,8 +76,8 @@ public class MoCEntityFXVacuum extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    protected SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.TRANSLUCENT;
     }
 
     public static class Factory implements ParticleProvider<VacuumParticleData> {
@@ -87,7 +89,7 @@ public class MoCEntityFXVacuum extends TextureSheetParticle {
 
         @Override
         public Particle createParticle(VacuumParticleData data, ClientLevel world, double x, double y, double z,
-                                     double dx, double dy, double dz) {
+                                     double dx, double dy, double dz, RandomSource random) {
             return new MoCEntityFXVacuum(world, x, y, z, dx, dy, dz, data.red, data.green, data.blue, sprite);
         }
     }

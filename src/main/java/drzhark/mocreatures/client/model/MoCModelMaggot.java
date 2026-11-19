@@ -2,11 +2,11 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.client.model;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import drzhark.mocreatures.entity.ambient.MoCEntityMaggot;
 
@@ -44,7 +44,7 @@ public class MoCModelMaggot<T extends MoCEntityMaggot> extends MoCEntityModel<T>
     private final ModelPart Tailtip;
 
     public MoCModelMaggot(ModelPart root) {
-        super(root);
+        super(root, RenderTypes::entityTranslucent);
         this.Head    = root.getChild("Head");
         this.Body    = root.getChild("Body");
         this.Tail    = root.getChild("Tail");
@@ -151,8 +151,6 @@ public class MoCModelMaggot<T extends MoCEntityMaggot> extends MoCEntityModel<T>
         poseStack.pushPose();
 
         // Mirror the old RenderSystem.enableBlend() / defaultBlendFunc() calls:
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
 
         // f9 = -(cos(limbSwing * 3)) * limbSwingAmount * 2
         float f9 = -Mth.cos(this.limbSwing * 3.0F) * this.limbSwingAmount * 2.0F;
@@ -166,7 +164,6 @@ public class MoCModelMaggot<T extends MoCEntityMaggot> extends MoCEntityModel<T>
         this.Tailtip.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Disable blending and pop
-        RenderSystem.disableBlend();
         poseStack.popPose();
     }
 }

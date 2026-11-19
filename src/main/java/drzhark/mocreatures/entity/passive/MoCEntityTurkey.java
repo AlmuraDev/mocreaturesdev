@@ -27,6 +27,7 @@ import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
@@ -44,10 +45,18 @@ import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.network.MoCMessageHandler;
 import drzhark.mocreatures.network.message.MoCMessageHeart;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.UUID;
 
 public class MoCEntityTurkey extends MoCEntityTameableAnimal {
-    private static final Ingredient TEMPTATION_ITEMS = Ingredient.of(Items.WHEAT_SEEDS, Items.PUMPKIN_SEEDS, Items.BEETROOT_SEEDS);
+    private static final Ingredient SEEDS = Ingredient.of(Items.WHEAT_SEEDS, Items.PUMPKIN_SEEDS, Items.BEETROOT_SEEDS);
+    /** Almura feed that also tempts and breeds turkeys; matched by id, so nothing changes without Almura. */
+    private static final Set<Identifier> ALMURA_FEED = Set.of(
+            Identifier.parse("almura:food/food/soybean"),
+            Identifier.parse("almura:food/food/corn"));
+    private static final Predicate<ItemStack> TEMPTATION_ITEMS = stack -> !stack.isEmpty()
+            && (SEEDS.test(stack) || ALMURA_FEED.contains(BuiltInRegistries.ITEM.getKey(stack.getItem())));
     private int gestationTime = 0;
 
     public MoCEntityTurkey(EntityType<? extends MoCEntityTurkey> type, Level world) {

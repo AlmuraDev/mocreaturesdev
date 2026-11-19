@@ -230,11 +230,14 @@ has been run in a game yet. The resources are converted to the 26.3 layout (see 
 - **Not checked yet:** nothing has loaded these files in a game. The data loader may still reject individual
   loot tables, recipes or worldgen files; the game log will name them.
 
-## Almura changes to re-apply
+## Almura changes
 
-- Turkey breeding items: soybean and corn, using the Almura 4.0 item ids. The 1.20.1 base already has its own turkey
-  breeding; check in game that babies come out both male and female, and that only adult males use the male texture.
-- Fish always drop an item. The 1.20.1 base drops only on a random roll.
+- **Turkey feed:** turkeys are tempted by, breed on and grow up on Almura's `almura:food/food/soybean` and
+  `almura:food/food/corn` as well as seeds (`MoCEntityTurkey.TEMPTATION_ITEMS`). They are matched by id, so without
+  Almura nothing changes. The 1.12.2 fixes for baby sexes (random male or female) and the male texture (adult males
+  only) are already how the 1.20.1 turkey works; still to check in game.
+- **Fish always drop an item:** no change needed. Every fish loot table rolls its fish pool unconditionally, and the
+  aquatic base class always rolls the loot table (1.12.2 only dropped the fish on 70% of kills).
 
 ## Server safety
 

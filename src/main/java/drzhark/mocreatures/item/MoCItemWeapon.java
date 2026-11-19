@@ -1,13 +1,16 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.Item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ToolMaterial;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import drzhark.mocreatures.MoCreatures;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -31,15 +34,18 @@ public class MoCItemWeapon extends MoCItem {
     private final ToolMaterial material;
     private final float attackDamage;
     private int specialWeaponType = 0;
-    private final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
     public MoCItemWeapon(Item.Properties properties, ToolMaterial material) {
-        super(properties.stacksTo(1).durability(material.durability()));
+        super(properties.stacksTo(1).durability(material.durability())
+                .enchantable(material.enchantmentValue())
+                .repairable(material.repairItems())
+                .attributes(ItemAttributeModifiers.builder()
+                        .add(Attributes.ATTACK_DAMAGE,
+                                new AttributeModifier(BASE_ATTACK_DAMAGE_ID, 3F + material.attackDamageBonus(), AttributeModifier.Operation.ADD_VALUE),
+                                EquipmentSlotGroup.MAINHAND)
+                        .build()));
         this.material = material;
-        this.attackDamage = 3F + material.getAttackDamageBonus();
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", this.attackDamage, AttributeModifier.Operation.ADDITION));
-        this.attributeModifiers = builder.build();
+        this.attackDamage = 3F + material.attackDamageBonus();
     }
 
     public MoCItemWeapon(Item.Properties properties, ToolMaterial material, int damageType) {
@@ -48,7 +54,7 @@ public class MoCItemWeapon extends MoCItem {
     }
 
     public float getAttackDamage() {
-        return this.material.getAttackDamageBonus();
+        return this.material.attackDamageBonus();
     }
 
     public float getDestroySpeed(ItemStack stack, BlockState state) {
@@ -62,7 +68,7 @@ public class MoCItemWeapon extends MoCItem {
     }
 
     @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (MoCreatures.proxy.weaponEffects) {
             int timer = 10; // seconds
             switch (this.specialWeaponType) {
@@ -84,15 +90,15 @@ public class MoCItemWeapon extends MoCItem {
             }
         }
 
-        stack.hurtAndBreak(1, attacker, (e) -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-        return true;
+        stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
+        return;
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         player.startUsingItem(hand);
-        return InteractionResultHolder.success(stack);
+        return InteractionResult.SUCCESS;
     }
 
     // TODO: Cobweb harvesting
@@ -101,15 +107,11 @@ public class MoCItemWeapon extends MoCItem {
         return state.is(Blocks.COBWEB);
     }*/
 
-    @Override
-    public int getEnchantmentValue() {
-        return this.material.getEnchantmentValue();
-    }
 
     @Override
     public boolean mineBlock(ItemStack stack, Level world, BlockState state, net.minecraft.core.BlockPos pos, LivingEntity entity) {
         if (!world.isClientSide() && state.getDestroySpeed(world, pos) != 0.0F) {
-            stack.hurtAndBreak(1, entity, (e) -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+            stack.hurtAndBreak(1, entity, EquipmentSlot.MAINHAND);
         }
         return true;
     }
@@ -118,26 +120,17 @@ public class MoCItemWeapon extends MoCItem {
         return this.material.toString();
     }
 
-    @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return this.material.getRepairIngredient().test(repair) || super.isValidRepairItem(toRepair, repair);
-    }
+
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-        return slot == EquipmentSlot.MAINHAND ? this.attributeModifiers : super.getDefaultAttributeModifiers(slot);
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         if (MoCreatures.proxy.weaponEffects) {
             switch (this.specialWeaponType) {
-                case 1 -> tooltip.add(Component.translatable("info.mocreatures.stingdefault1").withStyle(ChatFormatting.BLUE));
-                case 2 -> tooltip.add(Component.translatable("info.mocreatures.stingdefault2").withStyle(ChatFormatting.BLUE));
-                case 3 -> tooltip.add(Component.translatable("info.mocreatures.stingdefault3").withStyle(ChatFormatting.BLUE));
-                case 4 -> tooltip.add(Component.translatable("info.mocreatures.stingdefault4").withStyle(ChatFormatting.BLUE));
-                case 5 -> tooltip.add(Component.translatable("info.mocreatures.stingdefault5").withStyle(ChatFormatting.BLUE));
+                case 1 -> tooltip.accept(Component.translatable("info.mocreatures.stingdefault1").withStyle(ChatFormatting.BLUE));
+                case 2 -> tooltip.accept(Component.translatable("info.mocreatures.stingdefault2").withStyle(ChatFormatting.BLUE));
+                case 3 -> tooltip.accept(Component.translatable("info.mocreatures.stingdefault3").withStyle(ChatFormatting.BLUE));
+                case 4 -> tooltip.accept(Component.translatable("info.mocreatures.stingdefault4").withStyle(ChatFormatting.BLUE));
+                case 5 -> tooltip.accept(Component.translatable("info.mocreatures.stingdefault5").withStyle(ChatFormatting.BLUE));
             }
         }
     }

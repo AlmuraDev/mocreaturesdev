@@ -1,4 +1,11 @@
 package drzhark.mocreatures.item;
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.core.UUIDUtil;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.InteractionResult;
 
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.MoCTools;
@@ -16,7 +23,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -54,7 +60,7 @@ public class MoCItemPetAmulet extends MoCItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         double dist = 1D;
         double newPosY = player.getY();
@@ -69,7 +75,7 @@ public class MoCItemPetAmulet extends MoCItem {
         if (!level.isClientSide()) {
             initAndReadNBT(stack);
             if (this.spawnClass.isEmpty()) {
-                return InteractionResultHolder.success(stack);
+                return InteractionResult.SUCCESS;
             }
 
             try {
@@ -84,7 +90,7 @@ public class MoCItemPetAmulet extends MoCItem {
                     }
                 }
 
-                Mob entity = (Mob) EntityType.byString(MoCConstants.MOD_PREFIX + formattedClass).orElseThrow().create(level);
+                Mob entity = (Mob) BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(MoCConstants.MOD_PREFIX + formattedClass)).orElseThrow().create(level, EntitySpawnReason.SPAWN_ITEM_USE);
                 if (entity instanceof IMoCTameable storedCreature) {
                     entity.setPos(newPosX, newPosY, newPosZ);
                     storedCreature.setTypeMoC(creatureType);
@@ -130,7 +136,7 @@ public class MoCItemPetAmulet extends MoCItem {
             }
         }
 
-        return InteractionResultHolder.success(stack);
+        return InteractionResult.SUCCESS;
     }
 
     private void maybeRegisterPet(IMoCTameable creature, Player player) {
@@ -178,8 +184,8 @@ public class MoCItemPetAmulet extends MoCItem {
         this.spawnClass = nbt.getStringOr("SpawnClass", "");
         this.adult = nbt.getBooleanOr("Adult", false);
         this.ownerName = nbt.getStringOr("OwnerName", "");
-        if (nbt.hasUUID("OwnerUUID")) {
-            this.ownerUniqueId = nbt.getUUID("OwnerUUID");
+        if (nbt.read("OwnerUUID", UUIDUtil.CODEC).isPresent()) {
+            this.ownerUniqueId = nbt.read("OwnerUUID", UUIDUtil.CODEC).orElse(null);
         }
     }
 
@@ -193,23 +199,19 @@ public class MoCItemPetAmulet extends MoCItem {
         nbt.putBoolean("Adult", this.adult);
         nbt.putString("OwnerName", this.ownerName);
         if (this.ownerUniqueId != null) {
-            nbt.putUUID("OwnerUUID", ownerUniqueId);
+            nbt.store("OwnerUUID", UUIDUtil.CODEC, ownerUniqueId);
         }
     }
 
     private void initAndReadNBT(ItemStack stack) {
-        if (!stack.hasTag()) {
-            stack.setTag(new CompoundTag());
-        }
-        readFromNBT(stack.getTag());
+        readFromNBT(MoCTools.stackTag(stack));
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         initAndReadNBT(stack);
-        if (!spawnClass.isEmpty()) tooltip.add(Component.literal(spawnClass).withStyle(ChatFormatting.AQUA));
-        if (!name.isEmpty()) tooltip.add(Component.literal(name).withStyle(ChatFormatting.BLUE));
-        if (!ownerName.isEmpty()) tooltip.add(Component.literal("Owned by " + ownerName).withStyle(ChatFormatting.DARK_BLUE));
+        if (!spawnClass.isEmpty()) tooltip.accept(Component.literal(spawnClass).withStyle(ChatFormatting.AQUA));
+        if (!name.isEmpty()) tooltip.accept(Component.literal(name).withStyle(ChatFormatting.BLUE));
+        if (!ownerName.isEmpty()) tooltip.accept(Component.literal("Owned by " + ownerName).withStyle(ChatFormatting.DARK_BLUE));
     }
 }

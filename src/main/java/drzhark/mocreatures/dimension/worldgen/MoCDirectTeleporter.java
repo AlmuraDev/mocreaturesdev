@@ -1,4 +1,5 @@
 package drzhark.mocreatures.dimension.worldgen;
+import net.minecraft.world.level.portal.TeleportTransition;
 
 import drzhark.mocreatures.registry.MoCPOI;
 import net.minecraft.core.BlockPos;
@@ -10,9 +11,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.function.Function;
 
-public class MoCDirectTeleporter implements net.minecraftforge.common.util.ITeleporter {
+/** Moves an entity to a fixed spot in another dimension, building the wyvern portal there first if asked. */
+public class MoCDirectTeleporter {
     private final BlockPos pos;
     private final boolean generateStructure;
 
@@ -21,14 +22,10 @@ public class MoCDirectTeleporter implements net.minecraftforge.common.util.ITele
         this.generateStructure = generateStructure;
     }
 
-    @Override
-    public Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destWorld,
-                              float yaw, Function<Boolean, Entity> repositionEntity) {
-        Entity newEntity = repositionEntity.apply(false);
-
-        // Generate the portal structure first if needed
-        if (generateStructure) {
-            BlockState block = destWorld.getBlockState(pos);
+    /** Builds the portal (if asked) and teleports the entity to stand on it. */
+    public void teleport(Entity entity, ServerLevel destWorld) {
+        if (this.generateStructure) {
+            BlockState block = destWorld.getBlockState(this.pos);
             if (!block.is(Blocks.QUARTZ_BLOCK)) {
                 MoCWorldGenPortal portalGen = new MoCWorldGenPortal(
                         Blocks.QUARTZ_PILLAR.defaultBlockState(),
@@ -36,40 +33,16 @@ public class MoCDirectTeleporter implements net.minecraftforge.common.util.ITele
                         Blocks.QUARTZ_BLOCK.defaultBlockState(),
                         Blocks.QUARTZ_BLOCK.defaultBlockState()
                 );
-                portalGen.generate(destWorld, destWorld.getRandom(), pos);
-                
-                // Register the portal as a POI
-                registerPortalPOI(destWorld, pos);
-                
-                // Ensure there's a safe landing platform
-                ensureSafeLanding(destWorld, pos);
+                portalGen.generate(destWorld, destWorld.getRandom(), this.pos);
+                registerPortalPOI(destWorld, this.pos);
+                ensureSafeLanding(destWorld, this.pos);
             }
         }
-
-        // Now teleport the entity to the prepared position
-        destWorld.getServer().tell(new net.minecraft.server.TickTask(0, () -> {
-            if (newEntity instanceof ServerPlayer player) {
-                player.connection.teleport(
-                        pos.getX() + 0.5,
-                        pos.getY() + 1,
-                        pos.getZ() + 0.5,
-                        yaw,
-                        player.getXRot()
-                );
-                player.fallDistance = 0.0F;
-                player.setDeltaMovement(Vec3.ZERO);
-                System.out.println("[MoC Portal] Teleported player to " + pos);
-            } else {
-                newEntity.teleportTo(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
-                newEntity.setYRot(yaw);
-                newEntity.setDeltaMovement(Vec3.ZERO);
-                newEntity.fallDistance = 0.0F;
-            }
-        }));
-
-        return newEntity;
+        Vec3 target = new Vec3(this.pos.getX() + 0.5, this.pos.getY() + 1, this.pos.getZ() + 0.5);
+        entity.teleport(new TeleportTransition(destWorld, target, Vec3.ZERO, entity.getYRot(), entity.getXRot(),
+                e -> e.resetFallDistance()));
     }
-    
+
     /**
      * Ensures there's a safe landing platform at the destination
      */
@@ -106,7 +79,7 @@ public class MoCDirectTeleporter implements net.minecraftforge.common.util.ITele
         poiManager.ensureLoadedAndValid(world, pos, 8);
         
         // Force the POI to be registered at this position
-        poiManager.add(pos, MoCPOI.WYVERN_PORTAL.getHolder().get());
+        poiManager.add(pos, MoCPOI.WYVERN_PORTAL.getDelegate());
         
         // Log the POI registration
         System.out.println("[MoC Portal] Registered wyvern portal POI at " + pos);

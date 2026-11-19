@@ -34,7 +34,7 @@
 //     * How long it takes to use or consume an item
 //     */
 //    @Override
-//    public int getUseDuration(ItemStack par1ItemStack) {
+//    public int getUseDuration(ItemStack par1ItemStack, LivingEntity user) {
 //        return 72000;
 //    }
 //

@@ -47,7 +47,7 @@ public class MoCItemWhip extends MoCItem {
         if (context.getClickedFace() != Direction.DOWN && blockAbove == Blocks.AIR && block != Blocks.AIR && !(block instanceof StandingSignBlock)) {
             whipFX(level, pos);
             level.playSound(player, pos, MoCSoundEvents.ENTITY_GENERIC_WHIP.get(), SoundSource.PLAYERS, 0.5F, 0.4F / ((level.getRandom().nextFloat() * 0.4F) + 0.8F));
-            stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(context.getHand()));
+            stack.hurtAndBreak(1, player, context.getHand());
 
             List<Entity> entities = level.getEntities(player, player.getBoundingBox().inflate(12D));
             for (Entity entity : entities) {

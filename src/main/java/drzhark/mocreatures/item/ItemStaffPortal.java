@@ -1,4 +1,6 @@
 package drzhark.mocreatures.item;
+import drzhark.mocreatures.MoCTools;
+import net.minecraft.world.item.ItemUseAnimation;
 
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.dimension.worldgen.MoCDirectTeleporter;
@@ -19,14 +21,12 @@ import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.server.level.TicketType;
@@ -67,8 +67,8 @@ public class ItemStaffPortal extends MoCItem {
         }
 
         // Disallow Mending or Unbreaking
-        boolean hasMending = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) > 0;
-        boolean hasUnbreaking = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) > 0;
+        boolean hasMending = EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.MENDING), stack) > 0;
+        boolean hasUnbreaking = EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.UNBREAKING), stack) > 0;
         if (hasMending || hasUnbreaking) {
             String enchantments = hasMending && hasUnbreaking ? "mending, unbreaking"
                     : hasMending ? "mending" : "unbreaking";
@@ -77,7 +77,7 @@ public class ItemStaffPortal extends MoCItem {
             return InteractionResult.SUCCESS;
         }
 
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = MoCTools.stackTag(stack);
 
         if (!level.dimension().equals(WYVERN_DIM)) {
             // Save return portal info
@@ -86,30 +86,29 @@ public class ItemStaffPortal extends MoCItem {
             this.portalPosY = (int) player.getY();
             this.portalPosZ = (int) player.getZ();
             writeToNBT(tag);
+            MoCTools.setStackTag(stack, tag);
 
             // Teleport to Wyvern Lair
-            ServerLevel wyvernWorld = serverPlayer.server.getLevel(WYVERN_DIM);
+            ServerLevel wyvernWorld = serverPlayer.level().getServer().getLevel(WYVERN_DIM);
             if (wyvernWorld != null) {
                 // Find a suitable spawn point in the Wyvern dimension
                 BlockPos targetPos = findDestinationPortal(wyvernWorld);
                 
-                wyvernWorld.getChunkSource().addRegionTicket(
-                        TicketType.PORTAL, new ChunkPos(targetPos), 1, targetPos);
-                serverPlayer.changeDimension(wyvernWorld, new MoCDirectTeleporter(targetPos, true));
-                stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(context.getHand()));
+                wyvernWorld.getChunkSource().addTicketWithRadius(TicketType.PORTAL, ChunkPos.containing(targetPos), 1);
+                new MoCDirectTeleporter(targetPos, true).teleport(serverPlayer, wyvernWorld);
+                stack.hurtAndBreak(1, player, context.getHand());
             }
         } else {
             // Return to original location
             readFromNBT(tag);
             ResourceKey<Level> returnDim = this.portalDimension != null ? this.portalDimension : Level.OVERWORLD;
-            ServerLevel returnWorld = serverPlayer.server.getLevel(returnDim);
+            ServerLevel returnWorld = serverPlayer.level().getServer().getLevel(returnDim);
 
             if (returnWorld != null) {
                 BlockPos returnPos = new BlockPos(portalPosX, portalPosY + 1, portalPosZ);
-                returnWorld.getChunkSource().addRegionTicket(
-                        TicketType.PORTAL, new ChunkPos(returnPos), 1, returnPos);
-                serverPlayer.changeDimension(returnWorld, new MoCDirectTeleporter(returnPos, false));
-                stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(context.getHand()));
+                returnWorld.getChunkSource().addTicketWithRadius(TicketType.PORTAL, ChunkPos.containing(returnPos), 1);
+                new MoCDirectTeleporter(returnPos, false).teleport(serverPlayer, returnWorld);
+                stack.hurtAndBreak(1, player, context.getHand());
             } else {
                 return InteractionResult.FAIL;
             }
@@ -134,7 +133,7 @@ public class ItemStaffPortal extends MoCItem {
         }
         
         // No existing portal, find a suitable island location quickly
-        BlockPos spawnPos = world.getSharedSpawnPos();
+        BlockPos spawnPos = world.getRespawnData().pos();
         BlockPos portalPos = findSuitableIslandLocation(world, spawnPos);
         
         return portalPos;
@@ -149,7 +148,7 @@ public class ItemStaffPortal extends MoCItem {
             holder.is(MoCPOI.WYVERN_PORTAL_KEY);
         
         // Search in a much smaller radius to avoid hanging (500 blocks instead of 10000)
-        BlockPos centerPos = world.getSharedSpawnPos();
+        BlockPos centerPos = world.getRespawnData().pos();
         
         try {
             Stream<PoiRecord> records = poiManager.getInRange(
@@ -199,8 +198,8 @@ public class ItemStaffPortal extends MoCItem {
      */
     private BlockPos findSafePortalPosition(ServerLevel world, BlockPos basePos) {
         // Scan from build height down to find a suitable location
-        int worldHeight = world.getMaxBuildHeight();
-        int minHeight = world.getMinBuildHeight() + 10;
+        int worldHeight = world.getMaxY();
+        int minHeight = world.getMinY() + 10;
         
         // Start scanning from a reasonable height
         for (int y = Math.min(worldHeight - 10, 100); y >= minHeight; y--) {
@@ -273,8 +272,8 @@ public class ItemStaffPortal extends MoCItem {
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.BLOCK;
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.BLOCK;
     }
 
     @SuppressWarnings("removal")
@@ -293,8 +292,4 @@ public class ItemStaffPortal extends MoCItem {
         nbt.putString("portalDimension", this.portalDimension.identifier().toString());
     }
 
-    @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return false;
-    }
 }

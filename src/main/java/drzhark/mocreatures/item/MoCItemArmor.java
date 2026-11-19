@@ -1,4 +1,7 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.equipment.ArmorType;
 
 import drzhark.mocreatures.MoCConstants;
@@ -28,45 +31,44 @@ public class MoCItemArmor extends Item {
         super(properties.humanoidArmor(materialIn, type));
     }
 
-    @SuppressWarnings("removal")
+    /** Boots refresh the armour set effects every two seconds while worn. */
     @Override
-    public void onArmorTick(ItemStack itemStack, Level world, Player player) {
-        if (!world.isClientSide() && this.getEquipmentSlot() == EquipmentSlot.FEET && player.tickCount % 40 == 0) {
+    public void inventoryTick(ItemStack itemStack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
+        if (slot == EquipmentSlot.FEET && owner instanceof Player player && player.tickCount % 40 == 0) {
             MoCTools.updatePlayerArmorEffects(player);
         }
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         if ((this == MoCItems.HELMET_SCORP_D.get()) || (this == MoCItems.PLATE_SCORP_D.get())
                 || (this == MoCItems.LEGS_SCORP_D.get()) || (this == MoCItems.BOOTS_SCORP_D.get())) {
-            tooltip.add(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("info.mocreatures.setbonusscorp1").withStyle(ChatFormatting.BLUE));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonusscorp1").withStyle(ChatFormatting.BLUE));
         }
 
         if ((this == MoCItems.HELMET_SCORP_F.get()) || (this == MoCItems.PLATE_SCORP_F.get())
                 || (this == MoCItems.LEGS_SCORP_F.get()) || (this == MoCItems.BOOTS_SCORP_F.get())) {
-            tooltip.add(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("info.mocreatures.setbonusscorp2").withStyle(ChatFormatting.BLUE));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonusscorp2").withStyle(ChatFormatting.BLUE));
         }
 
         if ((this == MoCItems.HELMET_SCORP_N.get()) || (this == MoCItems.PLATE_SCORP_N.get())
                 || (this == MoCItems.LEGS_SCORP_N.get()) || (this == MoCItems.BOOTS_SCORP_N.get())) {
-            tooltip.add(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("info.mocreatures.setbonusscorp3").withStyle(ChatFormatting.BLUE));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonusscorp3").withStyle(ChatFormatting.BLUE));
         }
 
         if ((this == MoCItems.HELMET_SCORP_C.get()) || (this == MoCItems.PLATE_SCORP_C.get())
                 || (this == MoCItems.LEGS_SCORP_C.get()) || (this == MoCItems.BOOTS_SCORP_C.get())) {
-            tooltip.add(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("info.mocreatures.setbonusscorp4").withStyle(ChatFormatting.BLUE));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonusscorp4").withStyle(ChatFormatting.BLUE));
         }
 
         if ((this == MoCItems.HELMET_SCORP_U.get()) || (this == MoCItems.PLATE_SCORP_U.get())
                 || (this == MoCItems.LEGS_SCORP_U.get()) || (this == MoCItems.BOOTS_SCORP_U.get())) {
-            tooltip.add(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("info.mocreatures.setbonusscorp5").withStyle(ChatFormatting.BLUE));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonus").withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("info.mocreatures.setbonusscorp5").withStyle(ChatFormatting.BLUE));
         }
     }
 }

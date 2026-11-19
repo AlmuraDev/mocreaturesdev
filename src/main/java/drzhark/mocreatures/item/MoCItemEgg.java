@@ -1,4 +1,5 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.InteractionResult;
 import drzhark.mocreatures.init.MoCDataComponents;
 import net.minecraft.world.entity.EntitySpawnReason;
 
@@ -8,7 +9,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +28,7 @@ public class MoCItemEgg extends MoCItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!player.isCreative()) {
             stack.shrink(1);
@@ -52,7 +52,7 @@ public class MoCItemEgg extends MoCItem {
             }
         }
 
-        return InteractionResultHolder.success(stack);
+        return InteractionResult.SUCCESS;
     }
 
     public void fillItemCategory(CreativeModeTab.Output output) {
@@ -89,8 +89,8 @@ public class MoCItemEgg extends MoCItem {
     }
 
     @Override
-    public String getDescriptionId(ItemStack stack) {
+    public Component getName(ItemStack stack) {
         int eggType = stack.getOrDefault(MoCDataComponents.EGG_TYPE.get(), 0);
-        return super.getDescriptionId(stack) + "." + eggType;
+        return Component.translatable(this.getDescriptionId() + "." + eggType);
     }
 }

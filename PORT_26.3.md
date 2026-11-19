@@ -35,15 +35,15 @@ furniture mod's `4.0` branch.
 
 ## Remaining
 
-After the registration batch: about 350 unique errors. `entity/**`, `client/**`, `init/**` (bar two item and block
-constructors), the proxies, the network messages and the mod class compile.
+After the items batch: about 210 unique errors. `entity/**`, `client/**`, `init/**` (bar the glass block
+constructor), `item/**`, the proxies, the network messages and the mod class compile.
 
 | Area | Errors | Main work |
 |---|---|---|
 | Entities (`entity/**`) | 0 | done, see below; needs in-game testing |
 | Client rendering (`client/**`) | 0 | done, see below; needs in-game testing |
-| Registration (`init/**`) | 2 | done, see below; the two left are `MoCBlockGlass` and `MoCItemRecord` constructors |
-| Items (`item/**`) | ~130 | `use`/`hurtEnemy` signatures; NBT to data components; `RecordItem` to a jukebox song; food builder; amulets |
+| Registration (`init/**`) | 1 | done, see below; the one left is the `MoCBlockGlass` constructor |
+| Items (`item/**`) | 0 | done, see below; needs in-game testing |
 | World / worldgen / dimension | ~90 | `MobSpawnSettings.SpawnerData` (weight now beside it); biome spawn lists; dimension and portal code |
 | Commands (`network/command/**`) | ~30 | permission checks; teleporting between dimensions; pet listing NBT |
 | Other (events, util, compat, blocks) | ~160 | removed events (`TickEvent`, `BlockEvent.BreakEvent` moves, `MissingMappingsEvent`), `IPlantable`, `GlassBlock`, data fixers |
@@ -128,6 +128,26 @@ constructors), the proxies, the network messages and the mod class compile.
 - **Removed:** `MoCTagProvider` and `MoCDataGeneration` (datagen had never been run; the tags are hand-written JSON),
   `MoCRecipes` (fuel) and `MoCVillagerTrades` (trades), both now data. `MoCPOI` registers through the mod's deferred
   registries only.
+
+### Items batch
+
+- **Signatures:** `use` returns `InteractionResult`; `hurtEnemy` returns nothing; tooltips take a consumer; durability
+  loss names the hand or slot; use animations are `ItemUseAnimation`.
+- **Amulets and fish nets** keep the stored creature in the `minecraft:custom_data` component
+  (`MoCTools.stackTag/setStackTag`), with the same keys as before; owner UUIDs are stored with the UUID codec (the same
+  int-array form 1.20 used).
+- **Food:** nutrition and saturation in the food component; eating time and potion effects in the consumable component.
+  Wolves eat the Mo' Creatures meats through the `minecraft:meat` item tag.
+- **Music disc:** a jukebox song, `data/mocreatures/jukebox_song/shuffling.json` (sound `mocreatures:shuffling`,
+  comparator 15, 120 seconds); check the length against the sound file in game.
+- **Scorpion stings** (`MoCItemWeapon`): attack damage, enchantability and repair are components.
+- **Armour** set bonuses run from `inventoryTick` when the boots are worn.
+- **Eggs** name themselves per creature through `getName`.
+- **Horse guide:** the book is a written book component; the creative tab copy has a custom name and lore.
+- **Portal staff:** teleports through 26.3 teleport transitions; `MoCDirectTeleporter` builds the portal and moves the
+  player itself. The staff no longer blocks enchanting at the table (that is tag-driven now); it still refuses to work
+  with mending or unbreaking.
+- **Removed:** `MoCItemCrabClaw`, which was never registered.
 
 Resources are untouched so far:
 - data pack folder renames (`loot_tables` to `loot_table`, `recipes` to `recipe`, `tags/items` to `tags/item`, and so on), plus the recipe and loot JSON formats

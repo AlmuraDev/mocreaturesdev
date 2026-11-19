@@ -1,4 +1,6 @@
 package drzhark.mocreatures.item;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.ToolMaterial;
 
 import drzhark.mocreatures.MoCreatures;
@@ -33,7 +35,7 @@ public class MoCItemAxe extends Item {
     }
 
     @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (MoCreatures.proxy.weaponEffects) {
             int timer = 15; // seconds
             switch (this.specialWeaponType) {
@@ -65,12 +67,11 @@ public class MoCItemAxe extends Item {
             }
         }
 
-        return super.hurtEnemy(stack, target, attacker);
+        super.hurtEnemy(stack, target, attacker);
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         if (MoCreatures.proxy.weaponEffects) {
             String key = switch (this.specialWeaponType) {
                 case 1 -> "info.mocreatures.stingaxe1";
@@ -81,7 +82,7 @@ public class MoCItemAxe extends Item {
                 default -> null;
             };
             if (key != null) {
-                tooltip.add(Component.translatable(key).withStyle(ChatFormatting.BLUE));
+                tooltip.accept(Component.translatable(key).withStyle(ChatFormatting.BLUE));
             }
         }
     }

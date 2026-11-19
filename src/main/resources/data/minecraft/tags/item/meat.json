@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "mocreatures:turkeycooked",
+    "mocreatures:crabraw",
+    "mocreatures:crabcooked",
+    "mocreatures:duckcooked",
+    "mocreatures:duckraw",
+    "mocreatures:ostrichraw",
+    "mocreatures:ostrichcooked",
+    "mocreatures:ratcooked",
+    "mocreatures:ratraw",
+    "mocreatures:turkeyraw",
+    "mocreatures:turtlecooked",
+    "mocreatures:turtleraw",
+    "mocreatures:venisoncooked",
+    "mocreatures:venisonraw"
+  ]
+}

@@ -2,6 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.LivingEntity;
@@ -910,7 +913,7 @@ public class MoCTools {
             return;
         }
 
-        CompoundTag tag = stack.getOrCreateTag(); // replaces .getTag() and null check
+        CompoundTag tag = stackTag(stack);
         UUID ownerId = entity.getOwnerId();
         Player ownerPlayer = null;
 
@@ -929,7 +932,7 @@ public class MoCTools {
             tag.putBoolean("Adult", entity.getIsAdult());
             tag.putString("OwnerName", ownerPlayer != null ? ownerPlayer.getName().getString() : "");
             if (ownerId != null) {
-                tag.putUUID("OwnerUUID", ownerId);
+                tag.store("OwnerUUID", UUIDUtil.CODEC, ownerId);
             }
             tag.putInt("PetId", entity.getOwnerPetId());
 
@@ -944,6 +947,8 @@ public class MoCTools {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        setStackTag(stack, tag);
 
         if (ownerPlayer != null && ownerPlayer.getInventory().getFreeSlot() != -1) {
             ownerPlayer.getInventory().add(stack);
@@ -966,13 +971,13 @@ public class MoCTools {
             default -> new ItemStack(MoCItems.FISH_NET_FULL.get());
         };
 
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = stackTag(stack);
 
         try {
             final EntityType<?> entry = ((Entity) entity).getType();
             final String petClass = BuiltInRegistries.ENTITY_TYPE.getKey(entry).getPath().replace(MoCConstants.MOD_PREFIX, "");
             tag.putString("SpawnClass", petClass);
-            tag.putUUID("OwnerUUID", player.getUUID());
+            tag.store("OwnerUUID", UUIDUtil.CODEC, player.getUUID());
             tag.putString("OwnerName", player.getName().getString());
             tag.putFloat("Health", ((LivingEntity) entity).getHealth());
             tag.putInt("Edad", entity.getMoCAge());
@@ -984,6 +989,8 @@ public class MoCTools {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        setStackTag(stack, tag);
 
         if (!player.getInventory().add(stack)) {
             Level level = ((LivingEntity) entity).level();
@@ -1256,6 +1263,16 @@ public class MoCTools {
                     .orElse(0);
         }
         return 0;
+    }
+
+    /** A copy of the extra data an item stack carries (amulets keep their creature here); empty if it has none. */
+    public static CompoundTag stackTag(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+    }
+
+    /** Stores extra data on an item stack, replacing what it had. */
+    public static void setStackTag(ItemStack stack, CompoundTag tag) {
+        CustomData.set(DataComponents.CUSTOM_DATA, stack, tag);
     }
 
     /** Whether anything was saved under {@code key}. */

@@ -46,7 +46,7 @@ public class CommandMoCreatures {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         // Root command
         var mocCommand = Commands.literal("moc")
-            .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER));
+            .requires(MoCCommandPermissions.require("moc"));
             
         // Boolean settings
         for (String setting : List.of("attackhorses", "attackwolves", 

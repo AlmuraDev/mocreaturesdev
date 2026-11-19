@@ -243,7 +243,7 @@ public class MoCProxy {
                     cleanBiomeName = "minecraft:" + cleanBiomeName; // Default to minecraft namespace
                 }
                 
-                TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, Identifier.parse(cleanBiomeName));
+                TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, Identifier.parse(drzhark.mocreatures.config.biome.MoCBiomeTagNames.modernize(cleanBiomeName)));
                 biomeTypes.add(biomeTag);
                 
                 if (MoCreatures.isDebug()) {
@@ -255,7 +255,7 @@ public class MoCProxy {
                 try {
                     String fallback = biomeName.replaceAll("[^a-z0-9_/:-]", "").toLowerCase();
                     if (fallback.contains(":") && Identifier.tryParse(fallback) != null) {
-                        TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, Identifier.parse(fallback));
+                        TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, Identifier.parse(drzhark.mocreatures.config.biome.MoCBiomeTagNames.modernize(fallback)));
                         biomeTypes.add(biomeTag);
                         MoCreatures.LOGGER.info("Using fallback biome tag: {} -> {}", biomeName, fallback);
                     }
@@ -350,7 +350,7 @@ public class MoCProxy {
         // Helper method to create TagKey from string
         java.util.function.Function<String, TagKey<Biome>> createBiomeTag = (tagName) -> {
             try {
-                return TagKey.create(net.minecraft.core.registries.Registries.BIOME, Identifier.parse(tagName));
+                return TagKey.create(net.minecraft.core.registries.Registries.BIOME, Identifier.parse(drzhark.mocreatures.config.biome.MoCBiomeTagNames.modernize(tagName)));
             } catch (Exception e) {
                 MoCreatures.LOGGER.warn("Failed to create biome tag: {}", tagName);
                 return null;
@@ -359,69 +359,69 @@ public class MoCProxy {
         
         // Bears
         addEntityData("BlackBear", drzhark.mocreatures.init.MoCEntities.BLACK_BEAR.get(), MobCategory.CREATURE, 8, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_coniferous")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_tree/coniferous")}, new TagKey[0]);
         addEntityData("GrizzlyBear", drzhark.mocreatures.init.MoCEntities.GRIZZLY_BEAR.get(), MobCategory.CREATURE, 7, 1, 2, overworldDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_forest")}, new TagKey[0]);
         addEntityData("PolarBear", drzhark.mocreatures.init.MoCEntities.POLAR_BEAR.get(), MobCategory.CREATURE, 8, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_snowy")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_snowy")}, new TagKey[0]);
         addEntityData("PandaBear", drzhark.mocreatures.init.MoCEntities.PANDA_BEAR.get(), MobCategory.CREATURE, 7, 1, 3, overworldDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_jungle")}, new TagKey[0]);
         
         // Birds
         addEntityData("Bird", drzhark.mocreatures.init.MoCEntities.BIRD.get(), MobCategory.CREATURE, 16, 2, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("forge:is_plains"), 
-                createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("forge:is_lush"), createBiomeTag.apply("forge:is_steep")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("c:is_plains"), 
+                createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("c:is_lush"), createBiomeTag.apply("c:is_mountain")}, new TagKey[0]);
         addEntityData("Duck", drzhark.mocreatures.init.MoCEntities.DUCK.get(), MobCategory.CREATURE, 12, 2, 4, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("forge:is_lush")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("c:is_lush")}, new TagKey[0]);
         addEntityData("Turkey", drzhark.mocreatures.init.MoCEntities.TURKEY.get(), MobCategory.CREATURE, 12, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_plains")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_plains")}, new TagKey[0]);
         
         // Common land animals
         addEntityData("Boar", drzhark.mocreatures.init.MoCEntities.BOAR.get(), MobCategory.CREATURE, 12, 2, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_plains")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_plains")}, new TagKey[0]);
         addEntityData("Bunny", drzhark.mocreatures.init.MoCEntities.BUNNY.get(), MobCategory.CREATURE, 12, 2, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("forge:is_snowy"),
-                createBiomeTag.apply("forge:is_coniferous"), createBiomeTag.apply("forge:is_steep"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("c:is_snowy"),
+                createBiomeTag.apply("c:is_tree/coniferous"), createBiomeTag.apply("c:is_mountain"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
         addEntityData("Deer", drzhark.mocreatures.init.MoCEntities.DEER.get(), MobCategory.CREATURE, 10, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("forge:is_coniferous")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("c:is_tree/coniferous")}, new TagKey[0]);
         addEntityData("Goat", drzhark.mocreatures.init.MoCEntities.GOAT.get(), MobCategory.CREATURE, 12, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("forge:is_steep")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("c:is_mountain")}, new TagKey[0]);
         addEntityData("Kitty", drzhark.mocreatures.init.MoCEntities.KITTY.get(), MobCategory.CREATURE, 8, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("minecraft:is_forest")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("minecraft:is_forest")}, new TagKey[0]);
         
         // Semi-aquatic creatures  
         addEntityData("Crocodile", drzhark.mocreatures.init.MoCEntities.CROCODILE.get(), MobCategory.CREATURE, 10, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp")}, new TagKey[0]);
         addEntityData("Turtle", drzhark.mocreatures.init.MoCEntities.TURTLE.get(), MobCategory.CREATURE, 12, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("minecraft:is_river")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("minecraft:is_river")}, new TagKey[0]);
         
         // Desert/savanna creatures
         addEntityData("Elephant", drzhark.mocreatures.init.MoCEntities.ELEPHANT.get(), MobCategory.CREATURE, 6, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("minecraft:is_savanna"), createBiomeTag.apply("forge:is_snowy")}, 
+                new TagKey[]{createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("minecraft:is_savanna"), createBiomeTag.apply("c:is_snowy")}, 
                 new TagKey[]{createBiomeTag.apply("minecraft:is_badlands")});
         addEntityData("FilchLizard", drzhark.mocreatures.init.MoCEntities.FILCH_LIZARD.get(), MobCategory.CREATURE, 6, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_savanna"), createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_savanna"), createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
         addEntityData("Ostrich", drzhark.mocreatures.init.MoCEntities.OSTRICH.get(), MobCategory.CREATURE, 7, 1, 1, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_savanna"), createBiomeTag.apply("forge:is_sandy")}, 
+                new TagKey[]{createBiomeTag.apply("minecraft:is_savanna"), createBiomeTag.apply("c:is_sandy")}, 
                 new TagKey[]{createBiomeTag.apply("minecraft:is_badlands")});
         
         // Foxes
         addEntityData("Fox", drzhark.mocreatures.init.MoCEntities.FOX.get(), MobCategory.CREATURE, 10, 1, 1, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_snowy"), createBiomeTag.apply("forge:is_coniferous")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_snowy"), createBiomeTag.apply("c:is_tree/coniferous")}, new TagKey[0]);
         
         // Reptiles
         addEntityData("KomodoDragon", drzhark.mocreatures.init.MoCEntities.KOMODO_DRAGON.get(), MobCategory.CREATURE, 12, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
         addEntityData("Snake", drzhark.mocreatures.init.MoCEntities.SNAKE.get(), MobCategory.CREATURE, 14, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("forge:is_plains"), 
-                createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("forge:is_lush"), 
-                createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("forge:is_steep"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("c:is_plains"), 
+                createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("c:is_lush"), 
+                createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("c:is_mountain"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
         
         // Big cats
         addEntityData("Leopard", drzhark.mocreatures.init.MoCEntities.LEOPARD.get(), MobCategory.CREATURE, 7, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("forge:is_snowy"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("c:is_snowy"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
         addEntityData("Lion", drzhark.mocreatures.init.MoCEntities.LION.get(), MobCategory.CREATURE, 8, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_savanna"), createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("minecraft:is_badlands")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_savanna"), createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("minecraft:is_badlands")}, new TagKey[0]);
         addEntityData("Panther", drzhark.mocreatures.init.MoCEntities.PANTHER.get(), MobCategory.CREATURE, 6, 1, 2, overworldDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_jungle")}, new TagKey[0]);
         addEntityData("Tiger", drzhark.mocreatures.init.MoCEntities.TIGER.get(), MobCategory.CREATURE, 7, 1, 2, overworldDimensions,
@@ -441,15 +441,15 @@ public class MoCProxy {
         
         // Small mammals
         addEntityData("Mouse", drzhark.mocreatures.init.MoCEntities.MOUSE.get(), MobCategory.CREATURE, 10, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("forge:is_steep")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("c:is_mountain")}, new TagKey[0]);
         addEntityData("Mole", drzhark.mocreatures.init.MoCEntities.MOLE.get(), MobCategory.CREATURE, 10, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_lush"), createBiomeTag.apply("forge:is_plains")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_lush"), createBiomeTag.apply("c:is_plains")}, new TagKey[0]);
         addEntityData("Raccoon", drzhark.mocreatures.init.MoCEntities.RACCOON.get(), MobCategory.CREATURE, 12, 1, 2, overworldDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_forest")}, new TagKey[0]);
         
         // Horses
         addEntityData("WildHorse", drzhark.mocreatures.init.MoCEntities.WILDHORSE.get(), MobCategory.CREATURE, 12, 1, 4, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
         
         // Magical creatures
         addEntityData("Ent", drzhark.mocreatures.init.MoCEntities.ENT.get(), MobCategory.CREATURE, 5, 1, 2, overworldDimensions,
@@ -459,69 +459,69 @@ public class MoCProxy {
         
         // Monsters
         addEntityData("GreenOgre", drzhark.mocreatures.init.MoCEntities.GREEN_OGRE.get(), MobCategory.MONSTER, 8, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("forge:is_lush"), 
-                createBiomeTag.apply("forge:is_dead"), createBiomeTag.apply("forge:is_spooky")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("c:is_lush"), 
+                createBiomeTag.apply("c:is_dead"), createBiomeTag.apply("c:is_spooky")}, new TagKey[0]);
         addEntityData("CaveOgre", drzhark.mocreatures.init.MoCEntities.CAVE_OGRE.get(), MobCategory.MONSTER, 5, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_mountain")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_mountain")}, new TagKey[0]);
         addEntityData("FireOgre", drzhark.mocreatures.init.MoCEntities.FIRE_OGRE.get(), MobCategory.MONSTER, 6, 1, 2, netherDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_nether")}, new TagKey[0]);
         
         // More monsters
         addEntityData("CaveScorpion", drzhark.mocreatures.init.MoCEntities.CAVE_SCORPION.get(), MobCategory.MONSTER, 4, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_mountain"), createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("forge:is_snowy"), 
-                createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("forge:is_dry"), createBiomeTag.apply("forge:is_hot"), 
-                createBiomeTag.apply("forge:is_dead"), createBiomeTag.apply("forge:is_spooky")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_mountain"), createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("c:is_snowy"), 
+                createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("c:is_dry"), createBiomeTag.apply("c:is_hot"), 
+                createBiomeTag.apply("c:is_dead"), createBiomeTag.apply("c:is_spooky")}, new TagKey[0]);
         addEntityData("DirtScorpion", drzhark.mocreatures.init.MoCEntities.DIRT_SCORPION.get(), MobCategory.MONSTER, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("forge:is_dry"), createBiomeTag.apply("forge:is_hot")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("c:is_dry"), createBiomeTag.apply("c:is_hot")}, new TagKey[0]);
         addEntityData("FireScorpion", drzhark.mocreatures.init.MoCEntities.FIRE_SCORPION.get(), MobCategory.MONSTER, 6, 1, 3, netherDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_nether")}, new TagKey[0]);
         addEntityData("FrostScorpion", drzhark.mocreatures.init.MoCEntities.FROST_SCORPION.get(), MobCategory.MONSTER, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_snowy")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_snowy")}, new TagKey[0]);
         addEntityData("UndeadScorpion", drzhark.mocreatures.init.MoCEntities.UNDEAD_SCORPION.get(), MobCategory.MONSTER, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_dead"), createBiomeTag.apply("forge:is_spooky")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_dead"), createBiomeTag.apply("c:is_spooky")}, new TagKey[0]);
         
         addEntityData("BigGolem", drzhark.mocreatures.init.MoCEntities.BIG_GOLEM.get(), MobCategory.MONSTER, 3, 1, 1, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("forge:is_hill"), createBiomeTag.apply("minecraft:is_badlands"), 
-                createBiomeTag.apply("forge:is_mountain"), createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("forge:is_dead")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("c:is_hill"), createBiomeTag.apply("minecraft:is_badlands"), 
+                createBiomeTag.apply("c:is_mountain"), createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("c:is_dead")}, new TagKey[0]);
         addEntityData("MiniGolem", drzhark.mocreatures.init.MoCEntities.MINI_GOLEM.get(), MobCategory.MONSTER, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("forge:is_mountain"), 
-                createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("forge:is_dead")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("c:is_mountain"), 
+                createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("c:is_dead")}, new TagKey[0]);
         
         addEntityData("DarkManticore", drzhark.mocreatures.init.MoCEntities.DARK_MANTICORE.get(), MobCategory.MONSTER, 5, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("forge:is_mountain"), createBiomeTag.apply("forge:is_plains"), 
-                createBiomeTag.apply("forge:is_snowy"), createBiomeTag.apply("forge:is_dead"), createBiomeTag.apply("forge:is_spooky")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("c:is_mountain"), createBiomeTag.apply("c:is_plains"), 
+                createBiomeTag.apply("c:is_snowy"), createBiomeTag.apply("c:is_dead"), createBiomeTag.apply("c:is_spooky")}, new TagKey[0]);
         addEntityData("FireManticore", drzhark.mocreatures.init.MoCEntities.FIRE_MANTICORE.get(), MobCategory.MONSTER, 8, 1, 3, netherDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_nether")}, new TagKey[0]);
         addEntityData("FrostManticore", drzhark.mocreatures.init.MoCEntities.FROST_MANTICORE.get(), MobCategory.MONSTER, 8, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_snowy")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_snowy")}, new TagKey[0]);
         addEntityData("PlainManticore", drzhark.mocreatures.init.MoCEntities.PLAIN_MANTICORE.get(), MobCategory.MONSTER, 8, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("forge:is_mountain"), createBiomeTag.apply("forge:is_plains")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("c:is_mountain"), createBiomeTag.apply("c:is_plains")}, new TagKey[0]);
         addEntityData("ToxicManticore", drzhark.mocreatures.init.MoCEntities.TOXIC_MANTICORE.get(), MobCategory.MONSTER, 8, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_dead"), createBiomeTag.apply("forge:is_spooky")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_dead"), createBiomeTag.apply("c:is_spooky")}, new TagKey[0]);
         
         addEntityData("Werewolf", drzhark.mocreatures.init.MoCEntities.WEREWOLF.get(), MobCategory.MONSTER, 8, 1, 4, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_coniferous"), createBiomeTag.apply("minecraft:is_forest")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_tree/coniferous"), createBiomeTag.apply("minecraft:is_forest")}, new TagKey[0]);
         addEntityData("WWolf", drzhark.mocreatures.init.MoCEntities.WWOLF.get(), MobCategory.MONSTER, 8, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_snowy"), createBiomeTag.apply("forge:is_dead")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_snowy"), createBiomeTag.apply("c:is_dead")}, new TagKey[0]);
         
         addEntityData("Rat", drzhark.mocreatures.init.MoCEntities.RAT.get(), MobCategory.MONSTER, 7, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("forge:is_steep")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("minecraft:is_badlands"), createBiomeTag.apply("c:is_mountain")}, new TagKey[0]);
         addEntityData("HellRat", drzhark.mocreatures.init.MoCEntities.HELL_RAT.get(), MobCategory.MONSTER, 6, 1, 4, netherDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_nether")}, new TagKey[0]);
         
         addEntityData("SilverSkeleton", drzhark.mocreatures.init.MoCEntities.SILVER_SKELETON.get(), MobCategory.MONSTER, 6, 1, 4, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_sandy"), createBiomeTag.apply("forge:is_snowy"), createBiomeTag.apply("minecraft:is_badlands"), 
-                createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("forge:is_dead"), createBiomeTag.apply("forge:is_spooky")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_sandy"), createBiomeTag.apply("c:is_snowy"), createBiomeTag.apply("minecraft:is_badlands"), 
+                createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("c:is_dead"), createBiomeTag.apply("c:is_spooky")}, new TagKey[0]);
         
         addEntityData("Wraith", drzhark.mocreatures.init.MoCEntities.WRAITH.get(), MobCategory.MONSTER, 6, 1, 4, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_coniferous"), createBiomeTag.apply("forge:is_dead"), 
-                createBiomeTag.apply("forge:is_dense"), createBiomeTag.apply("forge:is_spooky")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_tree/coniferous"), createBiomeTag.apply("c:is_dead"), 
+                createBiomeTag.apply("c:is_dense_vegetation"), createBiomeTag.apply("c:is_spooky")}, new TagKey[0]);
         addEntityData("FlameWraith", drzhark.mocreatures.init.MoCEntities.FLAME_WRAITH.get(), MobCategory.MONSTER, 5, 1, 2, netherDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_nether")}, new TagKey[0]);
         
         addEntityData("HorseMob", drzhark.mocreatures.init.MoCEntities.HORSE_MOB.get(), MobCategory.MONSTER, 8, 1, 3, netherDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_nether"), createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("minecraft:is_savanna"), 
-                createBiomeTag.apply("forge:is_dead"), createBiomeTag.apply("forge:is_spooky")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_nether"), createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("minecraft:is_savanna"), 
+                createBiomeTag.apply("c:is_dead"), createBiomeTag.apply("c:is_spooky")}, new TagKey[0]);
         
         // Aquatic creatures
         addEntityData("Dolphin", drzhark.mocreatures.init.MoCEntities.DOLPHIN.get(), MobCategory.WATER_CREATURE, 6, 2, 4, overworldDimensions,
@@ -534,15 +534,15 @@ public class MoCProxy {
                 new TagKey[]{createBiomeTag.apply("minecraft:is_ocean")}, new TagKey[0]);
         
         addEntityData("Bass", drzhark.mocreatures.init.MoCEntities.BASS.get(), MobCategory.WATER_CREATURE, 10, 1, 4, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_plains")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_plains")}, new TagKey[0]);
         addEntityData("StingRay", drzhark.mocreatures.init.MoCEntities.STING_RAY.get(), MobCategory.WATER_CREATURE, 10, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("minecraft:is_river")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("minecraft:is_river")}, new TagKey[0]);
         
         // Small fish
         addEntityData("Anchovy", drzhark.mocreatures.init.MoCEntities.ANCHOVY.get(), MobCategory.WATER_AMBIENT, 12, 1, 6, overworldDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_beach"), createBiomeTag.apply("minecraft:is_ocean"), createBiomeTag.apply("minecraft:is_river")}, new TagKey[0]);
         addEntityData("AngelFish", drzhark.mocreatures.init.MoCEntities.ANGELFISH.get(), MobCategory.WATER_AMBIENT, 12, 1, 6, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("minecraft:is_jungle")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("minecraft:is_jungle")}, new TagKey[0]);
         addEntityData("Angler", drzhark.mocreatures.init.MoCEntities.ANGLER.get(), MobCategory.WATER_AMBIENT, 12, 1, 6, overworldDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_beach"), createBiomeTag.apply("minecraft:is_ocean")}, new TagKey[0]);
         addEntityData("ClownFish", drzhark.mocreatures.init.MoCEntities.CLOWNFISH.get(), MobCategory.WATER_AMBIENT, 12, 1, 6, overworldDimensions,
@@ -557,47 +557,47 @@ public class MoCProxy {
         addEntityData("Cod", drzhark.mocreatures.init.MoCEntities.COD.get(), MobCategory.WATER_CREATURE, 10, 1, 4, overworldDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_beach"), createBiomeTag.apply("minecraft:is_ocean")}, new TagKey[0]);
         addEntityData("Salmon", drzhark.mocreatures.init.MoCEntities.SALMON.get(), MobCategory.WATER_CREATURE, 10, 1, 4, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_beach"), createBiomeTag.apply("forge:is_water"), createBiomeTag.apply("minecraft:is_ocean"), 
-                createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_plains")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_beach"), createBiomeTag.apply("c:is_aquatic"), createBiomeTag.apply("minecraft:is_ocean"), 
+                createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_plains")}, new TagKey[0]);
         addEntityData("Piranha", drzhark.mocreatures.init.MoCEntities.PIRANHA.get(), MobCategory.WATER_CREATURE, 4, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("forge:is_lush")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("c:is_lush")}, new TagKey[0]);
         addEntityData("Fishy", drzhark.mocreatures.init.MoCEntities.FISHY.get(), MobCategory.WATER_AMBIENT, 12, 1, 6, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_beach"), createBiomeTag.apply("forge:is_water"), createBiomeTag.apply("minecraft:is_ocean"), 
-                createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("forge:is_plains")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_beach"), createBiomeTag.apply("c:is_aquatic"), createBiomeTag.apply("minecraft:is_ocean"), 
+                createBiomeTag.apply("minecraft:is_river"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("c:is_plains")}, new TagKey[0]);
         
         // Ambient creatures
         addEntityData("Ant", drzhark.mocreatures.init.MoCEntities.ANT.get(), MobCategory.AMBIENT, 12, 1, 4, overworldDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("minecraft:is_badlands"), 
-                createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("forge:is_hot"), 
-                createBiomeTag.apply("forge:is_dry"), createBiomeTag.apply("forge:is_lush"), createBiomeTag.apply("forge:is_sparse"), createBiomeTag.apply("forge:is_steep")}, new TagKey[0]);
+                createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("c:is_hot"), 
+                createBiomeTag.apply("c:is_dry"), createBiomeTag.apply("c:is_lush"), createBiomeTag.apply("c:is_sparse_vegetation"), createBiomeTag.apply("c:is_mountain")}, new TagKey[0]);
         addEntityData("Bee", drzhark.mocreatures.init.MoCEntities.BEE.get(), MobCategory.AMBIENT, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("forge:is_plains"), 
-                createBiomeTag.apply("forge:is_lush"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("c:is_plains"), 
+                createBiomeTag.apply("c:is_lush"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
         addEntityData("Butterfly", drzhark.mocreatures.init.MoCEntities.BUTTERFLY.get(), MobCategory.AMBIENT, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("forge:is_plains"), 
-                createBiomeTag.apply("forge:is_lush"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("c:is_plains"), 
+                createBiomeTag.apply("c:is_lush"), createBiomeTag.apply("minecraft:is_savanna")}, new TagKey[0]);
         addEntityData("Cricket", drzhark.mocreatures.init.MoCEntities.CRICKET.get(), MobCategory.AMBIENT, 10, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("forge:is_swamp")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("c:is_swamp")}, new TagKey[0]);
         addEntityData("Dragonfly", drzhark.mocreatures.init.MoCEntities.DRAGONFLY.get(), MobCategory.AMBIENT, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), 
-                createBiomeTag.apply("forge:is_lush"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), 
+                createBiomeTag.apply("c:is_lush"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
         addEntityData("Firefly", drzhark.mocreatures.init.MoCEntities.FIREFLY.get(), MobCategory.AMBIENT, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), 
-                createBiomeTag.apply("forge:is_lush"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), 
+                createBiomeTag.apply("c:is_lush"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
         addEntityData("Fly", drzhark.mocreatures.init.MoCEntities.FLY.get(), MobCategory.AMBIENT, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("forge:is_plains"), createBiomeTag.apply("minecraft:is_forest")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("c:is_plains"), createBiomeTag.apply("minecraft:is_forest")}, new TagKey[0]);
         addEntityData("Grasshopper", drzhark.mocreatures.init.MoCEntities.GRASSHOPPER.get(), MobCategory.AMBIENT, 10, 1, 2, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("forge:is_plains"), 
+                new TagKey[]{createBiomeTag.apply("minecraft:is_forest"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("c:is_plains"), 
                 createBiomeTag.apply("minecraft:is_savanna"), createBiomeTag.apply("mocreatures:is_wyvern_lair")}, new TagKey[0]);
         addEntityData("Maggot", drzhark.mocreatures.init.MoCEntities.MAGGOT.get(), MobCategory.AMBIENT, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("forge:is_dead"), createBiomeTag.apply("forge:is_spooky")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("c:is_dead"), createBiomeTag.apply("c:is_spooky")}, new TagKey[0]);
         addEntityData("Roach", drzhark.mocreatures.init.MoCEntities.ROACH.get(), MobCategory.AMBIENT, 6, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_dead"), createBiomeTag.apply("forge:is_spooky"), createBiomeTag.apply("forge:is_hot")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_dead"), createBiomeTag.apply("c:is_spooky"), createBiomeTag.apply("c:is_hot")}, new TagKey[0]);
         
         addEntityData("Crab", drzhark.mocreatures.init.MoCEntities.CRAB.get(), MobCategory.AMBIENT, 6, 1, 2, overworldDimensions,
                 new TagKey[]{createBiomeTag.apply("minecraft:is_beach")}, new TagKey[0]);
         addEntityData("Snail", drzhark.mocreatures.init.MoCEntities.SNAIL.get(), MobCategory.AMBIENT, 8, 1, 3, overworldDimensions,
-                new TagKey[]{createBiomeTag.apply("forge:is_swamp"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("forge:is_lush")}, new TagKey[0]);
+                new TagKey[]{createBiomeTag.apply("c:is_swamp"), createBiomeTag.apply("minecraft:is_jungle"), createBiomeTag.apply("c:is_lush")}, new TagKey[0]);
     }
 
     /**

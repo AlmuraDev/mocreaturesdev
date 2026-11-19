@@ -25,9 +25,7 @@ import net.neoforged.neoforge.server.command.EnumArgument;
 public class CommandMoCSpawn {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("mocspawn").requires((source) -> {
-            return source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
-        }).then(Commands.argument("entityType", EnumArgument.enumArgument(Type.class)).executes((context) -> {
+        dispatcher.register(Commands.literal("mocspawn").requires(MoCCommandPermissions.require("mocspawn")).then(Commands.argument("entityType", EnumArgument.enumArgument(Type.class)).executes((context) -> {
             return execute(context.getSource(), context.getArgument("entityType", Type.class), 0);
         }).then(Commands.argument("type", IntegerArgumentType.integer(1)).executes((context) -> {
             return execute(context.getSource(), context.getArgument("entityType", Type.class), IntegerArgumentType.getInteger(context, "type"));

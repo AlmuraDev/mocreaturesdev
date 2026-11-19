@@ -26,7 +26,7 @@ public class CommandMoCPets {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("mocpets")
-            .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+            .requires(MoCCommandPermissions.require("mocpets"))
             .executes(context -> execute(context.getSource()))
             .then(Commands.argument("page", IntegerArgumentType.integer(1))
                 .executes(context -> {

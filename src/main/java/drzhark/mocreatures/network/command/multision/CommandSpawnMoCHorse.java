@@ -1,5 +1,6 @@
 package drzhark.mocreatures.network.command.multision;
-import net.minecraft.server.permissions.Permissions;
+
+import drzhark.mocreatures.network.command.MoCCommandPermissions;import net.minecraft.server.permissions.Permissions;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -19,7 +20,7 @@ import java.util.Optional;
 public class CommandSpawnMoCHorse {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("mocsummon")
-                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+                .requires(MoCCommandPermissions.require("mocsummon"))
                 .then(Commands.literal("horse")
                         .then(Commands.argument("type", StringArgumentType.word())
                                 .suggests((ctx, builder) -> {

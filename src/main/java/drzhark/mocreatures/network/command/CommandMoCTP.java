@@ -32,7 +32,7 @@ public class CommandMoCTP {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("moctp")
-            .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+            .requires(MoCCommandPermissions.require("moctp"))
             .then(Commands.argument("petId", IntegerArgumentType.integer(0))
                 .executes(context -> {
                     int petId = IntegerArgumentType.getInteger(context, "petId");

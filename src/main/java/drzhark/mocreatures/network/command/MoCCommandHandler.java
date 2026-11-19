@@ -33,6 +33,7 @@ public class MoCCommandHandler {
             CommandMoCPets.register(dispatcher);
             CommandMoCSpawn.register(dispatcher);
             CommandMoCTP.register(dispatcher);
+            CommandCMS.register(dispatcher);
 
             // Commands brought over from 1.16.5 and new to 1.20.1 (Mainly for debugging)
             CommandSpawnMoCHorse.register(dispatcher);

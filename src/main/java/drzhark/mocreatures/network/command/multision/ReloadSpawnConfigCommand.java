@@ -1,5 +1,6 @@
 package drzhark.mocreatures.network.command.multision;
-import net.minecraft.server.permissions.Permissions;
+
+import drzhark.mocreatures.network.command.MoCCommandPermissions;import net.minecraft.server.permissions.Permissions;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -12,7 +13,7 @@ public class ReloadSpawnConfigCommand {
     
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("mocreloadspawns")
-            .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) // Requires OP level 2
+            .requires(MoCCommandPermissions.require("mocreloadspawns")) // Requires OP level 2
             .executes(ReloadSpawnConfigCommand::execute)
         );
     }

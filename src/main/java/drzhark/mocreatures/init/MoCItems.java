@@ -1,4 +1,7 @@
 package drzhark.mocreatures.init;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider;
+import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.ToolMaterial;
 
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.item.*;
@@ -25,6 +28,11 @@ public class MoCItems {
     /** Item properties carrying the item's registry id, which 26.3 needs before the item is constructed. */
     public static Properties props(Identifier id) {
         return new Properties().setId(ResourceKey.create(Registries.ITEM, id));
+    }
+
+    /** Burn time for a fuel item, read from data/mocreatures/context_int_provider/cooking/time_<name>.json. */
+    public static ResourceKey<ContextIntProvider> fuel(String name) {
+        return ResourceKey.create(Registries.CONTEXT_INT_PROVIDER, Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "cooking/time_" + name));
     }
 
     // Misc
@@ -64,7 +72,7 @@ public class MoCItems {
 
     // Materials & Drops
     public static final DeferredHolder<Item, Item> HEARTDARKNESS = ITEMS.register("heartdarkness", id -> new MoCItem(MoCItems.props(id)));
-    public static final DeferredHolder<Item, Item> HEARTFIRE = ITEMS.register("heartfire", id -> new MoCItem(MoCItems.props(id)));
+    public static final DeferredHolder<Item, Item> HEARTFIRE = ITEMS.register("heartfire", id -> new MoCItem(MoCItems.props(id).cookingFuel(fuel("heartfire"))));
     public static final DeferredHolder<Item, Item> HEARTUNDEAD = ITEMS.register("heartundead", id -> new MoCItem(MoCItems.props(id)));
     public static final DeferredHolder<Item, Item> UNICORNHORN = ITEMS.register("unicornhorn", id -> new MoCItem(MoCItems.props(id)));
     public static final DeferredHolder<Item, Item> HORSEARMORCRYSTAL = ITEMS.register("horsearmorcrystal", id -> new MoCItem(MoCItems.props(id)));
@@ -88,7 +96,7 @@ public class MoCItems {
     public static final DeferredHolder<Item, Item> ANCIENTSILVERSCRAP = ITEMS.register("ancientsilverscrap", id -> new MoCItem(MoCItems.props(id)));
     public static final DeferredHolder<Item, Item> ANCIENTSILVERINGOT = ITEMS.register("ancientsilveringot", id -> new MoCItem(MoCItems.props(id)));
     public static final DeferredHolder<Item, Item> ANCIENTSILVERNUGGET = ITEMS.register("ancientsilvernugget", id -> new MoCItem(MoCItems.props(id)));
-    public static final DeferredHolder<Item, Item> FIRESTONECHUNK = ITEMS.register("firestonechunk", id -> new MoCItem(MoCItems.props(id)));
+    public static final DeferredHolder<Item, Item> FIRESTONECHUNK = ITEMS.register("firestonechunk", id -> new MoCItem(MoCItems.props(id).cookingFuel(fuel("firestonechunk"))));
 
     // Amulets
     public static final DeferredHolder<Item, Item> AMULET_BONE = ITEMS.register("amuletbone", id -> new MoCItemHorseAmulet(MoCItems.props(id)));
@@ -125,12 +133,12 @@ public class MoCItems {
     public static final DeferredHolder<Item, Item> VENISON_RAW = ITEMS.register("venisonraw", id -> new MoCItemFood.Builder(MoCItems.props(id), 3, 0.4F, true).build());
 
     // Weapons
-    public static final DeferredHolder<Item, Item> NUNCHAKU = ITEMS.register("nunchaku", id -> new MoCItemSword(MoCItems.props(id), Tiers.IRON));
-    public static final DeferredHolder<Item, Item> SAI = ITEMS.register("sai", id -> new MoCItemSword(MoCItems.props(id), Tiers.IRON));
-    public static final DeferredHolder<Item, Item> BO = ITEMS.register("bo", id -> new MoCItemSword(MoCItems.props(id), Tiers.IRON));
-    public static final DeferredHolder<Item, Item> KATANA = ITEMS.register("katana", id -> new MoCItemSword(MoCItems.props(id), Tiers.IRON));
-    public static final DeferredHolder<Item, Item> SHARKSWORD = ITEMS.register("sharksword", id -> new MoCItemSword(MoCItems.props(id), MoCItemTier.SHARK));
-    public static final DeferredHolder<Item, Item> SHARKAXE = ITEMS.register("sharkaxe", id -> new MoCItemAxe(MoCItems.props(id), MoCItemTier.SHARK, 9.5F, 1.0F));
+    public static final DeferredHolder<Item, Item> NUNCHAKU = ITEMS.register("nunchaku", id -> new MoCItemSword(MoCItems.props(id), ToolMaterial.IRON));
+    public static final DeferredHolder<Item, Item> SAI = ITEMS.register("sai", id -> new MoCItemSword(MoCItems.props(id), ToolMaterial.IRON));
+    public static final DeferredHolder<Item, Item> BO = ITEMS.register("bo", id -> new MoCItemSword(MoCItems.props(id), ToolMaterial.IRON));
+    public static final DeferredHolder<Item, Item> KATANA = ITEMS.register("katana", id -> new MoCItemSword(MoCItems.props(id), ToolMaterial.IRON));
+    public static final DeferredHolder<Item, Item> SHARKSWORD = ITEMS.register("sharksword", id -> new MoCItemSword(MoCItems.props(id).cookingFuel(fuel("sharksword")), MoCItemTier.SHARK));
+    public static final DeferredHolder<Item, Item> SHARKAXE = ITEMS.register("sharkaxe", id -> new MoCItemAxe(MoCItems.props(id).cookingFuel(fuel("sharkaxe")), MoCItemTier.SHARK, 9.5F, 1.0F));
     public static final DeferredHolder<Item, Item> SILVERSWORD = ITEMS.register("silversword", id -> new MoCItemSword(MoCItems.props(id), MoCItemTier.SILVER));
     public static final DeferredHolder<Item, Item> SILVERAXE = ITEMS.register("silveraxe", id -> new MoCItemAxe(MoCItems.props(id), MoCItemTier.SILVER, 10.0F, 1.1F));
     public static final DeferredHolder<Item, Item> SCORPSWORDCAVE = ITEMS.register("scorpswordcave", id -> new MoCItemSword(MoCItems.props(id), MoCItemTier.SCORPC, 4));
@@ -150,42 +158,42 @@ public class MoCItems {
     public static final DeferredHolder<Item, Item> SCORPSTINGUNDEAD = ITEMS.register("scorpstingundead", id -> new MoCItemWeapon(MoCItems.props(id), MoCItemTier.STING, 5));
 
     // Armor
-    public static final DeferredHolder<Item, Item> PLATE_CROC = ITEMS.register("reptileplate", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.CROC, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> HELMET_CROC = ITEMS.register("reptilehelmet", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.CROC, ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> LEGS_CROC = ITEMS.register("reptilelegs", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.CROC, ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> BOOTS_CROC = ITEMS.register("reptileboots", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.CROC, ArmorItem.Type.BOOTS));
-    public static final DeferredHolder<Item, Item> HELMET_SCORP_D = ITEMS.register("scorphelmetdirt", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPD, ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> PLATE_SCORP_D = ITEMS.register("scorpplatedirt", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPD, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> LEGS_SCORP_D = ITEMS.register("scorplegsdirt", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPD, ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> BOOTS_SCORP_D = ITEMS.register("scorpbootsdirt", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPD, ArmorItem.Type.BOOTS));
-    public static final DeferredHolder<Item, Item> HELMET_SCORP_F = ITEMS.register("scorphelmetfrost", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPF, ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> PLATE_SCORP_F = ITEMS.register("scorpplatefrost", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPF, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> LEGS_SCORP_F = ITEMS.register("scorplegsfrost", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPF, ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> BOOTS_SCORP_F = ITEMS.register("scorpbootsfrost", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPF, ArmorItem.Type.BOOTS));
-    public static final DeferredHolder<Item, Item> HELMET_SCORP_N = ITEMS.register("scorphelmetnether", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPN, ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> PLATE_SCORP_N = ITEMS.register("scorpplatenether", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPN, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> LEGS_SCORP_N = ITEMS.register("scorplegsnether", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPN, ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> BOOTS_SCORP_N = ITEMS.register("scorpbootsnether", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPN, ArmorItem.Type.BOOTS));
-    public static final DeferredHolder<Item, Item> HELMET_SCORP_C = ITEMS.register("scorphelmetcave", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPC, ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> PLATE_SCORP_C = ITEMS.register("scorpplatecave", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPC, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> LEGS_SCORP_C = ITEMS.register("scorplegscave", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPC, ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> BOOTS_SCORP_C = ITEMS.register("scorpbootscave", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPC, ArmorItem.Type.BOOTS));
-    public static final DeferredHolder<Item, Item> HELMET_SCORP_U = ITEMS.register("scorphelmetundead", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPU, ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> PLATE_SCORP_U = ITEMS.register("scorpplateundead", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPU, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> LEGS_SCORP_U = ITEMS.register("scorplegsundead", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPU, ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> BOOTS_SCORP_U = ITEMS.register("scorpbootsundead", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPU, ArmorItem.Type.BOOTS));
-    public static final DeferredHolder<Item, Item> HELMET_FUR = ITEMS.register("furhelmet", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.FUR, ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> CHEST_FUR = ITEMS.register("furchest", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.FUR, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> LEGS_FUR = ITEMS.register("furlegs", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.FUR, ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> BOOTS_FUR = ITEMS.register("furboots", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.FUR, ArmorItem.Type.BOOTS));
-    public static final DeferredHolder<Item, Item> HELMET_HIDE = ITEMS.register("hidehelmet", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.HIDE, ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> CHEST_HIDE = ITEMS.register("hidechest", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.HIDE, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> LEGS_HIDE = ITEMS.register("hidelegs", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.HIDE, ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> BOOTS_HIDE = ITEMS.register("hideboots", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.HIDE, ArmorItem.Type.BOOTS));
-    public static final DeferredHolder<Item, Item> HELMET_SILVER = ITEMS.register("ancient_silver_helmet", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SILVER, ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> CHEST_SILVER = ITEMS.register("ancient_silver_chestplate", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SILVER, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> LEGS_SILVER = ITEMS.register("ancient_silver_leggings", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SILVER, ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> BOOTS_SILVER = ITEMS.register("ancient_silver_boots", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SILVER, ArmorItem.Type.BOOTS));
+    public static final DeferredHolder<Item, Item> PLATE_CROC = ITEMS.register("reptileplate", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.CROC, ArmorType.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> HELMET_CROC = ITEMS.register("reptilehelmet", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.CROC, ArmorType.HELMET));
+    public static final DeferredHolder<Item, Item> LEGS_CROC = ITEMS.register("reptilelegs", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.CROC, ArmorType.LEGGINGS));
+    public static final DeferredHolder<Item, Item> BOOTS_CROC = ITEMS.register("reptileboots", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.CROC, ArmorType.BOOTS));
+    public static final DeferredHolder<Item, Item> HELMET_SCORP_D = ITEMS.register("scorphelmetdirt", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPD, ArmorType.HELMET));
+    public static final DeferredHolder<Item, Item> PLATE_SCORP_D = ITEMS.register("scorpplatedirt", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPD, ArmorType.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> LEGS_SCORP_D = ITEMS.register("scorplegsdirt", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPD, ArmorType.LEGGINGS));
+    public static final DeferredHolder<Item, Item> BOOTS_SCORP_D = ITEMS.register("scorpbootsdirt", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPD, ArmorType.BOOTS));
+    public static final DeferredHolder<Item, Item> HELMET_SCORP_F = ITEMS.register("scorphelmetfrost", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPF, ArmorType.HELMET));
+    public static final DeferredHolder<Item, Item> PLATE_SCORP_F = ITEMS.register("scorpplatefrost", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPF, ArmorType.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> LEGS_SCORP_F = ITEMS.register("scorplegsfrost", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPF, ArmorType.LEGGINGS));
+    public static final DeferredHolder<Item, Item> BOOTS_SCORP_F = ITEMS.register("scorpbootsfrost", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPF, ArmorType.BOOTS));
+    public static final DeferredHolder<Item, Item> HELMET_SCORP_N = ITEMS.register("scorphelmetnether", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPN, ArmorType.HELMET));
+    public static final DeferredHolder<Item, Item> PLATE_SCORP_N = ITEMS.register("scorpplatenether", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPN, ArmorType.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> LEGS_SCORP_N = ITEMS.register("scorplegsnether", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPN, ArmorType.LEGGINGS));
+    public static final DeferredHolder<Item, Item> BOOTS_SCORP_N = ITEMS.register("scorpbootsnether", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPN, ArmorType.BOOTS));
+    public static final DeferredHolder<Item, Item> HELMET_SCORP_C = ITEMS.register("scorphelmetcave", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPC, ArmorType.HELMET));
+    public static final DeferredHolder<Item, Item> PLATE_SCORP_C = ITEMS.register("scorpplatecave", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPC, ArmorType.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> LEGS_SCORP_C = ITEMS.register("scorplegscave", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPC, ArmorType.LEGGINGS));
+    public static final DeferredHolder<Item, Item> BOOTS_SCORP_C = ITEMS.register("scorpbootscave", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPC, ArmorType.BOOTS));
+    public static final DeferredHolder<Item, Item> HELMET_SCORP_U = ITEMS.register("scorphelmetundead", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPU, ArmorType.HELMET));
+    public static final DeferredHolder<Item, Item> PLATE_SCORP_U = ITEMS.register("scorpplateundead", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPU, ArmorType.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> LEGS_SCORP_U = ITEMS.register("scorplegsundead", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPU, ArmorType.LEGGINGS));
+    public static final DeferredHolder<Item, Item> BOOTS_SCORP_U = ITEMS.register("scorpbootsundead", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SCORPU, ArmorType.BOOTS));
+    public static final DeferredHolder<Item, Item> HELMET_FUR = ITEMS.register("furhelmet", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.FUR, ArmorType.HELMET));
+    public static final DeferredHolder<Item, Item> CHEST_FUR = ITEMS.register("furchest", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.FUR, ArmorType.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> LEGS_FUR = ITEMS.register("furlegs", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.FUR, ArmorType.LEGGINGS));
+    public static final DeferredHolder<Item, Item> BOOTS_FUR = ITEMS.register("furboots", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.FUR, ArmorType.BOOTS));
+    public static final DeferredHolder<Item, Item> HELMET_HIDE = ITEMS.register("hidehelmet", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.HIDE, ArmorType.HELMET));
+    public static final DeferredHolder<Item, Item> CHEST_HIDE = ITEMS.register("hidechest", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.HIDE, ArmorType.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> LEGS_HIDE = ITEMS.register("hidelegs", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.HIDE, ArmorType.LEGGINGS));
+    public static final DeferredHolder<Item, Item> BOOTS_HIDE = ITEMS.register("hideboots", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.HIDE, ArmorType.BOOTS));
+    public static final DeferredHolder<Item, Item> HELMET_SILVER = ITEMS.register("ancient_silver_helmet", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SILVER, ArmorType.HELMET));
+    public static final DeferredHolder<Item, Item> CHEST_SILVER = ITEMS.register("ancient_silver_chestplate", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SILVER, ArmorType.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> LEGS_SILVER = ITEMS.register("ancient_silver_leggings", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SILVER, ArmorType.LEGGINGS));
+    public static final DeferredHolder<Item, Item> BOOTS_SILVER = ITEMS.register("ancient_silver_boots", id -> new MoCItemArmor(MoCItems.props(id), MoCArmorMaterial.SILVER, ArmorType.BOOTS));
     
 }
     

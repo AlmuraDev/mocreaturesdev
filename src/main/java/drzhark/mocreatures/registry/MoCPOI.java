@@ -32,8 +32,4 @@ public class MoCPOI {
                     1   // Can detect this POI from 1 block away
             ));
 
-    // Initialize the registry
-    public static void init() {
-        POI_TYPES.register(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus());
-    }
 } 

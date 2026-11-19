@@ -89,13 +89,13 @@ public class MoCBlocks {
             new MoCBlockLeaf(props(id).strength(0.2F).mapColor(MapColor.COLOR_LIGHT_BLUE).noOcclusion()));
 
     public static final DeferredHolder<Block, Block> wyvwoodSapling = register("wyvwood_sapling", id ->
-            new MoCBlockSapling(props(id).noCollission().randomTicks().strength(0.0F).mapColor(MapColor.PLANT)));
+            new MoCBlockSapling(props(id).noCollision().randomTicks().strength(0.0F).mapColor(MapColor.PLANT)));
 
     public static final DeferredHolder<Block, Block> wyvwoodLog = register("wyvwood_log", id ->
             new MoCBlockLog(props(id).strength(2.0F).mapColor(MapColor.COLOR_CYAN)));
 
     public static final DeferredHolder<Block, Block> tallWyvgrass = register("tall_wyvgrass", id ->
-            new MoCBlockTallGrass(props(id).noCollission().strength(0.0F).mapColor(MapColor.COLOR_LIGHT_BLUE)));
+            new MoCBlockTallGrass(props(id).noCollision().strength(0.0F).mapColor(MapColor.COLOR_LIGHT_BLUE)));
 
     public static final DeferredHolder<Block, Block> wyvwoodPlanks = register("wyvwood_planks", id ->
             new MoCBlockPlanks(props(id).strength(2.0F, 5.0F).mapColor(MapColor.COLOR_BLUE)));
@@ -111,7 +111,13 @@ public class MoCBlocks {
 
     private static DeferredHolder<Block, Block> register(String name, Function<Identifier, Block> factory) {
         DeferredHolder<Block, Block> block = BLOCKS.register(name, factory);
-        ITEMS.register(name, id -> new BlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)).useBlockDescriptionPrefix()));
+        ITEMS.register(name, id -> {
+            Item.Properties properties = new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)).useBlockDescriptionPrefix();
+            if (name.equals("wyvwood_sapling")) {
+                properties = properties.cookingFuel(MoCItems.fuel(name));
+            }
+            return new BlockItem(block.get(), properties);
+        });
         return block;
     }
 

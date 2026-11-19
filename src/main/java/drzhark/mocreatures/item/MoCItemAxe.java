@@ -1,4 +1,5 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.item.ToolMaterial;
 
 import drzhark.mocreatures.MoCreatures;
 import net.minecraft.ChatFormatting;
@@ -7,10 +8,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
@@ -19,17 +18,17 @@ import net.neoforged.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MoCItemAxe extends AxeItem {
+public class MoCItemAxe extends Item {
 
     private final int specialWeaponType;
 
-    public MoCItemAxe(Item.Properties properties, Tier material, float damage, float speed) {
-        super(material, damage - 1.0F, speed - 4.0F, properties);
+    public MoCItemAxe(Item.Properties properties, ToolMaterial material, float damage, float speed) {
+        super(properties.axe(material, damage - 1.0F, speed - 4.0F));
         this.specialWeaponType = 0;
     }
 
-    public MoCItemAxe(Item.Properties properties, Tier material, float damage, float speed, int damageType) {
-        super(material, damage - 1.0F, speed - 4.0F, properties);
+    public MoCItemAxe(Item.Properties properties, ToolMaterial material, float damage, float speed, int damageType) {
+        super(properties.axe(material, damage - 1.0F, speed - 4.0F));
         this.specialWeaponType = damageType;
     }
 

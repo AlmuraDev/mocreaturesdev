@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 5
+  },
+  "gives": {
+    "id": "mocreatures:ancientsilveringot"
+  },
+  "max_uses": 10,
+  "xp": 5,
+  "reputation_discount": 0.05
+}

@@ -36,7 +36,7 @@ public class MoCRegistration {
      * Register client-specific setup
      */
     public static void clientSetup() {
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             // Client-specific setup that needs to happen after registration
             MoCreatures.LOGGER.info("Mo'Creatures client setup complete");
         }

@@ -1,4 +1,5 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.item.ToolMaterial;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -27,13 +28,13 @@ import java.util.List;
 
 public class MoCItemWeapon extends MoCItem {
 
-    private final Tier material;
+    private final ToolMaterial material;
     private final float attackDamage;
     private int specialWeaponType = 0;
     private final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
-    public MoCItemWeapon(Item.Properties properties, Tier material) {
-        super(properties.stacksTo(1).durability(material.getUses()));
+    public MoCItemWeapon(Item.Properties properties, ToolMaterial material) {
+        super(properties.stacksTo(1).durability(material.durability()));
         this.material = material;
         this.attackDamage = 3F + material.getAttackDamageBonus();
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
@@ -41,7 +42,7 @@ public class MoCItemWeapon extends MoCItem {
         this.attributeModifiers = builder.build();
     }
 
-    public MoCItemWeapon(Item.Properties properties, Tier material, int damageType) {
+    public MoCItemWeapon(Item.Properties properties, ToolMaterial material, int damageType) {
         this(properties, material);
         this.specialWeaponType = damageType;
     }

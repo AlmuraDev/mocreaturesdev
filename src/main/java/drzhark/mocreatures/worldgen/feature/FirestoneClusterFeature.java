@@ -2,8 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.worldgen.feature;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import com.mojang.serialization.MapCodec;
 
-import com.mojang.serialization.Codec;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.init.MoCBlocks;
 import net.minecraft.core.BlockPos;
@@ -15,24 +16,25 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-public class FirestoneClusterFeature extends Feature<NoneFeatureConfiguration> {
+public class FirestoneClusterFeature implements Feature {
+
+    public static final MapCodec<FirestoneClusterFeature> CODEC = MapCodec.unit(FirestoneClusterFeature::new);
     
     private static final Direction[] HORIZONTAL_DIRECTIONS = new Direction[] {
             Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
     };
     
-    public FirestoneClusterFeature(Codec<NoneFeatureConfiguration> codec) {
-        super(codec);
+    public FirestoneClusterFeature() {
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-        WorldGenLevel level = context.level();
-        BlockPos origin = context.origin();
-        RandomSource random = context.random();
+    public MapCodec<FirestoneClusterFeature> codec() {
+        return CODEC;
+    }
+
+    @Override
+    public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
         boolean success = false;
         
         if (MoCreatures.proxy.debug) {

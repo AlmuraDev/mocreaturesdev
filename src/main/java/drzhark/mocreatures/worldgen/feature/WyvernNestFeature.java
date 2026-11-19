@@ -2,8 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.worldgen.feature;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import com.mojang.serialization.MapCodec;
 
-import com.mojang.serialization.Codec;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.init.MoCBlocks;
 import net.minecraft.core.BlockPos;
@@ -21,23 +22,24 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-public class WyvernNestFeature extends Feature<NoneFeatureConfiguration> {
+public class WyvernNestFeature implements Feature {
+
+    public static final MapCodec<WyvernNestFeature> CODEC = MapCodec.unit(WyvernNestFeature::new);
 
     private static final ResourceKey<Level> WYVERN_DIMENSION = 
             ResourceKey.create(Registries.DIMENSION, Identifier.fromNamespaceAndPath("mocreatures", "wyvernlairworld"));
 
-    public WyvernNestFeature(Codec<NoneFeatureConfiguration> codec) {
-        super(codec);
+    public WyvernNestFeature() {
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-        WorldGenLevel level = context.level();
-        BlockPos origin = context.origin();
-        RandomSource random = context.random();
+    public MapCodec<WyvernNestFeature> codec() {
+        return CODEC;
+    }
+
+    @Override
+    public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
         
         // Always log attempt
         if (MoCreatures.proxy.debug) {
@@ -155,7 +157,7 @@ public class WyvernNestFeature extends Feature<NoneFeatureConfiguration> {
         level.setBlock(chestPos, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.NORTH), 2);
         BlockEntity tile = level.getBlockEntity(chestPos);
         if (tile instanceof ChestBlockEntity) {
-            ((ChestBlockEntity) tile).setLootTable(Identifier.parse("mocreatures:chests/wyvern_nest"), random.nextLong());
+            ((ChestBlockEntity) tile).setLootTable(ResourceKey.create(Registries.LOOT_TABLE, Identifier.parse("mocreatures:chests/wyvern_nest")), random.nextLong());
         }
 
         if (MoCreatures.proxy.debug) {
@@ -168,7 +170,7 @@ public class WyvernNestFeature extends Feature<NoneFeatureConfiguration> {
      * Public method to force spawn a nest at a specific location (for testing/commands)
      */
     public static boolean forceSpawnNest(Level level, BlockPos pos) {
-        WyvernNestFeature feature = new WyvernNestFeature(NoneFeatureConfiguration.CODEC);
+        WyvernNestFeature feature = new WyvernNestFeature();
         return feature.buildNest((WorldGenLevel) level, pos, level.getRandom());
     }
 } 

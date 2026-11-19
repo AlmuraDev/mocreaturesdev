@@ -28,9 +28,9 @@ public class MoCCreativeTabs {
                            ItemStack.EMPTY)
                     .displayItems((params, output) -> {
                         // Add block items first
-                        for (DeferredHolder<Block, Block> blockEntry : MoCBlocks.BLOCKS.getEntries()) {
+                        for (DeferredHolder<Block, ? extends Block> blockEntry : MoCBlocks.BLOCKS.getEntries()) {
                             try {
-                                if (blockEntry.isPresent()) {
+                                if (blockEntry.isBound()) {
                                     // Find the corresponding item for this block
                                     String blockPath = blockEntry.getId().getPath();
                                     MoCBlocks.ITEMS.getEntries().stream()
@@ -44,9 +44,9 @@ public class MoCCreativeTabs {
                         }
                         
                         // Add standalone items (not block items)
-                        for (DeferredHolder<Item, Item> itemEntry : MoCItems.ITEMS.getEntries()) {
+                        for (DeferredHolder<Item, ? extends Item> itemEntry : MoCItems.ITEMS.getEntries()) {
                             try {
-                                if (itemEntry.isPresent()) {
+                                if (itemEntry.isBound()) {
                                     Item item = itemEntry.get();
 
                                     // Special handling for the horse guide item to add the display stack

@@ -35,16 +35,16 @@ furniture mod's `4.0` branch.
 
 ## Remaining
 
-After the client rendering batch: about 630 unique errors. `entity/**`, `client/**`, the proxies, the network
-messages and the mod class compile.
+After the registration batch: about 350 unique errors. `entity/**`, `client/**`, `init/**` (bar two item and block
+constructors), the proxies, the network messages and the mod class compile.
 
 | Area | Errors | Main work |
 |---|---|---|
 | Entities (`entity/**`) | 0 | done, see below; needs in-game testing |
 | Client rendering (`client/**`) | 0 | done, see below; needs in-game testing |
-| Registration (`init/**`) | ~195 | `EntityType.Builder.build(ResourceKey)`; spawn placements; creative tabs; villager trades; worldgen registration |
-| Items (`item/**`) | ~160 | tools and armour to `ToolMaterial` / `Item.Properties.sword()/humanoidArmor()` with an equipment asset; `use` returning `InteractionResult`; NBT to data components; `RecordItem` to a jukebox song |
-| World / worldgen / dimension | ~125 | 26.3 features are codec records (`Feature.place(level, generator, random, origin)`); `MobSpawnSettings.SpawnerData` changed |
+| Registration (`init/**`) | 2 | done, see below; the two left are `MoCBlockGlass` and `MoCItemRecord` constructors |
+| Items (`item/**`) | ~130 | `use`/`hurtEnemy` signatures; NBT to data components; `RecordItem` to a jukebox song; food builder; amulets |
+| World / worldgen / dimension | ~90 | `MobSpawnSettings.SpawnerData` (weight now beside it); biome spawn lists; dimension and portal code |
 | Commands (`network/command/**`) | ~30 | permission checks; teleporting between dimensions; pet listing NBT |
 | Other (events, util, compat, blocks) | ~160 | removed events (`TickEvent`, `BlockEvent.BreakEvent` moves, `MissingMappingsEvent`), `IPlantable`, `GlassBlock`, data fixers |
 
@@ -105,6 +105,29 @@ messages and the mod class compile.
   dedicated server never loads it. The horse guide opens its book through the proxy.
 - **Check in game:** pet name and health bar placement, see-through wings and ghosts, the firefly glow (now emissive
   translucent), the filch lizard's held item and the kitty mood icons.
+
+### Registration batch
+
+- **Entity types** are built with a `ResourceKey`. **Spawn placements** moved from the attribute event to
+  `RegisterSpawnPlacementsEvent` (all 88, same placement types, heightmaps and rules, `REPLACE`).
+- **Tool and armour materials** are 26.3 records (`MoCItemTier`, `MoCArmorMaterial`). Repair items come from item tags
+  (`data/mocreatures/tags/item/*_tool_materials.json`, `*_armor_materials.json`). Silver and sting tools had no repair
+  item and still don't (empty tags). Swords, axes and armour use `Item.Properties.sword/axe/humanoidArmor`; axes no
+  longer strip logs, since 26.3 has no `AxeItem` class to inherit that from. Each armour material names an equipment
+  asset `mocreatures:<croc|fur|hide|scorpd|scorpf|scorpn|scorpc|scorpu|silver>`, which still needs its
+  `assets/mocreatures/equipment/*.json` (resources).
+- **Fuel** is the `cookingFuel` item property, with burn times in
+  `data/mocreatures/context_int_provider/cooking/time_<item>.json`: same values as before (wyvwood sapling 100,
+  firestone chunk 2400, heart of fire 3200, shark sword and axe 200).
+- **Villager trades** are data: `data/mocreatures/villager_trade/<profession>/<level>/*.json`, added to the vanilla
+  `minecraft:<profession>/level_<n>` villager trade tags. 26.3 trades take a fixed count, so the old random counts are
+  now their middle values (duck raw 16, ostrich raw 11, cooked duck 7, cooked ostrich 6, silver scrap 5, mystic pear 2,
+  fish net price 3, cooked crab 7, fur 10, hide 7, silver ingot price 5, ingots for an emerald 3).
+- **Worldgen features** (firestone cluster, wyvern nest, wyvern island) are codec records registered as feature types
+  (`Registries.FEATURE_TYPE`); their worldgen JSON still needs moving to the 26.3 layout (resources).
+- **Removed:** `MoCTagProvider` and `MoCDataGeneration` (datagen had never been run; the tags are hand-written JSON),
+  `MoCRecipes` (fuel) and `MoCVillagerTrades` (trades), both now data. `MoCPOI` registers through the mod's deferred
+  registries only.
 
 Resources are untouched so far:
 - data pack folder renames (`loot_tables` to `loot_table`, `recipes` to `recipe`, `tags/items` to `tags/item`, and so on), plus the recipe and loot JSON formats

@@ -2,8 +2,11 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.worldgen.structure;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.WorldGenLevel;
+import com.mojang.serialization.MapCodec;
 
-import com.mojang.serialization.Codec;
 import drzhark.mocreatures.MoCreatures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -16,15 +19,15 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import java.util.Optional;
 
-public class WyvernIslandFeature extends Feature<NoneFeatureConfiguration> {
+public class WyvernIslandFeature implements Feature {
+
+    public static final MapCodec<WyvernIslandFeature> CODEC = MapCodec.unit(WyvernIslandFeature::new);
     
     private static final String[] STRUCTURE_NAMES = {
         "wyvernisland1", "wyvernisland2", "wyvernisland3", "wyvernisland4"
@@ -33,20 +36,21 @@ public class WyvernIslandFeature extends Feature<NoneFeatureConfiguration> {
     // Enable debug mode
     private static final boolean DEBUG = false;
     
-    public WyvernIslandFeature(Codec<NoneFeatureConfiguration> codec) {
-        super(codec);
+    public WyvernIslandFeature() {
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
+    public MapCodec<WyvernIslandFeature> codec() {
+        return CODEC;
+    }
+
+    @Override
+    public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
         // Only generate in wyvern dimension
-        ResourceKey<?> dimensionType = context.level().getLevel().dimension();
+        ResourceKey<?> dimensionType = level.getLevel().dimension();
         if (!dimensionType.identifier().toString().contains("wyvernlairworld")) {
             return false;
         }
-        
-        RandomSource random = context.random();
-        BlockPos origin = context.origin();
         
         // Get chunk coordinates like in 1.16
         int ci = origin.getX() >> 4 << 4;
@@ -63,7 +67,7 @@ public class WyvernIslandFeature extends Feature<NoneFeatureConfiguration> {
             
             // Height calculation similar to 1.16
             // First get surface height
-            int j = context.level().getHeight(Heightmap.Types.OCEAN_FLOOR_WG, i, k);
+            int j = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, i, k);
             // Then add random height (16-80 blocks above surface)
             j += random.nextInt(84) + 16;
             
@@ -81,7 +85,7 @@ public class WyvernIslandFeature extends Feature<NoneFeatureConfiguration> {
             }
             
             // Get template
-            StructureTemplateManager templateManager = context.level().getLevel().getStructureManager();
+            StructureTemplateManager templateManager = level.getLevel().getServer().getStructureTemplateManager();
             Identifier location = Identifier.fromNamespaceAndPath("mocreatures", structureName);
             
             // Try loading the template
@@ -118,7 +122,7 @@ public class WyvernIslandFeature extends Feature<NoneFeatureConfiguration> {
                     .setRandom(random)
                     .addProcessor(BlockIgnoreProcessor.STRUCTURE_AND_AIR)
                     .setIgnoreEntities(false)
-                    .setKeepLiquids(false)  // Don't require liquids to match
+                    .setLiquidSettings(LiquidSettings.IGNORE_WATERLOGGING)  // Don't require liquids to match
                     .setKnownShape(false);  // More lenient placement
             
             if (DEBUG) {
@@ -130,7 +134,7 @@ public class WyvernIslandFeature extends Feature<NoneFeatureConfiguration> {
             try {
                 // Place the structure
                 boolean result = template.placeInWorld(
-                        (ServerLevelAccessor) context.level(),
+                        (ServerLevelAccessor) level,
                         spawnPos,
                         spawnPos,
                         placementSettings,

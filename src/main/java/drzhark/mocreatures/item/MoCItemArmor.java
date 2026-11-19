@@ -1,4 +1,5 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.item.equipment.ArmorType;
 
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.MoCTools;
@@ -8,7 +9,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,10 +22,10 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class MoCItemArmor extends ArmorItem {
+public class MoCItemArmor extends Item {
 
-    public MoCItemArmor(Item.Properties properties, ArmorMaterial materialIn, Type type) {
-        super(materialIn, type, properties);
+    public MoCItemArmor(Item.Properties properties, ArmorMaterial materialIn, ArmorType type) {
+        super(properties.humanoidArmor(materialIn, type));
     }
 
     @SuppressWarnings("removal")

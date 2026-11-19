@@ -123,7 +123,6 @@ public class MoCreatures {
             LOGGER.info("Mo'Creatures debug mode: {}", debug);
             
             // Initialize the POI registry
-            MoCPOI.init();
         });
     }
 

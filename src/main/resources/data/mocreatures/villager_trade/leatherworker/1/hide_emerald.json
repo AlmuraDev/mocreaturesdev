@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "mocreatures:hide",
+    "count": 7
+  },
+  "gives": {
+    "id": "minecraft:emerald"
+  },
+  "max_uses": 10,
+  "xp": 2,
+  "reputation_discount": 0.05
+}

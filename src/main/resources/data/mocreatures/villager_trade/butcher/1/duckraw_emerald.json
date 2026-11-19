@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "mocreatures:duckraw",
+    "count": 16
+  },
+  "gives": {
+    "id": "minecraft:emerald"
+  },
+  "max_uses": 10,
+  "xp": 2,
+  "reputation_discount": 0.05
+}

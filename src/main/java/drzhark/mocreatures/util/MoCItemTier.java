@@ -1,43 +1,35 @@
+/*
+ * GNU GENERAL PUBLIC LICENSE Version 3
+ */
 package drzhark.mocreatures.util;
 
-import drzhark.mocreatures.init.MoCItems;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.util.LazyLoadedValue;
+import drzhark.mocreatures.MoCConstants;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ToolMaterial;
 
-import java.util.function.Supplier;
+/**
+ * Mo' Creatures tool materials. 26.3 tool materials are records; their repair items come from an item tag
+ * (data/mocreatures/tags/item/*_tool_materials.json), and the mining level from an "incorrect for" block tag.
+ */
+public final class MoCItemTier {
 
-public enum MoCItemTier implements Tier {
+    public static final ToolMaterial SHARK = new ToolMaterial(BlockTags.INCORRECT_FOR_STONE_TOOL, 161, 7.0F, 2.5F, 15, repairTag("shark_tool_materials"));
+    public static final ToolMaterial SILVER = new ToolMaterial(BlockTags.INCORRECT_FOR_IRON_TOOL, 304, 9.5F, 3.0F, 19, repairTag("silver_tool_materials"));
+    public static final ToolMaterial SCORPC = new ToolMaterial(BlockTags.INCORRECT_FOR_IRON_TOOL, 371, 7.5F, 2.5F, 16, repairTag("scorpc_tool_materials"));
+    public static final ToolMaterial SCORPF = new ToolMaterial(BlockTags.INCORRECT_FOR_IRON_TOOL, 371, 7.5F, 2.5F, 16, repairTag("scorpf_tool_materials"));
+    public static final ToolMaterial SCORPN = new ToolMaterial(BlockTags.INCORRECT_FOR_IRON_TOOL, 371, 7.5F, 2.5F, 16, repairTag("scorpn_tool_materials"));
+    public static final ToolMaterial SCORPD = new ToolMaterial(BlockTags.INCORRECT_FOR_IRON_TOOL, 371, 7.5F, 2.5F, 16, repairTag("scorpd_tool_materials"));
+    public static final ToolMaterial SCORPU = new ToolMaterial(BlockTags.INCORRECT_FOR_IRON_TOOL, 371, 7.5F, 2.5F, 16, repairTag("scorpu_tool_materials"));
+    public static final ToolMaterial STING = new ToolMaterial(BlockTags.INCORRECT_FOR_WOODEN_TOOL, 8, 6.0F, 0.0F, 5, repairTag("sting_tool_materials"));
 
-    SHARK(1, 161, 7.0F, 2.5F, 15, () -> Ingredient.of(MoCItems.SHARK_TEETH.get())),
-    SILVER(2, 304, 9.5F, 3.0F, 19, Ingredient::of),
-    SCORPC(2, 371, 7.5F, 2.5F, 16, () -> Ingredient.of(MoCItems.CHITINCAVE.get())),
-    SCORPF(2, 371, 7.5F, 2.5F, 16, () -> Ingredient.of(MoCItems.CHITINFROST.get())),
-    SCORPN(2, 371, 7.5F, 2.5F, 16, () -> Ingredient.of(MoCItems.CHITINNETHER.get())),
-    SCORPD(2, 371, 7.5F, 2.5F, 16, () -> Ingredient.of(MoCItems.CHITIN.get())),
-    SCORPU(2, 371, 7.5F, 2.5F, 16, () -> Ingredient.of(MoCItems.CHITINUNDEAD.get())),
-    STING(0, 8, 6.0F, 0.0F, 5, Ingredient::of);
-
-    private final int level;
-    private final int uses;
-    private final float speed;
-    private final float damage;
-    private final int enchantmentValue;
-    private final LazyLoadedValue<Ingredient> repairIngredient;
-
-    MoCItemTier(int level, int uses, float speed, float damage, int enchantmentValue, Supplier<Ingredient> repairIngredient) {
-        this.level = level;
-        this.uses = uses;
-        this.speed = speed;
-        this.damage = damage;
-        this.enchantmentValue = enchantmentValue;
-        this.repairIngredient = new LazyLoadedValue<>(repairIngredient);
+    private MoCItemTier() {
     }
 
-    @Override public int getUses() { return uses; }
-    @Override public float getSpeed() { return speed; }
-    @Override public float getAttackDamageBonus() { return damage; }
-    @Override public int getLevel() { return level; }
-    @Override public int getEnchantmentValue() { return enchantmentValue; }
-    @Override public Ingredient getRepairIngredient() { return repairIngredient.get(); }
+    private static TagKey<Item> repairTag(String name) {
+        return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, name));
+    }
 }

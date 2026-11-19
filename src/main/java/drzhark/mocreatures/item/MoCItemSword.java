@@ -1,4 +1,5 @@
 package drzhark.mocreatures.item;
+import net.minecraft.world.item.ToolMaterial;
 
 import drzhark.mocreatures.MoCreatures;
 import net.minecraft.ChatFormatting;
@@ -9,8 +10,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
@@ -19,17 +18,17 @@ import net.neoforged.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MoCItemSword extends SwordItem {
+public class MoCItemSword extends Item {
 
     private final int specialWeaponType;
 
-    public MoCItemSword(Item.Properties properties, Tier material) {
-        super(material, 3, -2.4F, properties);
+    public MoCItemSword(Item.Properties properties, ToolMaterial material) {
+        super(properties.sword(material, 3.0F, -2.4F));
         this.specialWeaponType = 0;
     }
 
-    public MoCItemSword(Item.Properties properties, Tier material, int damageType) {
-        super(material, 3, -2.4F, properties);
+    public MoCItemSword(Item.Properties properties, ToolMaterial material, int damageType) {
+        super(properties.sword(material, 3.0F, -2.4F));
         this.specialWeaponType = damageType;
     }
 

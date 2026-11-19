@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald"
+  },
+  "gives": {
+    "id": "mocreatures:ostrichcooked",
+    "count": 6
+  },
+  "max_uses": 10,
+  "xp": 5,
+  "reputation_discount": 0.05
+}

@@ -2,6 +2,8 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.event;
+import net.minecraft.world.entity.EntityTypes;
+import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.MoCreatures;
@@ -57,7 +59,7 @@ public class MoCEventHooks {
     }
 
     @SubscribeEvent
-    public void onLivingSpawnEvent(MobSpawnEvent.FinalizeSpawn event) {
+    public void onLivingSpawnEvent(FinalizeSpawnEvent event) {
         LivingEntity entity = event.getEntity();
         Class<? extends LivingEntity> entityClass = entity.getClass();
         MoCEntityData data = MoCreatures.entityMap.get(entityClass);
@@ -74,7 +76,6 @@ public class MoCEventHooks {
                 return;
             }
             // Explicitly allow Wyvern Lair mobs
-            event.setResult(Event.Result.ALLOW);
             return;
         }
         
@@ -83,7 +84,6 @@ public class MoCEventHooks {
         } else if (data.getFrequency() <= 0) {
             event.setSpawnCancelled(true);
         } else if (dimensionIDs.contains(MoCreatures.proxy.wyvernDimension) && level.dimension().equals(MoCreatures.proxy.wyvernDimension)) {
-            event.setResult(Event.Result.ALLOW);
         }
     }
 
@@ -126,7 +126,7 @@ public class MoCEventHooks {
                 testing = testing.below();
             }
             BlockState blockstate = entity.level().getBlockState(testing);
-            if (blockstate.isValidSpawn(entity.level(), testing, EntityType.PIG)) {
+            if (blockstate.isValidSpawn(entity.level(), testing, EntityTypes.PIG)) {
                 return testing.above();
             }
         }

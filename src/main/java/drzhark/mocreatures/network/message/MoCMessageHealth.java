@@ -2,13 +2,13 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.network.message;
+import drzhark.mocreatures.client.MoCClientPacketHandlers;
 
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import drzhark.mocreatures.MoCConstants;
 import net.minecraft.resources.Identifier;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -46,15 +46,7 @@ public class MoCMessageHealth implements CustomPacketPayload {
     }
 
     public static void onMessage(MoCMessageHealth message, IPayloadContext ctx) {
-        ctx.enqueueWork(() -> {
-            Minecraft minecraft = Minecraft.getInstance();
-            if (minecraft.level != null) {
-                Entity entity = minecraft.level.getEntity(message.entityId);
-                if (entity instanceof Mob mob) {
-                    mob.setHealth(message.health);
-                }
-            }
-        });
+        ctx.enqueueWork(() -> MoCClientPacketHandlers.handleHealth(message));
             }
 
     @Override

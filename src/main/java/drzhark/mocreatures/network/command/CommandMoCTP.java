@@ -2,6 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.network.command;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.server.permissions.Permissions;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -22,16 +25,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.util.ITeleporter;
 
-import java.util.function.Function;
 
 @SuppressWarnings("removal")
 public class CommandMoCTP {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("moctp")
-            .requires(source -> source.hasPermission(2))
+            .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
             .then(Commands.argument("petId", IntegerArgumentType.integer(0))
                 .executes(context -> {
                     int petId = IntegerArgumentType.getInteger(context, "petId");
@@ -62,9 +63,9 @@ public class CommandMoCTP {
                     
                     if (world != null) {
                         if (!teleportLoadedPet(world, player, petId, petName, source)) {
-                            double posX = nbt.getListOrEmpty("Pos").getDouble(0);
-                            double posY = nbt.getListOrEmpty("Pos").getDouble(1);
-                            double posZ = nbt.getListOrEmpty("Pos").getDouble(2);
+                            double posX = nbt.getListOrEmpty("Pos").getDoubleOr(0, 0.0D);
+                            double posY = nbt.getListOrEmpty("Pos").getDoubleOr(1, 0.0D);
+                            double posZ = nbt.getListOrEmpty("Pos").getDoubleOr(2, 0.0D);
                             int x = (int) Math.floor(posX);
                             int y = (int) Math.floor(posY);
                             int z = (int) Math.floor(posZ);
@@ -94,25 +95,17 @@ public class CommandMoCTP {
         for (Entity entity : world.getAllEntities()) {
             // Search for entities that are IMoCTameable
             if (entity instanceof IMoCTameable tameable && !tameable.getPetName().isEmpty() && tameable.getOwnerPetId() == petId) {
-                // Grab the entity data
-                CompoundTag compound = new CompoundTag();
-                entity.save(compound);
-                
-                if (!compound.isEmpty() && !compound.getStringOr("Owner", "").isEmpty()) {
-                    String owner = compound.getStringOr("Owner", "");
-                    String name = compound.getStringOr("Name", "");
-                    
-                    if (!owner.isEmpty() && owner.equalsIgnoreCase(player.getName().getString())) {
-                        // Check if in same dimension
+                // Only the owner's pets come along (1.20 compared a saved owner name that Mo' Creatures never wrote).
+                if (player.getUUID().equals(tameable.getOwnerId())) {
+                    String name = tameable.getPetName();
+                    {
                         if (entity.level().dimension() == player.level().dimension()) {
                             entity.setPos(player.getX(), player.getY(), player.getZ());
-                        } else if (!player.level().isClientSide()) {
-                            // Cross-dimension teleportation using changeDimension
-                            ServerLevel targetLevel = player.serverLevel();
-                            entity.changeDimension(targetLevel, new PetTeleporter(
-                                player.getX(), player.getY(), player.getZ()));
+                        } else {
+                            entity.teleport(new TeleportTransition(player.level(), player.position(), Vec3.ZERO,
+                                    entity.getYRot(), entity.getXRot(), TeleportTransition.DO_NOTHING));
                         }
-                        
+
                         source.sendSuccess(() -> Component.literal(name + 
                                 " has been teleported to location " + Math.round(player.getX()) + 
                                 ", " + Math.round(player.getY()) + ", " + Math.round(player.getZ()) + 
@@ -125,27 +118,4 @@ public class CommandMoCTP {
         return false;
     }
 
-    /**
-     * Simple teleporter implementation for cross-dimension pet teleportation
-     */
-    private static class PetTeleporter implements ITeleporter {
-        private final double x, y, z;
-        
-        public PetTeleporter(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-        
-        @Override
-        public Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destWorld, 
-                                  float yaw, Function<Boolean, Entity> repositionEntity) {
-            Entity newEntity = repositionEntity.apply(false);
-            if (newEntity != null) {
-                newEntity.setPos(x, y, z);
-                newEntity.setYRot(yaw);
-            }
-            return newEntity;
-        }
-    }
 }

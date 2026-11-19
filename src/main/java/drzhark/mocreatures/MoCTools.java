@@ -2,6 +2,15 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.server.players.NameAndId;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
+import net.minecraft.world.level.ServerExplosion;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.core.component.DataComponents;
@@ -114,7 +123,7 @@ public class MoCTools {
                 float offsetX = (i % 2 - 0.5F) * 0.25F;
                 float offsetZ = ((float) i / 2 - 0.5F) * 0.25F;
 
-                Slime slime = EntityType.SLIME.create(level);
+                Slime slime = EntityTypes.SLIME.create(level, EntitySpawnReason.MOB_SUMMONED);
                 if (slime == null) continue;
 
                 slime.snapTo(
@@ -203,8 +212,8 @@ public class MoCTools {
 
             DamageSource source = new DamageSource(
                     level.registryAccess()
-                            .registryOrThrow(Registries.DAMAGE_TYPE)
-                            .getHolderOrThrow(DamageTypes.MOB_ATTACK),
+                            .lookupOrThrow(Registries.DAMAGE_TYPE)
+                            .getOrThrow(DamageTypes.MOB_ATTACK),
                     entityAttacker
             );
 
@@ -227,8 +236,8 @@ public class MoCTools {
 
             DamageSource source = new DamageSource(
                     level.registryAccess()
-                            .registryOrThrow(Registries.DAMAGE_TYPE)
-                            .getHolderOrThrow(DamageTypes.MOB_ATTACK),
+                            .lookupOrThrow(Registries.DAMAGE_TYPE)
+                            .getOrThrow(DamageTypes.MOB_ATTACK),
                     attacker
             );
 
@@ -239,7 +248,7 @@ public class MoCTools {
     }
 
     public static void spawnNearPlayer(ServerPlayer player, int entityId, int numberToSpawn) {
-        ServerLevel world = player.serverLevel(); // Replaces player.getServer().getWorld(...)
+        ServerLevel world = player.level();
 
         for (int i = 0; i < numberToSpawn; i++) {
             Mob entity = null;
@@ -520,7 +529,7 @@ public class MoCTools {
     }
 
     public static boolean mobGriefing(Level world) {
-        return world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+        return world instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING);
     }
 
     public static void destroyBlast(Entity entity, double x, double y, double z, float strength, boolean fire) {
@@ -607,7 +616,7 @@ public class MoCTools {
                     dy /= magnitude;
                     dz /= magnitude;
 
-                    double exposure = Explosion.getSeenPercent(blastCenter, e);
+                    double exposure = ServerExplosion.getSeenPercent(blastCenter, e);
                     double impact = (1.0D - distance) * exposure;
                     float damage = (float) (((impact * impact + impact) / 2.0D) * 7.0D * blastRadius + 1.0D);
 
@@ -639,12 +648,10 @@ public class MoCTools {
             for (BlockPos pos : affectedBlocks) {
                 BlockState state = level.getBlockState(pos);
                 if (!state.isAir()) {
-                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(serverLevel, pos, state,
+                    BreakBlockEvent breakEvent = new BreakBlockEvent(serverLevel, pos, state,
                             FakePlayerFactory.get(serverLevel, MoCreatures.MOCFAKEPLAYER));
-                    if (!NeoForge.EVENT_BUS.post(breakEvent)) {
+                    if (!NeoForge.EVENT_BUS.post(breakEvent).isCanceled()) {
                         level.removeBlock(pos, false);
-                        Explosion explosion = new Explosion(level, entity, pos.getX(), pos.getY(), pos.getZ(), 3f, false, Explosion.BlockInteraction.KEEP);
-                        state.onBlockExploded(level, pos, explosion);
                     }
                 }
             }
@@ -655,9 +662,9 @@ public class MoCTools {
             for (BlockPos pos : affectedBlocks) {
                 if (level.getBlockState(pos).isAir() && level.getRandom().nextInt(8) == 0) {
                     ServerLevel serverLevel = (ServerLevel) level;
-                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(serverLevel, pos, Blocks.AIR.defaultBlockState(),
+                    BreakBlockEvent breakEvent = new BreakBlockEvent(serverLevel, pos, Blocks.AIR.defaultBlockState(),
                             FakePlayerFactory.get(serverLevel, MoCreatures.MOCFAKEPLAYER));
-                    if (!NeoForge.EVENT_BUS.post(breakEvent)) {
+                    if (!NeoForge.EVENT_BUS.post(breakEvent).isCanceled()) {
                         level.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
                     }
                 }
@@ -728,9 +735,9 @@ public class MoCTools {
 
             if (!stateTarget.isAir() && stateTarget.getBlock() != Blocks.WATER && stateTarget.getBlock() != Blocks.BEDROCK && stateAbove.isAir()) {
                 if (mobGriefing(level)) {
-                    BlockEvent.BreakEvent event = null;
+                    BreakBlockEvent event = null;
                     if (!level.isClientSide()) {
-                        event = new BlockEvent.BreakEvent(level, pos, stateTarget, FakePlayerFactory.get((ServerLevel) level, MoCreatures.MOCFAKEPLAYER));
+                        event = new BreakBlockEvent(level, pos, stateTarget, FakePlayerFactory.get((ServerLevel) level, MoCreatures.MOCFAKEPLAYER));
                     }
                     if (event != null && !event.isCanceled()) {
                         level.removeBlock(pos, false);
@@ -751,8 +758,8 @@ public class MoCTools {
         BlockPos pos = entity.blockPosition();
         Level world = entity.level();
 
-        int x = pos.getX() + world.random.nextInt(distance * 2 + 1) - distance;
-        int z = pos.getZ() + world.random.nextInt(distance * 2 + 1) - distance;
+        int x = pos.getX() + world.getRandom().nextInt(distance * 2 + 1) - distance;
+        int z = pos.getZ() + world.getRandom().nextInt(distance * 2 + 1) - distance;
         int y = world.getChunk(x >> 4, z >> 4).getHeight(Heightmap.Types.MOTION_BLOCKING, x & 15, z & 15) - 1;
 
         return new BlockPos(x, y, z);
@@ -790,7 +797,7 @@ public class MoCTools {
             // Force a save of the pet data immediately after taming
             if (ep.level() instanceof ServerLevel) {
                 MoCreatures.LOGGER.info("Forcing save after taming pet for player {}", ep.getName().getString());
-                ((ServerLevel) ep.level()).getDataStorage().save();
+                ((ServerLevel) ep.level()).getDataStorage().scheduleSave();
             }
         }
 
@@ -849,9 +856,9 @@ public class MoCTools {
             BlockPos pos = new BlockPos(x, y + i, z);
             BlockState blockstate = entity.level().getBlockState(pos);
             if (!blockstate.isAir() && blockstate.getDestroySpeed(entity.level(), pos) <= strength) {
-                BlockEvent.BreakEvent event = null;
+                BreakBlockEvent event = null;
                 if (!entity.level().isClientSide()) {
-                    event = new BlockEvent.BreakEvent(entity.level(), pos, blockstate,
+                    event = new BreakBlockEvent(entity.level(), pos, blockstate,
                             FakePlayerFactory.get((ServerLevel) entity.level(), MoCreatures.MOCFAKEPLAYER));
                 }
                 if (event != null && !event.isCanceled()) {
@@ -1028,7 +1035,7 @@ public class MoCTools {
     public static boolean isThisPlayerAnOP(Player player) {
         if (player.level().isClientSide()) return false;
 
-        return player.getServer().getPlayerList().isOp(player.getGameProfile());
+        return player.level().getServer().getPlayerList().isOp(new NameAndId(player.getGameProfile()));
     }
 
     public static void spawnMaggots(Level level, Entity entity) {
@@ -1120,12 +1127,11 @@ public class MoCTools {
             return true;
         }
 
-        CompoundTag tag = entity.serializeNBT();
-        if (tag.contains("Owner") && !tag.getStringOr("Owner", "").isEmpty()) {
+        if (entity instanceof OwnableEntity ownable && ownable.getOwnerReference() != null) {
             return true;
         }
 
-        return tag.contains("Tamed") && tag.getBooleanOr("Tamed", false);
+        return entity instanceof IMoCTameable moc && moc.getIsTamed();
     }
 
     /**
@@ -1150,7 +1156,7 @@ public class MoCTools {
         double dy = (y - throwerEntity.getY()) / speedMod + height;
         double dz = (z - throwerEntity.getZ()) / speedMod;
         etrock.setDeltaMovement(dx, dy, dz);
-        etrock.hasImpulse = true;
+        etrock.needsSync = true;
     
         throwerEntity.level().addFreshEntity(etrock);
     }
@@ -1190,7 +1196,7 @@ public class MoCTools {
      * List of edible foods
      */
     public static boolean isItemEdible(Item item) {
-        return item.isEdible()
+        return item.components().has(DataComponents.FOOD)
                 || item.builtInRegistryHolder().is(Tags.Items.SEEDS)
                 || item == Items.WHEAT
                 || item == Items.SUGAR
@@ -1294,9 +1300,11 @@ public class MoCTools {
     }
 
     public static void copyDataFromOld(Entity source, Entity target) {
-        CompoundTag tag = target.saveWithoutId(new CompoundTag());
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, target.registryAccess());
+        target.saveWithoutId(output);
+        CompoundTag tag = output.buildResult();
         tag.remove("Dimension");
-        source.load(tag);
+        source.load(TagValueInput.create(ProblemReporter.DISCARDING, source.registryAccess(), tag));
     }
 
     public static void dismountSneakingPlayer(Mob entity) {
@@ -1327,10 +1335,10 @@ public class MoCTools {
         RegistryAccess access = getSafeRegistryAccess();
         if (access == null) return Collections.emptyList();
 
-        Registry<Biome> biomeRegistry = access.registryOrThrow(Registries.BIOME);
+        HolderLookup.RegistryLookup<Biome> biomeRegistry = access.lookupOrThrow(Registries.BIOME);
         Set<Identifier> tagSet = new HashSet<>();
 
-        biomeRegistry.holders().forEach(biomeHolder -> {
+        biomeRegistry.listElements().forEach(biomeHolder -> {
             biomeHolder.tags().forEach(tagKey -> tagSet.add(tagKey.location()));
         });
 

@@ -1,7 +1,7 @@
 package drzhark.mocreatures.compat;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
@@ -33,18 +33,17 @@ public class CompatScreen extends Screen {
 
         int buttonY = Math.min(this.height / 2 + this.textHeight / 2 + this.font.lineHeight, this.height - 30);
         this.addRenderableWidget(Button.builder(Component.translatable("gui.done"), btn -> {
-            this.minecraft.setScreen(new SelectWorldScreen(this));
+            this.minecraft.gui.setScreen(new SelectWorldScreen(this));
         }).bounds(this.width / 2 - 100, buttonY, 200, 20).build());
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         int i = this.height / 2 - this.textHeight / 2;
         for (Component line : this.messages) {
-            graphics.drawCenteredString(this.font, line, this.width / 2, i, 0xFFFFFF);
+            graphics.centeredText(this.font, line, this.width / 2, i, 0xFFFFFFFF);
             i += this.font.lineHeight;
         }
-        super.render(graphics, mouseX, mouseY, partialTicks);
     }
 }

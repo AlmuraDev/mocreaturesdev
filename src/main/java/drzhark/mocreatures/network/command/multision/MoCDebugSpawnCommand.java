@@ -1,4 +1,5 @@
 package drzhark.mocreatures.network.command.multision;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.EntitySpawnReason;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -26,7 +27,7 @@ public class MoCDebugSpawnCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
             Commands.literal("mocdebug")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                 .then(Commands.literal("spawn")
                     .then(Commands.literal("info")
                         .executes(MoCDebugSpawnCommand::showSpawnInfo))
@@ -63,15 +64,15 @@ public class MoCDebugSpawnCommand {
         source.sendSuccess(() -> Component.literal("Spawn multiplier: " + MoCreatures.proxy.spawnMultiplier), false);
         
         // Check biome spawn lists
-        net.minecraft.world.level.biome.MobSpawnSettings spawnSettings = biome.value().getMobSettings();
-        java.util.List<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData> creatures = 
-            spawnSettings.getMobs(net.minecraft.world.entity.MobCategory.CREATURE).unwrap();
-        java.util.List<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData> monsters = 
-            spawnSettings.getMobs(net.minecraft.world.entity.MobCategory.MONSTER).unwrap();
-        java.util.List<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData> water = 
-            spawnSettings.getMobs(net.minecraft.world.entity.MobCategory.WATER_CREATURE).unwrap();
-        java.util.List<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData> ambient = 
-            spawnSettings.getMobs(net.minecraft.world.entity.MobCategory.AMBIENT).unwrap();
+        net.minecraft.world.level.biome.MobSpawnSettings spawnSettings = level.environmentAttributes().getValue(net.minecraft.world.attribute.EnvironmentAttributes.NATURAL_MOB_SPAWNS, player.position());
+        java.util.List<net.minecraft.util.random.Weighted<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData>> creatures = 
+            spawnSettings.getMobsToSpawn(net.minecraft.world.entity.MobCategory.CREATURE).unwrap();
+        java.util.List<net.minecraft.util.random.Weighted<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData>> monsters = 
+            spawnSettings.getMobsToSpawn(net.minecraft.world.entity.MobCategory.MONSTER).unwrap();
+        java.util.List<net.minecraft.util.random.Weighted<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData>> water = 
+            spawnSettings.getMobsToSpawn(net.minecraft.world.entity.MobCategory.WATER_CREATURE).unwrap();
+        java.util.List<net.minecraft.util.random.Weighted<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData>> ambient = 
+            spawnSettings.getMobsToSpawn(net.minecraft.world.entity.MobCategory.AMBIENT).unwrap();
         
         source.sendSuccess(() -> Component.literal("Biome spawn counts - Creatures: " + creatures.size() + 
             ", Monsters: " + monsters.size() + ", Water: " + water.size() + ", Ambient: " + ambient.size()), false);
@@ -161,7 +162,7 @@ public class MoCDebugSpawnCommand {
         source.sendSuccess(() -> Component.literal("=== Spawn Conditions Check ==="), false);
         
         // Check game rules
-        boolean doMobSpawning = level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING);
+        boolean doMobSpawning = level.getGameRules().get(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS);
         source.sendSuccess(() -> Component.literal("doMobSpawning: " + doMobSpawning), false);
         
         // Check difficulty
@@ -173,25 +174,25 @@ public class MoCDebugSpawnCommand {
         source.sendSuccess(() -> Component.literal("Light level: " + lightLevel), false);
         
         // Check if player is in spawn range
-        net.minecraft.core.BlockPos spawnPos = level.getSharedSpawnPos();
+        net.minecraft.core.BlockPos spawnPos = level.getRespawnData().pos();
         double distanceToSpawn = Math.sqrt(pos.distSqr(spawnPos));
         source.sendSuccess(() -> Component.literal("Distance to spawn: " + String.format("%.1f", distanceToSpawn)), false);
         
         // Check biome spawn lists for MoCreatures entities
         Holder<net.minecraft.world.level.biome.Biome> biome = level.getBiome(pos);
-        net.minecraft.world.level.biome.MobSpawnSettings spawnSettings = biome.value().getMobSettings();
+        net.minecraft.world.level.biome.MobSpawnSettings spawnSettings = level.environmentAttributes().getValue(net.minecraft.world.attribute.EnvironmentAttributes.NATURAL_MOB_SPAWNS, player.position());
         
         final int[] mocCreatureCount = {0};
         
         // Check all mob categories
         for (net.minecraft.world.entity.MobCategory category : net.minecraft.world.entity.MobCategory.values()) {
-            java.util.List<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData> spawners = 
-                spawnSettings.getMobs(category).unwrap();
+            java.util.List<net.minecraft.util.random.Weighted<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData>> spawners = 
+                spawnSettings.getMobsToSpawn(category).unwrap();
             
             if (!spawners.isEmpty()) {
                 boolean foundMocInCategory = false;
-                for (net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData spawner : spawners) {
-                    String entityName = spawner.type.getDescriptionId();
+                for (net.minecraft.util.random.Weighted<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData> spawner : spawners) {
+                    String entityName = spawner.value().type().getDescriptionId();
                     if (entityName.contains("mocreatures")) {
                         if (!foundMocInCategory) {
                             final String finalCategoryName = category.getName();
@@ -200,7 +201,7 @@ public class MoCDebugSpawnCommand {
                         }
                         mocCreatureCount[0]++;
                         final String finalEntityName = entityName;
-                        final int finalWeight = spawner.getWeight().asInt();
+                        final int finalWeight = spawner.weight();
                         source.sendSuccess(() -> Component.literal("  " + finalEntityName + " (weight: " + finalWeight + ")"), false);
                     }
                 }

@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.network.command;
+import net.minecraft.server.permissions.Permissions;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -45,7 +46,7 @@ public class CommandMoCreatures {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         // Root command
         var mocCommand = Commands.literal("moc")
-            .requires(source -> source.hasPermission(2));
+            .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER));
             
         // Boolean settings
         for (String setting : List.of("attackhorses", "attackwolves", 

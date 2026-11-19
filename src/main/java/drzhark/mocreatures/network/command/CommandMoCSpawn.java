@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.network.command;
+import net.minecraft.server.permissions.Permissions;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -25,7 +26,7 @@ public class CommandMoCSpawn {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("mocspawn").requires((source) -> {
-            return source.hasPermission(2);
+            return source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
         }).then(Commands.argument("entityType", EnumArgument.enumArgument(Type.class)).executes((context) -> {
             return execute(context.getSource(), context.getArgument("entityType", Type.class), 0);
         }).then(Commands.argument("type", IntegerArgumentType.integer(1)).executes((context) -> {

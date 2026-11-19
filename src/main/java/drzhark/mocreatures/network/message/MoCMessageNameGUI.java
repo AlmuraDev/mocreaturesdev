@@ -2,15 +2,14 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.network.message;
+import drzhark.mocreatures.client.MoCClientPacketHandlers;
 
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import drzhark.mocreatures.MoCConstants;
 import net.minecraft.resources.Identifier;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import drzhark.mocreatures.client.gui.MoCGUIEntityNamer;
 import drzhark.mocreatures.entity.IMoCEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
@@ -47,20 +46,9 @@ public class MoCMessageNameGUI implements CustomPacketPayload {
 
     public static void onMessage(MoCMessageNameGUI message, IPayloadContext ctx) {
         // Registered client-bound only, so this runs on the client.
-        ctx.enqueueWork(() -> handleClient(message));
+        ctx.enqueueWork(() -> MoCClientPacketHandlers.handleNameGUI(message));
     }
 
-    @OnlyIn(Dist.CLIENT)
-    private static void handleClient(MoCMessageNameGUI message) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null || mc.player == null || mc.level == null) return;
-
-        Entity ent = mc.level.getEntity(message.entityId);
-        if (ent instanceof IMoCEntity) {
-            IMoCEntity mocEntity = (IMoCEntity) ent;
-            mc.gui.setScreen(new MoCGUIEntityNamer(mocEntity, mocEntity.getPetName()));
-        }
-    }
 
     @Override
     public String toString() {

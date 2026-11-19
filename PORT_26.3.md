@@ -35,8 +35,8 @@ furniture mod's `4.0` branch.
 
 ## Remaining
 
-After the blocks batch: about 75 unique errors, all in `MoCTools`, commands, events and compat. Everything else
-compiles.
+**The whole mod compiles** and `./gradlew build` produces `build/libs/mocreatures-neoforge-26.3-1.0.0.jar`. Nothing
+has been run in a game yet; the resources below are still in 1.20.1 form.
 
 | Area | Errors | Main work |
 |---|---|---|
@@ -45,9 +45,9 @@ compiles.
 | Registration (`init/**`) | 0 | done, see below |
 | Items (`item/**`) | 0 | done, see below; needs in-game testing |
 | World / worldgen / dimension | 0 | done, code and data, see below; needs in-game testing |
-| Commands (`network/command/**`) | ~30 | permission checks; teleporting between dimensions; pet listing NBT |
+| Commands (`network/command/**`) | 0 | done, see below |
 | Blocks (`block/**`) | 0 | done, see below |
-| Other (`MoCTools`, events, compat) | ~40 | removed events (`TickEvent`, `MissingMappingsEvent`), game rules, explosions, data fixers |
+| Other (`MoCTools`, events, compat) | 0 | done, see below |
 
 ### Entities batch: how the 1.20 behaviour was kept
 
@@ -185,6 +185,23 @@ compiles.
   through NeoForge's `canSustainPlant(..., BlockState plant)` (cacti and dead bushes; mushrooms).
 - Wyvgrass bone meal uses the biome's bone meal features; the ores drop experience unless mined with silk touch through
   NeoForge's `getExpDrop`; leaves have no ambient sound; blocks that used `PushReaction.DESTROY` now pop (`POPPED`).
+
+### Last compile errors (MoCTools, commands, events, compat)
+
+- **Commands** check permissions through `source.permissions()` (level 2 is `Permissions.COMMANDS_GAMEMASTER`).
+  `/moctp` teleports pets across dimensions with a teleport transition and now matches the owner by UUID; 1.20 compared
+  a saved owner name that Mo' Creatures never wrote, so it never found a pet.
+- **Spawn events** use `FinalizeSpawnEvent`; its old `ALLOW`/`DEFAULT` results only meant "carry on" and are gone.
+  Note: `MoCEventHooks.onLivingSpawnEvent` looks entities up in `entityMap` by class while the map is keyed by entity type,
+  so it never matches (as in 1.20.1); left as is.
+- **MoCTools:** mob griefing reads the 26.3 game rule from the server level; explosions use `ServerExplosion.getSeenPercent`;
+  break checks use `BreakBlockEvent`; op checks use `NameAndId`; entity copies go through `TagValueOutput`/`TagValueInput`.
+- **Removed:** `compat/datafixes` (1.16 id remappers that nothing registered). Their mappings matter for the 3.5 world
+  converter: an old `mocreatures:scorpion` becomes cave (TypeInt 2), fire (3), frost (4) or dirt (other) scorpion;
+  an old `mocreatures:manticore` becomes dark (2), frost (3), toxic (4) or fire (other) manticore; both get TypeInt 1.
+- **Client packet handling** lives in `client/MoCClientPacketHandlers`. The client-bound message classes, which the server
+  loads to send them, only call it from the lambda that runs on the client. A constant-pool scan of the jar finds no
+  other client class referenced from code a dedicated server loads.
 
 Resources are untouched so far:
 - data pack folder renames (`loot_tables` to `loot_table`, `recipes` to `recipe`, `tags/items` to `tags/item`, and so on), plus the recipe and loot JSON formats

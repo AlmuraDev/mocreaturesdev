@@ -1,4 +1,5 @@
 package drzhark.mocreatures.event;
+import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 
 import net.neoforged.fml.common.EventBusSubscriber;
 import drzhark.mocreatures.MoCConstants;
@@ -49,7 +50,7 @@ public class MoCWyvernDimensionHandler {
      * Handle mob spawning - use lower priority to allow other systems to work first
      */
     @SubscribeEvent(priority = EventPriority.LOW)
-    public static void onCheckSpawn(MobSpawnEvent.FinalizeSpawn event) {
+    public static void onCheckSpawn(FinalizeSpawnEvent event) {
         LivingEntity entity = event.getEntity();
         
         // Check if we're in the Wyvern dimension
@@ -67,13 +68,11 @@ public class MoCWyvernDimensionHandler {
                     MoCreatures.LOGGER.info("MoCWyvernDimensionHandler: Allowing {} to spawn in Wyvern dimension", 
                         entity.getType().getDescriptionId());
                 }
-                event.setResult(Event.Result.ALLOW);
                 return;
             }
             
             // If this is a player, allow it
             if (entity instanceof Player) {
-                event.setResult(Event.Result.DEFAULT);
                 return;
             }
             
@@ -82,7 +81,6 @@ public class MoCWyvernDimensionHandler {
                 MoCreatures.LOGGER.info("MoCWyvernDimensionHandler: Non-allowed entity {} attempted to spawn, letting JSON modifiers handle it", 
                     entity.getType().getDescriptionId());
             }
-            event.setResult(Event.Result.DEFAULT);
         }
     }
 

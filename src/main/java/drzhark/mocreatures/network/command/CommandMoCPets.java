@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.network.command;
+import net.minecraft.server.permissions.Permissions;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -25,7 +26,7 @@ public class CommandMoCPets {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("mocpets")
-            .requires(source -> source.hasPermission(2))
+            .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
             .executes(context -> execute(context.getSource()))
             .then(Commands.argument("page", IntegerArgumentType.integer(1))
                 .executes(context -> {
@@ -76,9 +77,9 @@ public class CommandMoCPets {
                     CompoundTag nbt = ownerPetData.getTamedList().getCompoundOrEmpty(i);
                     if (nbt.contains("PetId") && !foundIds.contains(nbt.getIntOr("PetId", 0))) {
                         unloadedCount++;
-                        double posX = nbt.getListOrEmpty("Pos").getDouble(0);
-                        double posY = nbt.getListOrEmpty("Pos").getDouble(1);
-                        double posZ = nbt.getListOrEmpty("Pos").getDouble(2);
+                        double posX = nbt.getListOrEmpty("Pos").getDoubleOr(0, 0.0D);
+                        double posY = nbt.getListOrEmpty("Pos").getDoubleOr(1, 0.0D);
+                        double posZ = nbt.getListOrEmpty("Pos").getDoubleOr(2, 0.0D);
                         
                         if (nbt.getBooleanOr("InAmulet", false)) {
                             tamedList.add("Found unloaded pet in AMULET with Type: " + 

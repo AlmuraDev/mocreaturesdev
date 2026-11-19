@@ -2,6 +2,7 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.network.message;
+import drzhark.mocreatures.client.MoCClientPacketHandlers;
 
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import drzhark.mocreatures.MoCConstants;
@@ -9,7 +10,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import drzhark.mocreatures.entity.hostile.MoCEntityGolem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 
@@ -53,15 +53,7 @@ public class MoCMessageTwoBytes implements CustomPacketPayload {
     }
 
     public static void onMessage(MoCMessageTwoBytes message, IPayloadContext ctx) {
-        ctx.enqueueWork(() -> {
-            Minecraft minecraft = Minecraft.getInstance();
-            if (minecraft.level != null) {
-                Entity ent = minecraft.level.getEntity(message.entityId);
-                if (ent instanceof MoCEntityGolem) {
-                    ((MoCEntityGolem) ent).saveGolemCube(message.slot, message.value);
-                }
-            }
-        });
+        ctx.enqueueWork(() -> MoCClientPacketHandlers.handleTwoBytes(message));
             }
 
     @Override

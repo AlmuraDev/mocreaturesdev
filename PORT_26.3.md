@@ -35,8 +35,8 @@ furniture mod's `4.0` branch.
 
 ## Remaining
 
-After the items batch: about 210 unique errors. `entity/**`, `client/**`, `init/**` (bar the glass block
-constructor), `item/**`, the proxies, the network messages and the mod class compile.
+After the worldgen batch: about 120 unique errors, all in blocks, `MoCTools`, commands, events and compat.
+Everything else compiles (`init/**` bar the glass block constructor).
 
 | Area | Errors | Main work |
 |---|---|---|
@@ -44,7 +44,7 @@ constructor), `item/**`, the proxies, the network messages and the mod class com
 | Client rendering (`client/**`) | 0 | done, see below; needs in-game testing |
 | Registration (`init/**`) | 1 | done, see below; the one left is the `MoCBlockGlass` constructor |
 | Items (`item/**`) | 0 | done, see below; needs in-game testing |
-| World / worldgen / dimension | ~90 | `MobSpawnSettings.SpawnerData` (weight now beside it); biome spawn lists; dimension and portal code |
+| World / worldgen / dimension | 0 | done, code and data, see below; needs in-game testing |
 | Commands (`network/command/**`) | ~30 | permission checks; teleporting between dimensions; pet listing NBT |
 | Other (events, util, compat, blocks) | ~160 | removed events (`TickEvent`, `BlockEvent.BreakEvent` moves, `MissingMappingsEvent`), `IPlantable`, `GlassBlock`, data fixers |
 
@@ -149,15 +149,38 @@ constructor), `item/**`, the proxies, the network messages and the mod class com
   with mending or unbreaking.
 - **Removed:** `MoCItemCrabClaw`, which was never registered.
 
+### Worldgen batch
+
+- **Spawns:** the 88 biome spawn entries add through `addSpawn(type, category, weight, UniformInt)`; the village kitty
+  spawn override takes the weight beside the entry.
+- **Wyvern Lair data** is in the 26.3 formats:
+  - features moved from `worldgen/configured_feature` to `worldgen/feature`, with their config inlined and block
+    providers in the short `{"id"}` form;
+  - the two `random_patch` features (tall wyvgrass, mushrooms) are now plain features; their placed features carry the
+    old tries and spread as count and offset placements;
+  - trees replace `dirt_provider`/`force_dirt` with a `below_trunk_provider` that places wyvdirt (always for the large
+    trees, which forced it; otherwise only where vanilla would replace the block below a trunk);
+  - biome colours, music and mood sound moved into `effects` and environment `attributes`; the empty spawn lists went
+    (Mo' Creatures spawns come from the biome modifier);
+  - biome modifiers moved to `data/mocreatures/neoforge/biome_modifier` with `neoforge:` types. The nest modifier pointed at
+    a tag that doesn't exist (`#mocreatures:worldgen/biome/is_wyvern_lair`); it now uses `#mocreatures:is_wyvern_lair`;
+  - island structure templates moved from `structures/` to `structure/`, where 26.3 looks for them.
+- **Terrain:** the old noise settings used 1.20 density-function syntax that 26.3 no longer reads. The Wyvern Lair now
+  uses vanilla 26.3's floating islands terrain, with wyvstone, no fluid and the Wyvern Lair's own surface rule
+  (now `material_rule`). The dimension is 0 to 256 high to match (it was -64 to 320). Check the island shapes and heights
+  in game.
+- **Dimension type:** bed, raid, respawn anchor and piglin rules are attributes; day and night come from the overworld
+  clock and timelines. The unregistered custom sky (`effects`) was dropped, so the sky is vanilla's.
+- **Portal and teleporter:** see the items batch.
+- None of this data has been loaded by a game yet: the first run will show any datapack errors in the log.
+
 Resources are untouched so far:
 - data pack folder renames (`loot_tables` to `loot_table`, `recipes` to `recipe`, `tags/items` to `tags/item`, and so on), plus the recipe and loot JSON formats
 - `data/forge` to `data/c` tags
-- the NeoForge biome modifier folder
 - client item definitions (`assets/mocreatures/items/*.json`)
 - equipment assets for the armour
 - spawn egg textures (the old egg colours are still in `MoCSpawnEggs`)
 - `render_type` in the block models for leaves, sapling, tall grass and glass, which `ItemBlockRenderTypes` used to set
-- Wyvern Lair dimension and worldgen JSON for the 26.3 formats
 
 ## Almura changes to re-apply
 

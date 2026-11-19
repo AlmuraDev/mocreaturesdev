@@ -1,8 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": "#mocreatures:worldgen/biome/is_wyvern_lair",
-  "features": [
-    "mocreatures:wyvern_nest"
-  ],
-  "step": "vegetal_decoration"
-} 

@@ -93,10 +93,10 @@ public class SpawnBiomeData {
                     // if(biomeHolder != null) {
                     //     MoCreatures.LOGGER.debug("Checking biome {} for tag {}. Available tags: {}", 
                     //         registryName, value, 
-                    //         biomeHolder.getTagKeys().map(tag -> tag.location().toString()).toList());
+                    //         biomeHolder.tags().map(tag -> tag.location().toString()).toList());
                     // }
                     
-                    if(biomeHolder.getTagKeys().anyMatch((biomeTagKey -> biomeTagKey.location() != null && biomeTagKey.location().toString().equals(value)))){
+                    if(biomeHolder.tags().anyMatch((biomeTagKey -> biomeTagKey.location() != null && biomeTagKey.location().toString().equals(value)))){
                         //MoCreatures.LOGGER.debug("Tag {} FOUND in biome {}", value, registryName);
                         return !negate;
                     }

@@ -1,5 +1,5 @@
 {
-  "type": "forge:add_features",
+  "type": "neoforge:add_features",
   "biomes": "#mocreatures:is_wyvern_lair",
   "features": [
     "mocreatures:wyvern_iron_ore",
@@ -10,4 +10,4 @@
     "mocreatures:ancient_ore"
   ],
   "step": "underground_ores"
-} 
+}

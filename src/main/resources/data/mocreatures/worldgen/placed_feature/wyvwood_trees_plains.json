@@ -63,12 +63,12 @@
       "predicate": {
         "type": "minecraft:would_survive",
         "state": {
-          "Name": "mocreatures:wyvwood_sapling",
-          "Properties": {
+          "id": "mocreatures:wyvwood_sapling",
+          "properties": {
             "stage": "0"
           }
         }
       }
     }
   ]
-} 
+}

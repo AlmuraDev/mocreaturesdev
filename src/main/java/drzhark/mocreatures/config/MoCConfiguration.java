@@ -62,7 +62,7 @@ public class MoCConfiguration {
      */
     public MoCConfiguration(File file) {
         this.file = file;
-        String basePath = FMLLoader.getGamePath().toString().replace(File.separatorChar, '/').replace("/.", "");
+        String basePath = net.neoforged.fml.loading.FMLPaths.GAMEDIR.get().toString().replace(File.separatorChar, '/').replace("/.", "");
         String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
         if (PARENT != null) {
             PARENT.setChild(path, this);

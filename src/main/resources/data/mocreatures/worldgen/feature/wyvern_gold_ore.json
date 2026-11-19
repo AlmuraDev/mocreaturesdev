@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:ore",
+  "discard_chance_on_air_exposure": 0,
+  "size": 9,
+  "targets": [
+    {
+      "target": {
+        "block": "mocreatures:wyvstone",
+        "predicate_type": "minecraft:block_match"
+      },
+      "state": "mocreatures:wyvern_gold_ore"
+    }
+  ]
+}

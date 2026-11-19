@@ -1,26 +1,32 @@
 {
-  "ultrawarm": false,
-  "natural": true,
-  "piglin_safe": false,
-  "respawn_anchor_works": false,
-  "bed_works": true,
-  "has_raids": false,
   "has_skylight": true,
   "has_ceiling": false,
+  "has_ender_dragon_fight": false,
   "coordinate_scale": 1.0,
   "ambient_light": 0.2,
-  "fixed_time": null,
+  "min_y": 0,
+  "height": 256,
+  "logical_height": 256,
+  "infiniburn": "#minecraft:infiniburn_overworld",
   "monster_spawn_light_level": {
     "type": "minecraft:uniform",
-    "value": {
-      "min_inclusive": 0,
-      "max_inclusive": 11
-    }
+    "min_inclusive": 0,
+    "max_inclusive": 11
   },
   "monster_spawn_block_light_limit": 0,
-  "logical_height": 384,
-  "infiniburn": "#minecraft:infiniburn_overworld",
-  "min_y": -64,
-  "height": 384,
-  "effects": "mocreatures:wyvernlairworld"
+  "default_clock": "minecraft:overworld",
+  "timelines": "#minecraft:in_overworld",
+  "attributes": {
+    "minecraft:gameplay/can_start_raid": false,
+    "minecraft:gameplay/respawn_anchor_works": false,
+    "minecraft:gameplay/nether_portal_spawns_piglin": false,
+    "minecraft:gameplay/water_evaporates": false,
+    "minecraft:gameplay/bed_rule": {
+      "can_set_spawn": "always",
+      "can_sleep": "when_dark",
+      "error_message": {
+        "translate": "block.minecraft.bed.no_sleep"
+      }
+    }
+  }
 }

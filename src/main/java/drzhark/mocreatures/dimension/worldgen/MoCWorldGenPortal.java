@@ -136,7 +136,7 @@ public class MoCWorldGenPortal {
         poiManager.ensureLoadedAndValid(world, pos, 8);
         
         // Force the POI to be registered at this position
-        poiManager.add(pos, MoCPOI.WYVERN_PORTAL.getHolder().get());
+        poiManager.add(pos, MoCPOI.WYVERN_PORTAL.getDelegate());
         
         // Log the POI registration
         System.out.println("[MoC Portal] Registered wyvern portal POI at " + pos);

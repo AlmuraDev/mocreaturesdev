@@ -1,4 +1,5 @@
 package drzhark.mocreatures.world;
+import net.minecraft.util.valueproviders.UniformInt;
 
 import net.neoforged.fml.common.EventBusSubscriber;
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,7 +39,7 @@ public class MoCWorldRegistry {
                 if (kittyData != null && kittyData.getCanSpawn() && kittyData.getFrequency() > 0) {
                     int spawnWeight = Math.max(1, kittyData.getFrequency() / 4); // Reduced weight for village spawns
                     builder.getStructureSettings().getOrAddSpawnOverrides(MobCategory.CREATURE)
-                        .addSpawn(new MobSpawnSettings.SpawnerData(kitty, spawnWeight, 1, 3));
+                        .addSpawn(new MobSpawnSettings.SpawnerData(kitty, UniformInt.of(1, 3)), spawnWeight);
                 }
             }
         }
@@ -148,9 +149,7 @@ public class MoCWorldRegistry {
                 }
                 
                 // Add the spawn
-                builder.getMobSpawnSettings().getSpawner(category).add(
-                    new MobSpawnSettings.SpawnerData(entityType, (int) (spawnData.weight * MoCreatures.proxy.spawnMultiplier), spawnData.minCount, spawnData.maxCount)
-                );
+                builder.getMobSpawnSettings().addSpawn(entityType, category, (int) (spawnData.weight * MoCreatures.proxy.spawnMultiplier), UniformInt.of(spawnData.minCount, spawnData.maxCount));
                 
                 spawnsAdded++;
                 
@@ -181,327 +180,327 @@ public class MoCWorldRegistry {
         
         // Bears - kept one example of old format
         if (testBiome(BiomeConfig.blackBear, biome) && MoCConfig.blackBearSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.BLACK_BEAR.get(), MoCConfig.blackBearSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.BLACK_BEAR.get(), MobCategory.CREATURE, MoCConfig.blackBearSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.grizzlyBear, biome) && MoCConfig.grizzlyBearSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.GRIZZLY_BEAR.get(), MoCConfig.grizzlyBearSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.GRIZZLY_BEAR.get(), MobCategory.CREATURE, MoCConfig.grizzlyBearSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.polarBear, biome) && MoCConfig.polarBearSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.POLAR_BEAR.get(), MoCConfig.polarBearSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.POLAR_BEAR.get(), MobCategory.CREATURE, MoCConfig.polarBearSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.pandaBear, biome) && MoCConfig.pandaBearSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.PANDA_BEAR.get(), MoCConfig.pandaBearSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.PANDA_BEAR.get(), MobCategory.CREATURE, MoCConfig.pandaBearSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Birds
         if (testBiome(BiomeConfig.bird, biome) && MoCConfig.birdSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.BIRD.get(), MoCConfig.birdSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.BIRD.get(), MobCategory.CREATURE, MoCConfig.birdSpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.duck, biome) && MoCConfig.duckSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.DUCK.get(), MoCConfig.duckSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.DUCK.get(), MobCategory.CREATURE, MoCConfig.duckSpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.turkey, biome) && MoCConfig.turkeySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.TURKEY.get(), MoCConfig.turkeySpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.TURKEY.get(), MobCategory.CREATURE, MoCConfig.turkeySpawnWeight, UniformInt.of(1, 2));
         }
         
         // Land animals
         if (testBiome(BiomeConfig.boar, biome) && MoCConfig.boarSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.BOAR.get(), MoCConfig.boarSpawnWeight, 1, 3));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.BOAR.get(), MobCategory.CREATURE, MoCConfig.boarSpawnWeight, UniformInt.of(1, 3));
         }
         if (testBiome(BiomeConfig.bunny, biome) && MoCConfig.bunnySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.BUNNY.get(), MoCConfig.bunnySpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.BUNNY.get(), MobCategory.CREATURE, MoCConfig.bunnySpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.deer, biome) && MoCConfig.deerSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.DEER.get(), MoCConfig.deerSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.DEER.get(), MobCategory.CREATURE, MoCConfig.deerSpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.goat, biome) && MoCConfig.goatSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.GOAT.get(), MoCConfig.goatSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.GOAT.get(), MobCategory.CREATURE, MoCConfig.goatSpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.kitty, biome) && MoCConfig.kittySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.KITTY.get(), MoCConfig.kittySpawnWeight, 1, 3));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.KITTY.get(), MobCategory.CREATURE, MoCConfig.kittySpawnWeight, UniformInt.of(1, 3));
         }
         
         // Semi-aquatic creatures
         if (testBiome(BiomeConfig.crocodile, biome) && MoCConfig.crocodileSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.CROCODILE.get(), MoCConfig.crocodileSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.CROCODILE.get(), MobCategory.CREATURE, MoCConfig.crocodileSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.turtle, biome) && MoCConfig.turtleSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.TURTLE.get(), MoCConfig.turtleSpawnWeight, 1, 3));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.TURTLE.get(), MobCategory.CREATURE, MoCConfig.turtleSpawnWeight, UniformInt.of(1, 3));
         }
         
         // Desert/savanna creatures
         if (testBiome(BiomeConfig.elephant, biome) && MoCConfig.elephantSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.ELEPHANT.get(), MoCConfig.elephantSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.ELEPHANT.get(), MobCategory.CREATURE, MoCConfig.elephantSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.filchLizard, biome) && MoCConfig.filchLizardSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.FILCH_LIZARD.get(), MoCConfig.filchLizardSpawnWeight, 1, 3));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FILCH_LIZARD.get(), MobCategory.CREATURE, MoCConfig.filchLizardSpawnWeight, UniformInt.of(1, 3));
         }
         if (testBiome(BiomeConfig.ostrich, biome) && MoCConfig.ostrichSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.OSTRICH.get(), MoCConfig.ostrichSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.OSTRICH.get(), MobCategory.CREATURE, MoCConfig.ostrichSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Foxes
         if (testBiome(BiomeConfig.fox, biome) && MoCConfig.foxSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.FOX.get(), MoCConfig.foxSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FOX.get(), MobCategory.CREATURE, MoCConfig.foxSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Reptiles
         if (testBiome(BiomeConfig.komodoDragon, biome) && MoCConfig.komodoDragonSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.KOMODO_DRAGON.get(), MoCConfig.komodoDragonSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.KOMODO_DRAGON.get(), MobCategory.CREATURE, MoCConfig.komodoDragonSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.snake, biome) && MoCConfig.snakeSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.SNAKE.get(), MoCConfig.snakeSpawnWeight, 1, 3));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.SNAKE.get(), MobCategory.CREATURE, MoCConfig.snakeSpawnWeight, UniformInt.of(1, 3));
         }
         
         // Big cats
         if (testBiome(BiomeConfig.leopard, biome) && MoCConfig.leopardSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.LEOPARD.get(), MoCConfig.leopardSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.LEOPARD.get(), MobCategory.CREATURE, MoCConfig.leopardSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.lion, biome) && MoCConfig.lionSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.LION.get(), MoCConfig.lionSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.LION.get(), MobCategory.CREATURE, MoCConfig.lionSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.panther, biome) && MoCConfig.pantherSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.PANTHER.get(), MoCConfig.pantherSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.PANTHER.get(), MobCategory.CREATURE, MoCConfig.pantherSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.tiger, biome) && MoCConfig.tigerSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.TIGER.get(), MoCConfig.tigerSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.TIGER.get(), MobCategory.CREATURE, MoCConfig.tigerSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Big cat hybrids
         if (testBiome(BiomeConfig.liger, biome) && MoCConfig.ligerSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.LIGER.get(), MoCConfig.ligerSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.LIGER.get(), MobCategory.CREATURE, MoCConfig.ligerSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.lither, biome) && MoCConfig.litherSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.LITHER.get(), MoCConfig.litherSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.LITHER.get(), MobCategory.CREATURE, MoCConfig.litherSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.panthger, biome) && MoCConfig.panthgerSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.PANTHGER.get(), MoCConfig.panthgerSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.PANTHGER.get(), MobCategory.CREATURE, MoCConfig.panthgerSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.panthard, biome) && MoCConfig.panthardSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.PANTHARD.get(), MoCConfig.panthardSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.PANTHARD.get(), MobCategory.CREATURE, MoCConfig.panthardSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.leoger, biome) && MoCConfig.leogerSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.LEOGER.get(), MoCConfig.leogerSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.LEOGER.get(), MobCategory.CREATURE, MoCConfig.leogerSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Small mammals
         if (testBiome(BiomeConfig.mouse, biome) && MoCConfig.mouseSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.MOUSE.get(), MoCConfig.mouseSpawnWeight, 2, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.MOUSE.get(), MobCategory.CREATURE, MoCConfig.mouseSpawnWeight, UniformInt.of(2, 6));
         }
         if (testBiome(BiomeConfig.mole, biome) && MoCConfig.moleSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.MOLE.get(), MoCConfig.moleSpawnWeight, 1, 3));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.MOLE.get(), MobCategory.CREATURE, MoCConfig.moleSpawnWeight, UniformInt.of(1, 3));
         }
         if (testBiome(BiomeConfig.raccoon, biome) && MoCConfig.raccoonSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.RACCOON.get(), MoCConfig.raccoonSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.RACCOON.get(), MobCategory.CREATURE, MoCConfig.raccoonSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Horses
         if (testBiome(BiomeConfig.wildHorse, biome) && MoCConfig.wildHorseSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.WILDHORSE.get(), MoCConfig.wildHorseSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.WILDHORSE.get(), MobCategory.CREATURE, MoCConfig.wildHorseSpawnWeight, UniformInt.of(2, 4));
         }
         
         // Magical creatures
         if (testBiome(BiomeConfig.ent, biome) && MoCConfig.entSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.ENT.get(), MoCConfig.entSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.ENT.get(), MobCategory.CREATURE, MoCConfig.entSpawnWeight, UniformInt.of(1, 1));
         }
         if (testBiome(BiomeConfig.wyvern, biome) && MoCConfig.wyvernSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.WYVERN.get(), MoCConfig.wyvernSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.WYVERN.get(), MobCategory.CREATURE, MoCConfig.wyvernSpawnWeight, UniformInt.of(1, 1));
         }
         
         // MoCreatures Monster Spawns
         
         // Ogres
         if (testBiome(BiomeConfig.greenOgre, biome) && MoCConfig.greenOgreSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.GREEN_OGRE.get(), MoCConfig.greenOgreSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.GREEN_OGRE.get(), MobCategory.MONSTER, MoCConfig.greenOgreSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.caveOgre, biome) && MoCConfig.caveOgreSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.CAVE_OGRE.get(), MoCConfig.caveOgreSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.CAVE_OGRE.get(), MobCategory.MONSTER, MoCConfig.caveOgreSpawnWeight, UniformInt.of(1, 1));
         }
         if (testBiome(BiomeConfig.fireOgre, biome) && MoCConfig.fireOgreSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.FIRE_OGRE.get(), MoCConfig.fireOgreSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FIRE_OGRE.get(), MobCategory.MONSTER, MoCConfig.fireOgreSpawnWeight, UniformInt.of(1, 1));
         }
         
         // Scorpions
         if (testBiome(BiomeConfig.caveScorpion, biome) && MoCConfig.caveScorpionSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.CAVE_SCORPION.get(), MoCConfig.caveScorpionSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.CAVE_SCORPION.get(), MobCategory.MONSTER, MoCConfig.caveScorpionSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.dirtScorpion, biome) && MoCConfig.dirtScorpionSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.DIRT_SCORPION.get(), MoCConfig.dirtScorpionSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.DIRT_SCORPION.get(), MobCategory.MONSTER, MoCConfig.dirtScorpionSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.fireScorpion, biome) && MoCConfig.fireScorpionSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.FIRE_SCORPION.get(), MoCConfig.fireScorpionSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FIRE_SCORPION.get(), MobCategory.MONSTER, MoCConfig.fireScorpionSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.frostScorpion, biome) && MoCConfig.frostScorpionSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.FROST_SCORPION.get(), MoCConfig.frostScorpionSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FROST_SCORPION.get(), MobCategory.MONSTER, MoCConfig.frostScorpionSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.undeadScorpion, biome) && MoCConfig.undeadScorpionSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.UNDEAD_SCORPION.get(), MoCConfig.undeadScorpionSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.UNDEAD_SCORPION.get(), MobCategory.MONSTER, MoCConfig.undeadScorpionSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Golems
         if (testBiome(BiomeConfig.bigGolem, biome) && MoCConfig.bigGolemSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.BIG_GOLEM.get(), MoCConfig.bigGolemSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.BIG_GOLEM.get(), MobCategory.MONSTER, MoCConfig.bigGolemSpawnWeight, UniformInt.of(1, 1));
         }
         if (testBiome(BiomeConfig.miniGolem, biome) && MoCConfig.miniGolemSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.MINI_GOLEM.get(), MoCConfig.miniGolemSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.MINI_GOLEM.get(), MobCategory.MONSTER, MoCConfig.miniGolemSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Manticores
         if (testBiome(BiomeConfig.darkManticore, biome) && MoCConfig.darkManticoreSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.DARK_MANTICORE.get(), MoCConfig.darkManticoreSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.DARK_MANTICORE.get(), MobCategory.MONSTER, MoCConfig.darkManticoreSpawnWeight, UniformInt.of(1, 1));
         }
         if (testBiome(BiomeConfig.fireManticore, biome) && MoCConfig.fireManticoreSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.FIRE_MANTICORE.get(), MoCConfig.fireManticoreSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FIRE_MANTICORE.get(), MobCategory.MONSTER, MoCConfig.fireManticoreSpawnWeight, UniformInt.of(1, 1));
         }
         if (testBiome(BiomeConfig.frostManticore, biome) && MoCConfig.frostManticoreSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.FROST_MANTICORE.get(), MoCConfig.frostManticoreSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FROST_MANTICORE.get(), MobCategory.MONSTER, MoCConfig.frostManticoreSpawnWeight, UniformInt.of(1, 1));
         }
         if (testBiome(BiomeConfig.plainManticore, biome) && MoCConfig.plainManticoreSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.PLAIN_MANTICORE.get(), MoCConfig.plainManticoreSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.PLAIN_MANTICORE.get(), MobCategory.MONSTER, MoCConfig.plainManticoreSpawnWeight, UniformInt.of(1, 1));
         }
         if (testBiome(BiomeConfig.toxicManticore, biome) && MoCConfig.toxicManticoreSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.TOXIC_MANTICORE.get(), MoCConfig.toxicManticoreSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.TOXIC_MANTICORE.get(), MobCategory.MONSTER, MoCConfig.toxicManticoreSpawnWeight, UniformInt.of(1, 1));
         }
         
         // Werewolves and variants
         if (testBiome(BiomeConfig.werewolf, biome) && MoCConfig.werewolfSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.WEREWOLF.get(), MoCConfig.werewolfSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.WEREWOLF.get(), MobCategory.MONSTER, MoCConfig.werewolfSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.wwolf, biome) && MoCConfig.wwolfSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.WWOLF.get(), MoCConfig.wwolfSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.WWOLF.get(), MobCategory.MONSTER, MoCConfig.wwolfSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Rats
         if (testBiome(BiomeConfig.rat, biome) && MoCConfig.ratSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.RAT.get(), MoCConfig.ratSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.RAT.get(), MobCategory.MONSTER, MoCConfig.ratSpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.hellRat, biome) && MoCConfig.hellRatSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.HELL_RAT.get(), MoCConfig.hellRatSpawnWeight, 1, 3));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.HELL_RAT.get(), MobCategory.MONSTER, MoCConfig.hellRatSpawnWeight, UniformInt.of(1, 3));
         }
         
         // Undead
         if (testBiome(BiomeConfig.silverSkeleton, biome) && MoCConfig.silverSkeletonSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.SILVER_SKELETON.get(), MoCConfig.silverSkeletonSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.SILVER_SKELETON.get(), MobCategory.MONSTER, MoCConfig.silverSkeletonSpawnWeight, UniformInt.of(1, 2));
         }
         
         // Wraiths
         if (testBiome(BiomeConfig.wraith, biome) && MoCConfig.wraithSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.WRAITH.get(), MoCConfig.wraithSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.WRAITH.get(), MobCategory.MONSTER, MoCConfig.wraithSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.flameWraith, biome) && MoCConfig.flameWraithSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.FLAME_WRAITH.get(), MoCConfig.flameWraithSpawnWeight, 1, 1));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FLAME_WRAITH.get(), MobCategory.MONSTER, MoCConfig.flameWraithSpawnWeight, UniformInt.of(1, 1));
         }
         
         // Nether mounts
         if (testBiome(BiomeConfig.horseMob, biome) && MoCConfig.horseMobSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(MoCEntities.HORSE_MOB.get(), MoCConfig.horseMobSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.HORSE_MOB.get(), MobCategory.MONSTER, MoCConfig.horseMobSpawnWeight, UniformInt.of(1, 2));
         }
         
         // MoCreatures Aquatic Spawns
         
         // Ocean creatures
         if (testBiome(BiomeConfig.dolphin, biome) && MoCConfig.dolphinSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.DOLPHIN.get(), MoCConfig.dolphinSpawnWeight, 1, 3));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.DOLPHIN.get(), MobCategory.WATER_CREATURE, MoCConfig.dolphinSpawnWeight, UniformInt.of(1, 3));
         }
         if (testBiome(BiomeConfig.shark, biome) && MoCConfig.sharkSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.SHARK.get(), MoCConfig.sharkSpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.SHARK.get(), MobCategory.WATER_CREATURE, MoCConfig.sharkSpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.mantaRay, biome) && MoCConfig.mantaRaySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.MANTA_RAY.get(), MoCConfig.mantaRaySpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.MANTA_RAY.get(), MobCategory.WATER_CREATURE, MoCConfig.mantaRaySpawnWeight, UniformInt.of(1, 2));
         }
         if (testBiome(BiomeConfig.jellyfish, biome) && MoCConfig.jellyfishSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.JELLYFISH.get(), MoCConfig.jellyfishSpawnWeight, 1, 3));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.JELLYFISH.get(), MobCategory.WATER_CREATURE, MoCConfig.jellyfishSpawnWeight, UniformInt.of(1, 3));
         }
         
         // River/swamp creatures
         if (testBiome(BiomeConfig.bass, biome) && MoCConfig.bassSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.BASS.get(), MoCConfig.bassSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.BASS.get(), MobCategory.WATER_CREATURE, MoCConfig.bassSpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.stingRay, biome) && MoCConfig.stingRaySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.STING_RAY.get(), MoCConfig.stingRaySpawnWeight, 1, 2));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.STING_RAY.get(), MobCategory.WATER_CREATURE, MoCConfig.stingRaySpawnWeight, UniformInt.of(1, 2));
         }
         
         // Small fish
         if (testBiome(BiomeConfig.anchovy, biome) && MoCConfig.anchovySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.ANCHOVY.get(), MoCConfig.anchovySpawnWeight, 3, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.ANCHOVY.get(), MobCategory.WATER_AMBIENT, MoCConfig.anchovySpawnWeight, UniformInt.of(3, 6));
         }
         if (testBiome(BiomeConfig.angelfish, biome) && MoCConfig.angelfishSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.ANGELFISH.get(), MoCConfig.angelfishSpawnWeight, 3, 5));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.ANGELFISH.get(), MobCategory.WATER_AMBIENT, MoCConfig.angelfishSpawnWeight, UniformInt.of(3, 5));
         }
         if (testBiome(BiomeConfig.angler, biome) && MoCConfig.anglerSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.ANGLER.get(), MoCConfig.anglerSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.ANGLER.get(), MobCategory.WATER_AMBIENT, MoCConfig.anglerSpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.clownfish, biome) && MoCConfig.clownfishSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.CLOWNFISH.get(), MoCConfig.clownfishSpawnWeight, 3, 5));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.CLOWNFISH.get(), MobCategory.WATER_AMBIENT, MoCConfig.clownfishSpawnWeight, UniformInt.of(3, 5));
         }
         if (testBiome(BiomeConfig.goldfish, biome) && MoCConfig.goldfishSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.GOLDFISH.get(), MoCConfig.goldfishSpawnWeight, 3, 5));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.GOLDFISH.get(), MobCategory.WATER_AMBIENT, MoCConfig.goldfishSpawnWeight, UniformInt.of(3, 5));
         }
         if (testBiome(BiomeConfig.hippotang, biome) && MoCConfig.hippotangSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.HIPPOTANG.get(), MoCConfig.hippotangSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.HIPPOTANG.get(), MobCategory.WATER_AMBIENT, MoCConfig.hippotangSpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.manderin, biome) && MoCConfig.manderinSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.MANDERIN.get(), MoCConfig.manderinSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.MANDERIN.get(), MobCategory.WATER_AMBIENT, MoCConfig.manderinSpawnWeight, UniformInt.of(2, 4));
         }
         
         // Medium fish
         if (testBiome(BiomeConfig.cod, biome) && MoCConfig.codSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.COD.get(), MoCConfig.codSpawnWeight, 3, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.COD.get(), MobCategory.WATER_CREATURE, MoCConfig.codSpawnWeight, UniformInt.of(3, 6));
         }
         if (testBiome(BiomeConfig.salmon, biome) && MoCConfig.salmonSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.SALMON.get(), MoCConfig.salmonSpawnWeight, 3, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.SALMON.get(), MobCategory.WATER_CREATURE, MoCConfig.salmonSpawnWeight, UniformInt.of(3, 6));
         }
         
         // Predatory fish
         if (testBiome(BiomeConfig.piranha, biome) && MoCConfig.piranhaSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_CREATURE).add(new MobSpawnSettings.SpawnerData(MoCEntities.PIRANHA.get(), MoCConfig.piranhaSpawnWeight, 3, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.PIRANHA.get(), MobCategory.WATER_CREATURE, MoCConfig.piranhaSpawnWeight, UniformInt.of(3, 6));
         }
         
         // General fish
         if (testBiome(BiomeConfig.fishy, biome) && MoCConfig.fishySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.WATER_AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.FISHY.get(), MoCConfig.fishySpawnWeight, 4, 8));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FISHY.get(), MobCategory.WATER_AMBIENT, MoCConfig.fishySpawnWeight, UniformInt.of(4, 8));
         }
         
         // MoCreatures Ambient Spawns
         
         // Insects
         if (testBiome(BiomeConfig.ant, biome) && MoCConfig.antSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.ANT.get(), MoCConfig.antSpawnWeight, 4, 8));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.ANT.get(), MobCategory.AMBIENT, MoCConfig.antSpawnWeight, UniformInt.of(4, 8));
         }
         if (testBiome(BiomeConfig.bee, biome) && MoCConfig.beeSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.BEE.get(), MoCConfig.beeSpawnWeight, 3, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.BEE.get(), MobCategory.AMBIENT, MoCConfig.beeSpawnWeight, UniformInt.of(3, 6));
         }
         if (testBiome(BiomeConfig.butterfly, biome) && MoCConfig.butterflySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.BUTTERFLY.get(), MoCConfig.butterflySpawnWeight, 3, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.BUTTERFLY.get(), MobCategory.AMBIENT, MoCConfig.butterflySpawnWeight, UniformInt.of(3, 6));
         }
         if (testBiome(BiomeConfig.cricket, biome) && MoCConfig.cricketSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.CRICKET.get(), MoCConfig.cricketSpawnWeight, 3, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.CRICKET.get(), MobCategory.AMBIENT, MoCConfig.cricketSpawnWeight, UniformInt.of(3, 6));
         }
         if (testBiome(BiomeConfig.dragonfly, biome) && MoCConfig.dragonflySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.DRAGONFLY.get(), MoCConfig.dragonflySpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.DRAGONFLY.get(), MobCategory.AMBIENT, MoCConfig.dragonflySpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.firefly, biome) && MoCConfig.fireflySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.FIREFLY.get(), MoCConfig.fireflySpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FIREFLY.get(), MobCategory.AMBIENT, MoCConfig.fireflySpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.fly, biome) && MoCConfig.flySpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.FLY.get(), MoCConfig.flySpawnWeight, 3, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.FLY.get(), MobCategory.AMBIENT, MoCConfig.flySpawnWeight, UniformInt.of(3, 6));
         }
         if (testBiome(BiomeConfig.grasshopper, biome) && MoCConfig.grasshopperSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.GRASSHOPPER.get(), MoCConfig.grasshopperSpawnWeight, 3, 6));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.GRASSHOPPER.get(), MobCategory.AMBIENT, MoCConfig.grasshopperSpawnWeight, UniformInt.of(3, 6));
         }
         if (testBiome(BiomeConfig.maggot, biome) && MoCConfig.maggotSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.MAGGOT.get(), MoCConfig.maggotSpawnWeight, 2, 5));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.MAGGOT.get(), MobCategory.AMBIENT, MoCConfig.maggotSpawnWeight, UniformInt.of(2, 5));
         }
         if (testBiome(BiomeConfig.roach, biome) && MoCConfig.roachSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.ROACH.get(), MoCConfig.roachSpawnWeight, 2, 5));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.ROACH.get(), MobCategory.AMBIENT, MoCConfig.roachSpawnWeight, UniformInt.of(2, 5));
         }
         
         // Beach/aquatic ambient
         if (testBiome(BiomeConfig.crab, biome) && MoCConfig.crabSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.CRAB.get(), MoCConfig.crabSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.CRAB.get(), MobCategory.AMBIENT, MoCConfig.crabSpawnWeight, UniformInt.of(2, 4));
         }
         if (testBiome(BiomeConfig.snail, biome) && MoCConfig.snailSpawnWeight > 0) {
-            builder.getMobSpawnSettings().getSpawner(MobCategory.AMBIENT).add(new MobSpawnSettings.SpawnerData(MoCEntities.SNAIL.get(), MoCConfig.snailSpawnWeight, 2, 4));
+            builder.getMobSpawnSettings().addSpawn(MoCEntities.SNAIL.get(), MobCategory.AMBIENT, MoCConfig.snailSpawnWeight, UniformInt.of(2, 4));
         }
     }
 }

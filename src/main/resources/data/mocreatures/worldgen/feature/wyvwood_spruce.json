@@ -1,0 +1,46 @@
+{
+  "type": "minecraft:tree",
+  "ignore_vines": true,
+  "minimum_size": {
+    "type": "minecraft:two_layers_feature_size",
+    "limit": 1,
+    "lower_size": 0,
+    "upper_size": 1
+  },
+  "trunk_provider": {
+    "id": "mocreatures:wyvwood_log"
+  },
+  "foliage_provider": {
+    "id": "mocreatures:wyvwood_leaves"
+  },
+  "trunk_placer": {
+    "type": "minecraft:straight_trunk_placer",
+    "base_height": 5,
+    "height_rand_a": 2,
+    "height_rand_b": 1
+  },
+  "foliage_placer": {
+    "type": "minecraft:spruce_foliage_placer",
+    "radius": 2,
+    "offset": 1,
+    "trunk_height": 1
+  },
+  "decorators": [],
+  "below_trunk_provider": {
+    "type": "minecraft:rule_based",
+    "rules": [
+      {
+        "if_true": {
+          "type": "minecraft:not",
+          "predicate": {
+            "type": "minecraft:matching_block_tag",
+            "tag": "minecraft:cannot_replace_below_tree_trunk"
+          }
+        },
+        "then": {
+          "id": "mocreatures:wyvdirt"
+        }
+      }
+    ]
+  }
+}

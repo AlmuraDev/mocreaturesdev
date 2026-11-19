@@ -219,6 +219,6 @@ public class BiomeConfig {
 	}
 
 	public static boolean test(Pair<String, SpawnBiomeData> spawns, Holder<Biome> biome) {
-		return test(spawns, biome, BuiltInRegistries.BIOME.getKey(biome.value()));
+		return test(spawns, biome, biome.unwrapKey().map(net.minecraft.resources.ResourceKey::identifier).orElse(null));
 	}
 }

@@ -1,178 +1,60 @@
 {
-  "aquifers_enabled": false,
-  "default_block": {
-    "Name": "mocreatures:wyvstone"
-  },
-  "default_fluid": {
-    "Name": "minecraft:air"
-  },
-  "disable_mob_generation": false,
-  "has_lava_pools": false,
-  "has_fluid": false,
-  "structures_disabled": true,
-  "legacy_random_source": false,
-  "noise": {
-    "height": 384,
-    "min_y": -64,
-    "size_horizontal": 2,
-    "size_vertical": 2,
-    "bottom_slide": {
-      "target": 0,
-      "size": 0,
-      "offset": 0
-    },
-    "top_slide": {
-      "target": 0,
-      "size": 0,
-      "offset": 0
-    }
-  },
-  "noise_router": {
-    "barrier": 0,
-    "continents": 0,
-    "depth": 0,
-    "erosion": 0,
-    "final_density": {
-      "type": "minecraft:squeeze",
-      "argument": {
-        "type": "minecraft:mul",
-        "argument1": 0.64,
-        "argument2": {
-          "type": "minecraft:interpolated",
-          "argument": {
-            "type": "minecraft:blend_density",
-            "argument": {
-              "type": "minecraft:add",
-              "argument1": -0.234375,
-              "argument2": {
-                "type": "minecraft:mul",
-                "argument1": {
-                  "type": "minecraft:y_clamped_gradient",
-                  "from_value": 0.0,
-                  "from_y": -64,
-                  "to_value": 1.0,
-                  "to_y": 48
-                },
-                "argument2": {
-                  "type": "minecraft:add",
-                  "argument1": 0.234375,
-                  "argument2": {
-                    "type": "minecraft:add",
-                    "argument1": -23.4375,
-                    "argument2": {
-                      "type": "minecraft:mul",
-                      "argument1": {
-                        "type": "minecraft:y_clamped_gradient",
-                        "from_value": 1.0,
-                        "from_y": 56,
-                        "to_value": 0.0,
-                        "to_y": 256
-                      },
-                      "argument2": {
-                        "type": "minecraft:add",
-                        "argument1": 23.4375,
-                        "argument2": {
-                          "type": "minecraft:add",
-                          "argument1": {
-                            "type": "minecraft:end_islands",
-                            "scale": 2.0
-                          },
-                          "argument2": {
-                            "type": "minecraft:old_blended_noise",
-                            "smear_scale_multiplier": 4.0,
-                            "xz_factor": 120.0,
-                            "xz_scale": 0.7,
-                            "y_factor": 160.0,
-                            "y_scale": 0.25
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "fluid_level_floodedness": 0,
-    "fluid_level_spread": 0,
-    "initial_density_without_jaggedness": {
-      "type": "minecraft:add",
-      "argument1": -0.234375,
-      "argument2": {
-        "type": "minecraft:mul",
-        "argument1": {
-          "type": "minecraft:y_clamped_gradient",
-          "from_value": 0.0,
-          "from_y": -64,
-          "to_value": 1.0,
-          "to_y": 48
-        },
-        "argument2": {
-          "type": "minecraft:add",
-          "argument1": 0.234375,
-          "argument2": {
-            "type": "minecraft:add",
-            "argument1": -23.4375,
-            "argument2": {
+  "debug_functions": [
+    {
+      "function": {
+        "type": "minecraft:add",
+        "left": {
+          "type": "minecraft:squeeze",
+          "input": {
+            "type": "minecraft:interpolated",
+            "cell_size_xz": 8,
+            "cell_size_y": 4,
+            "input": {
               "type": "minecraft:mul",
-              "argument1": {
-                "type": "minecraft:y_clamped_gradient",
-                "from_value": 1.0,
-                "from_y": 56,
-                "to_value": 0.0,
-                "to_y": 256
-              },
-              "argument2": {
-                "type": "minecraft:add",
-                "argument1": 23.4375,
-                "argument2": {
-                  "type": "minecraft:add",
-                  "argument1": -0.703125,
-                  "argument2": {
-                    "type": "minecraft:cache_2d",
-                    "argument": {
-                      "type": "minecraft:end_islands",
-                      "scale": 2.0
-                    }
+              "left": {
+                "type": "minecraft:blend_density",
+                "input": {
+                  "type": "minecraft:lerp",
+                  "alpha": {
+                    "type": "minecraft:gradient",
+                    "axis": "y",
+                    "from_coordinate": 4,
+                    "from_value": 0.0,
+                    "to_coordinate": 32,
+                    "to_value": 1.0
+                  },
+                  "first": -0.234375,
+                  "second": {
+                    "type": "minecraft:lerp",
+                    "alpha": {
+                      "type": "minecraft:gradient",
+                      "axis": "y",
+                      "from_coordinate": 184,
+                      "from_value": 1.0,
+                      "to_coordinate": 440,
+                      "to_value": 0.0
+                    },
+                    "first": -23.4375,
+                    "second": "minecraft:end/base_3d_noise"
                   }
                 }
-              }
+              },
+              "right": 0.64
             }
           }
+        },
+        "right": {
+          "type": "minecraft:beardifier"
         }
-      }
-    },
-    "lava": -1000000,
-    "ridges": 0,
-    "temperature": {
-      "type": "minecraft:shifted_noise",
-      "noise": "minecraft:temperature",
-      "shift_x": "minecraft:shift_x",
-      "shift_y": 0.0,
-      "shift_z": "minecraft:shift_z",
-      "xz_scale": 0.25,
-      "y_scale": 0.0
-    },
-    "vegetation": {
-      "type": "minecraft:shifted_noise",
-      "noise": "minecraft:vegetation",
-      "shift_x": "minecraft:shift_x",
-      "shift_y": 0.0,
-      "shift_z": "minecraft:shift_z",
-      "xz_scale": 0.25,
-      "y_scale": 0.0
-    },
-    "vein_gap": 0,
-    "vein_ridged": 0,
-    "vein_toggle": 0
-  },
-  "ore_veins_enabled": true,
-  "sea_level": -128,
-  "spawn_target": [],
-  "surface_rule": {
+      },
+      "label": "N"
+    }
+  ],
+  "default_block": "mocreatures:wyvstone",
+  "default_fluid": "minecraft:air",
+  "disable_mob_generation": false,
+  "legacy_random_source": true,
+  "material_rule": {
     "type": "minecraft:sequence",
     "sequence": [
       {
@@ -210,9 +92,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvgrass"
-                      }
+                      "result_state": "mocreatures:wyvgrass"
                     }
                   },
                   {
@@ -226,9 +106,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvdirt"
-                      }
+                      "result_state": "mocreatures:wyvdirt"
                     }
                   },
                   {
@@ -242,9 +120,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvdirt"
-                      }
+                      "result_state": "mocreatures:wyvdirt"
                     }
                   },
                   {
@@ -258,9 +134,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvdirt"
-                      }
+                      "result_state": "mocreatures:wyvdirt"
                     }
                   }
                 ]
@@ -288,9 +162,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvgrass"
-                      }
+                      "result_state": "mocreatures:wyvgrass"
                     }
                   },
                   {
@@ -304,9 +176,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvdirt"
-                      }
+                      "result_state": "mocreatures:wyvdirt"
                     }
                   },
                   {
@@ -320,9 +190,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvdirt"
-                      }
+                      "result_state": "mocreatures:wyvdirt"
                     }
                   },
                   {
@@ -336,9 +204,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvdirt"
-                      }
+                      "result_state": "mocreatures:wyvdirt"
                     }
                   }
                 ]
@@ -366,9 +232,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvgrass"
-                      }
+                      "result_state": "mocreatures:wyvgrass"
                     }
                   },
                   {
@@ -382,9 +246,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvdirt"
-                      }
+                      "result_state": "mocreatures:wyvdirt"
                     }
                   },
                   {
@@ -398,9 +260,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvdirt"
-                      }
+                      "result_state": "mocreatures:wyvdirt"
                     }
                   },
                   {
@@ -414,9 +274,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:wyvdirt"
-                      }
+                      "result_state": "mocreatures:wyvdirt"
                     }
                   }
                 ]
@@ -444,9 +302,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:silver_sand"
-                      }
+                      "result_state": "mocreatures:silver_sand"
                     }
                   },
                   {
@@ -460,9 +316,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:silver_sand"
-                      }
+                      "result_state": "mocreatures:silver_sand"
                     }
                   },
                   {
@@ -476,9 +330,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:silver_sandstone"
-                      }
+                      "result_state": "mocreatures:silver_sandstone"
                     }
                   },
                   {
@@ -492,9 +344,7 @@
                     },
                     "then_run": {
                       "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "mocreatures:silver_sandstone"
-                      }
+                      "result_state": "mocreatures:silver_sandstone"
                     }
                   }
                 ]
@@ -517,11 +367,70 @@
         },
         "then_run": {
           "type": "minecraft:block",
-          "result_state": {
-            "Name": "minecraft:air"
-          }
+          "result_state": "minecraft:air"
         }
       }
     ]
-  }
-} 
+  },
+  "noise": {
+    "height": 256,
+    "min_y": 0
+  },
+  "noise_router": {
+    "chunk_surface_level": 0.0,
+    "continents": 0.0,
+    "depth": 0.0,
+    "erosion": 0.0,
+    "final_density": {
+      "type": "minecraft:add",
+      "left": {
+        "type": "minecraft:squeeze",
+        "input": {
+          "type": "minecraft:interpolated",
+          "cell_size_xz": 8,
+          "cell_size_y": 4,
+          "input": {
+            "type": "minecraft:mul",
+            "left": {
+              "type": "minecraft:blend_density",
+              "input": {
+                "type": "minecraft:lerp",
+                "alpha": {
+                  "type": "minecraft:gradient",
+                  "axis": "y",
+                  "from_coordinate": 4,
+                  "from_value": 0.0,
+                  "to_coordinate": 32,
+                  "to_value": 1.0
+                },
+                "first": -0.234375,
+                "second": {
+                  "type": "minecraft:lerp",
+                  "alpha": {
+                    "type": "minecraft:gradient",
+                    "axis": "y",
+                    "from_coordinate": 184,
+                    "from_value": 1.0,
+                    "to_coordinate": 440,
+                    "to_value": 0.0
+                  },
+                  "first": -23.4375,
+                  "second": "minecraft:end/base_3d_noise"
+                }
+              }
+            },
+            "right": 0.64
+          }
+        }
+      },
+      "right": {
+        "type": "minecraft:beardifier"
+      }
+    },
+    "ridges": 0.0,
+    "temperature": 0.0,
+    "vegetation": 0.0
+  },
+  "sea_level": -64,
+  "spawn_target": []
+}

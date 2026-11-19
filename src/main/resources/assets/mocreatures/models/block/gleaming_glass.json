@@ -1,6 +1,9 @@
 {
-  "parent": "block/cube_all",
+  "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "mocreatures:block/glass_gleaming"
+    "all": {
+      "force_translucent": true,
+      "sprite": "mocreatures:block/glass_gleaming"
+    }
   }
 }

@@ -23,7 +23,7 @@ public class MoCBlockNest extends Block {
     }
 
     @Override
-    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float distance) {
+    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, double distance) {
         entity.causeFallDamage(distance, 0.2F, level.damageSources().fall());
     }
 

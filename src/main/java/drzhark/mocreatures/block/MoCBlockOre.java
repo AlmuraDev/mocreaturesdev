@@ -2,6 +2,14 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.block;
+import org.jspecify.annotations.Nullable;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.LevelAccessor;
 
 import drzhark.mocreatures.init.MoCBlocks;
 import net.minecraft.core.BlockPos;
@@ -20,8 +28,11 @@ public class MoCBlockOre extends Block {
     }
 
     @Override
-    public int getExpDrop(BlockState state, LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
-        return silkTouchLevel == 0 ? getExperience(randomSource) : 0;
+    public int getExpDrop(BlockState state, LevelAccessor level, BlockPos pos, @Nullable BlockEntity blockEntity, @Nullable Entity breaker, ItemStack tool) {
+        boolean silkTouch = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(Enchantments.SILK_TOUCH)
+                .map(silk -> EnchantmentHelper.getItemEnchantmentLevel(silk, tool) > 0)
+                .orElse(false);
+        return silkTouch ? 0 : getExperience(level.getRandom());
     }
 
     private int getExperience(RandomSource rand) {

@@ -17,16 +17,16 @@ import net.minecraft.world.level.material.PushReaction;
 public class MoCBlockSapling extends SaplingBlock {
 
     public MoCBlockSapling(BlockBehaviour.Properties properties) {
-        super(new WyvwoodTreeGrower(), properties
-                .noCollission()
+        super(WyvwoodTreeGrower.WYVWOOD, properties
+                .noCollision()
                 .randomTicks()
                 .strength(0.0F)
                 .sound(SoundType.GRASS)
-                .pushReaction(PushReaction.DESTROY));
+                .pushReaction(PushReaction.POPPED));
     }
     
     @Override
-    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos blockpos = pos.below();
         BlockState blockstate = level.getBlockState(blockpos);
         

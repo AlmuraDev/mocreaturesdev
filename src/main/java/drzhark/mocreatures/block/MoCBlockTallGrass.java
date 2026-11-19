@@ -2,12 +2,12 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.block;
+import net.minecraft.world.level.block.FarmlandBlock;
 
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.GrassBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.core.BlockPos;
@@ -22,11 +22,11 @@ public class MoCBlockTallGrass extends TallGrassBlock {
 
     public MoCBlockTallGrass(BlockBehaviour.Properties properties) {
         super(properties
-                .noCollission()
+                .noCollision()
                 .instabreak()
                 .sound(SoundType.GRASS)
                 .offsetType(BlockBehaviour.OffsetType.XYZ)
-                .pushReaction(PushReaction.DESTROY));
+                .pushReaction(PushReaction.POPPED));
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MoCBlockTallGrass extends TallGrassBlock {
         return state.getBlock() instanceof GrassBlock
                 || state.getBlock() instanceof MoCBlockGrass
                 || state.getBlock() instanceof MoCBlockDirt
-                || state.getBlock() instanceof FarmBlock
+                || state.getBlock() instanceof FarmlandBlock
                 || state.is(net.minecraft.tags.BlockTags.DIRT);
     }
 }

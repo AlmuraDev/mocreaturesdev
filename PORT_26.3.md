@@ -35,18 +35,19 @@ furniture mod's `4.0` branch.
 
 ## Remaining
 
-After the worldgen batch: about 120 unique errors, all in blocks, `MoCTools`, commands, events and compat.
-Everything else compiles (`init/**` bar the glass block constructor).
+After the blocks batch: about 75 unique errors, all in `MoCTools`, commands, events and compat. Everything else
+compiles.
 
 | Area | Errors | Main work |
 |---|---|---|
 | Entities (`entity/**`) | 0 | done, see below; needs in-game testing |
 | Client rendering (`client/**`) | 0 | done, see below; needs in-game testing |
-| Registration (`init/**`) | 1 | done, see below; the one left is the `MoCBlockGlass` constructor |
+| Registration (`init/**`) | 0 | done, see below |
 | Items (`item/**`) | 0 | done, see below; needs in-game testing |
 | World / worldgen / dimension | 0 | done, code and data, see below; needs in-game testing |
 | Commands (`network/command/**`) | ~30 | permission checks; teleporting between dimensions; pet listing NBT |
-| Other (events, util, compat, blocks) | ~160 | removed events (`TickEvent`, `BlockEvent.BreakEvent` moves, `MissingMappingsEvent`), `IPlantable`, `GlassBlock`, data fixers |
+| Blocks (`block/**`) | 0 | done, see below |
+| Other (`MoCTools`, events, compat) | ~40 | removed events (`TickEvent`, `MissingMappingsEvent`), game rules, explosions, data fixers |
 
 ### Entities batch: how the 1.20 behaviour was kept
 
@@ -174,13 +175,23 @@ Everything else compiles (`init/**` bar the glass block constructor).
 - **Portal and teleporter:** see the items batch.
 - None of this data has been loaded by a game yet: the first run will show any datapack errors in the log.
 
+### Blocks batch
+
+- Gleaming glass is a `TransparentBlock`; its model marks the texture `force_translucent`. 26.3 picks cutout for leaves,
+  sapling and tall grass from their textures' transparency, so `ItemBlockRenderTypes` isn't needed.
+- The wyvwood sapling uses a 26.3 `TreeGrower` (`WyvwoodTreeGrower.WYVWOOD`): dark oak and spruce shapes at weight 9 each,
+  the two large shapes at weight 1 each, the same one-in-ten chance of a large tree as before.
+- Silver sand is a `ColoredFallingBlock` with its old dust colour; silver sand and wyvgrass say which plants they grow
+  through NeoForge's `canSustainPlant(..., BlockState plant)` (cacti and dead bushes; mushrooms).
+- Wyvgrass bone meal uses the biome's bone meal features; the ores drop experience unless mined with silk touch through
+  NeoForge's `getExpDrop`; leaves have no ambient sound; blocks that used `PushReaction.DESTROY` now pop (`POPPED`).
+
 Resources are untouched so far:
 - data pack folder renames (`loot_tables` to `loot_table`, `recipes` to `recipe`, `tags/items` to `tags/item`, and so on), plus the recipe and loot JSON formats
 - `data/forge` to `data/c` tags
 - client item definitions (`assets/mocreatures/items/*.json`)
 - equipment assets for the armour
 - spawn egg textures (the old egg colours are still in `MoCSpawnEggs`)
-- `render_type` in the block models for leaves, sapling, tall grass and glass, which `ItemBlockRenderTypes` used to set
 
 ## Almura changes to re-apply
 

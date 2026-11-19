@@ -2,6 +2,9 @@
  * GNU GENERAL PUBLIC LICENSE Version 3
  */
 package drzhark.mocreatures.block;
+import net.minecraft.util.TriState;
+import net.minecraft.util.ColorRGBA;
+import net.minecraft.world.level.block.ColoredFallingBlock;
 
 import drzhark.mocreatures.init.MoCBlocks;
 import net.minecraft.core.BlockPos;
@@ -14,25 +17,22 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.IPlantable;
 
-public class MoCBlockSand extends FallingBlock {
+public class MoCBlockSand extends ColoredFallingBlock {
 
     public MoCBlockSand(BlockBehaviour.Properties properties) {
-        super(properties
+        super(new ColorRGBA(0xFFB8B8CA), properties
                 .strength(0.5F)
                 .sound(SoundType.SAND));
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public int getDustColor(BlockState state, BlockGetter world, BlockPos pos) {
-        return 12107978;
-    }
 
+    /** Silver sand grows cacti and dead bushes like sand. */
     @Override
-    public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction direction, IPlantable plantable) {
-        BlockState plant = plantable.getPlant(world, pos.relative(direction));
-        return (plant.getBlock() == Blocks.CACTUS || plant.getBlock() == Blocks.DEAD_BUSH) && this == MoCBlocks.silverSand.get()
-                || super.canSustainPlant(state, world, pos, direction, plantable);
+    public TriState canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction direction, BlockState plant) {
+        if ((plant.is(Blocks.CACTUS) || plant.is(Blocks.DEAD_BUSH)) && this == MoCBlocks.silverSand.get()) {
+            return TriState.TRUE;
+        }
+        return super.canSustainPlant(state, world, pos, direction, plant);
     }
 }

@@ -3,6 +3,8 @@
  */
 package drzhark.mocreatures.entity.hunter;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIFleeFromPlayer;
@@ -15,7 +17,7 @@ import drzhark.mocreatures.init.MoCSoundEvents;
 import drzhark.mocreatures.network.MoCMessageHandler;
 import drzhark.mocreatures.network.message.MoCMessageAnimation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -38,7 +40,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 
@@ -94,7 +96,7 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, EntitySpawnReason reason, @Nullable SpawnGroupData spawnDataIn) {
         if (this.level().dimension() == MoCreatures.proxy.wyvernDimension) this.setPersistenceRequired();
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
@@ -123,7 +125,7 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("snake_wolf.png");
@@ -145,12 +147,12 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return this.xpReward;
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -441,8 +443,8 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
-        boolean flag = super.doHurtTarget(entityIn);
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
+        boolean flag = super.doHurtTarget(serverLevel, serverLevel, entityIn);
         if (flag && entityIn instanceof LivingEntity && getTypeMoC() > 2) {
             MoCMessageHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new MoCMessageAnimation(this.getId(), 1));
             setBiting(true);
@@ -475,13 +477,13 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
 
         if (getTypeMoC() < 3) {
-            return super.hurt(damagesource, i);
+            return super.hurtServer(serverLevel, damagesource, i);
         }
 
-        if (super.hurt(damagesource, i)) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             Entity entity = damagesource.getDirectEntity();
             if (entity != null && this.isVehicle()) {
                 return true;
@@ -497,7 +499,7 @@ public class MoCEntitySnake extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
         if (getMoCAge() > 60) {
             int j = this.random.nextInt(3);
             for (int l = 0; l < j; l++) {

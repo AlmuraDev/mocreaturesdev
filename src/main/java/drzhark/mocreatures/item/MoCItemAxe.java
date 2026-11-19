@@ -13,8 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -42,14 +42,14 @@ public class MoCItemAxe extends AxeItem {
                     target.addEffect(new MobEffectInstance(MobEffects.POISON, timer * 20, 1));
                     break;
                 case 2: // Slowness
-                    target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, timer * 20, 0));
+                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, timer * 20, 0));
                     break;
                 case 3: // Fire
-                    target.setSecondsOnFire(timer);
+                    target.igniteForSeconds(timer);
                     break;
                 case 4: // Weakness or Nausea
                     if (target instanceof Player) {
-                        target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, timer * 20, 0));
+                        target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, timer * 20, 0));
                     } else {
                         target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, timer * 20, 0));
                     }

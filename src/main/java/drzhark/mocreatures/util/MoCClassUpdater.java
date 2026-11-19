@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.util;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
@@ -67,7 +68,7 @@ public class MoCClassUpdater {
      * 
      * New (1.20.1):
      * @Override 
-     * protected void defineSynchedData() { ... }
+     * protected void defineSynchedData(SynchedEntityData.Builder builder) { ... }
      * entity.getNavigation().stop();
      * entity.getLookControl().setLookAt()
      * entity.getMaxHeadXRot()
@@ -100,7 +101,7 @@ public class MoCClassUpdater {
      * world.playSound(...)
      * 
      * New (1.20.1):
-     * level.isClientSide
+     * level.isClientSide()
      * level.addFreshEntity(entity) 
      * level.getNearestPlayer(entity, distance)
      * level.players()

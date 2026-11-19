@@ -3,7 +3,7 @@
  */
 package drzhark.mocreatures.entity;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.UUID;
@@ -66,7 +66,7 @@ public interface IMoCEntity {
 
     float getAdjustedXOffset();
 
-    ResourceLocation getTexture();
+    Identifier getTexture();
 
     boolean canAttackTarget(LivingEntity entity);
 

@@ -13,8 +13,8 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -43,14 +43,14 @@ public class MoCItemSword extends SwordItem {
                     target.addEffect(new MobEffectInstance(MobEffects.POISON, timer, 1));
                     break;
                 case 2: // Slowness
-                    target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, timer, 0));
+                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, timer, 0));
                     break;
                 case 3: // Fire
-                    target.setSecondsOnFire(10);
+                    target.igniteForSeconds(10);
                     break;
                 case 4: // Weakness (Nausea for players)
                     target.addEffect(new MobEffectInstance(
-                            target instanceof Player ? MobEffects.CONFUSION : MobEffects.WEAKNESS, timer, 0));
+                            target instanceof Player ? MobEffects.NAUSEA : MobEffects.WEAKNESS, timer, 0));
                     break;
                 case 5: // Wither (Blindness for players)
                     target.addEffect(new MobEffectInstance(

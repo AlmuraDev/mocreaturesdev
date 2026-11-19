@@ -7,6 +7,6 @@ package drzhark.mocreatures.compat.industrialforegoing;
 public class IndustrialForegoingIntegration {
 
     public static void generateLatexEntries() {
-//        new FluidExtractorRecipe(new ResourceLocation(MoCConstants.MOD_ID, "wyvwood"), new Ingredient.SingleItemList(new ItemStack(MoCBlocks.wyvwoodLog)), MoCBlocks.strippedwyvwoodLog, 0.005f, new FluidStack(ModuleCore.LATEX.getSourceFluid(), 1), false);
+//        new FluidExtractorRecipe(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "wyvwood"), new Ingredient.SingleItemList(new ItemStack(MoCBlocks.wyvwoodLog)), MoCBlocks.strippedwyvwoodLog, 0.005f, new FluidStack(ModuleCore.LATEX.getSourceFluid(), 1), false);
     }
 }

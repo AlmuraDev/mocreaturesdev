@@ -10,7 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class MoCEntityFireScorpion extends MoCEntityScorpion {
@@ -36,7 +36,7 @@ public class MoCEntityFireScorpion extends MoCEntityScorpion {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("scorpion_fire.png");
     }
 
@@ -44,7 +44,7 @@ public class MoCEntityFireScorpion extends MoCEntityScorpion {
     public void doEnchantDamageEffects(LivingEntity attacker, Entity target) {
         if (!getIsPoisoning() && this.random.nextInt(5) == 0 && target instanceof LivingEntity) {
             setPoisoning(true);
-            target.setSecondsOnFire(15);
+            target.igniteForSeconds(15);
         } else {
             swingArm();
         }
@@ -52,7 +52,7 @@ public class MoCEntityFireScorpion extends MoCEntityScorpion {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.FIRE_SCORPION;
     }
 }

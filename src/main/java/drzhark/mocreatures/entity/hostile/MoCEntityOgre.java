@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.hostile;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityMob;
@@ -15,12 +16,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityOgre extends MoCEntityMob {
 
@@ -61,8 +62,8 @@ public class MoCEntityOgre extends MoCEntityMob {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float damage) {
-        if (!super.hurt(source, damage)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float damage) {
+        if (!super.hurtServer(serverLevel, source, damage)) {
             return false;
         }
         Entity attacker = source.getEntity();
@@ -200,9 +201,9 @@ public class MoCEntityOgre extends MoCEntityMob {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity target) {
         startArmSwingAttack();
-        return super.doHurtTarget(target);
+        return super.doHurtTarget(serverLevel, serverLevel, target);
     }
 
     @Override

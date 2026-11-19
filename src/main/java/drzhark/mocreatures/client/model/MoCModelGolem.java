@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import drzhark.mocreatures.entity.hostile.MoCEntityGolem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -15,10 +16,10 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelGolem (1.16.5) to 1.20.1.
@@ -29,11 +30,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * 2. prepareMobModel
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelGolem<T extends MoCEntityGolem> extends EntityModel<T> {
+public class MoCModelGolem<T extends MoCEntityGolem> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "golem"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "golem"), "main"
     );
 
     private final ModelPart[][] blocks; // [23][28]
@@ -52,6 +53,7 @@ public class MoCModelGolem<T extends MoCEntityGolem> extends EntityModel<T> {
     private boolean angry;
 
     public MoCModelGolem(ModelPart root) {
+        super(root);
         this.blocks = new ModelPart[23][28];
 
         // Retrieve head/chest parts
@@ -202,17 +204,17 @@ public class MoCModelGolem<T extends MoCEntityGolem> extends EntityModel<T> {
         for (int g = 0; g < 23; g++) {
             int idx = this.blocksText[g];
             if (idx != 30) {
-                this.blocks[g][idx].render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.blocks[g][idx].render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
         }
 
         // Render head/chest based on angry state
         if (this.angry) {
-            this.headb.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.chestb.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.headb.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.chestb.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
-            this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.chest.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.chest.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
         
         poseStack.popPose();

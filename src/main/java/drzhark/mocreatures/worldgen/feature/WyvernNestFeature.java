@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
@@ -27,7 +27,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 public class WyvernNestFeature extends Feature<NoneFeatureConfiguration> {
 
     private static final ResourceKey<Level> WYVERN_DIMENSION = 
-            ResourceKey.create(Registries.DIMENSION, new ResourceLocation("mocreatures", "wyvernlairworld"));
+            ResourceKey.create(Registries.DIMENSION, Identifier.fromNamespaceAndPath("mocreatures", "wyvernlairworld"));
 
     public WyvernNestFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -155,7 +155,7 @@ public class WyvernNestFeature extends Feature<NoneFeatureConfiguration> {
         level.setBlock(chestPos, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.NORTH), 2);
         BlockEntity tile = level.getBlockEntity(chestPos);
         if (tile instanceof ChestBlockEntity) {
-            ((ChestBlockEntity) tile).setLootTable(new ResourceLocation("mocreatures:chests/wyvern_nest"), random.nextLong());
+            ((ChestBlockEntity) tile).setLootTable(Identifier.parse("mocreatures:chests/wyvern_nest"), random.nextLong());
         }
 
         if (MoCreatures.proxy.debug) {

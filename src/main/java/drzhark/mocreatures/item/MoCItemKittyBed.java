@@ -28,7 +28,7 @@ public class MoCItemKittyBed extends MoCItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (!player.isCreative()) stack.shrink(1);
 
             MoCEntityKittyBed kittyBed = MoCEntities.KITTY_BED.get().create(level);

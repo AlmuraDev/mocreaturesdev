@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.hostile;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityMob;
@@ -15,7 +16,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -24,7 +25,7 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
@@ -67,9 +68,9 @@ public class MoCEntityRat extends MoCEntityMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(CLIMBING, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(CLIMBING, Boolean.FALSE);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class MoCEntityRat extends MoCEntityMob {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("rat_black.png");
@@ -128,12 +129,12 @@ public class MoCEntityRat extends MoCEntityMob {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         Entity entity = damagesource.getEntity();
         if (entity instanceof LivingEntity) {
             setTarget((LivingEntity) entity);
@@ -148,7 +149,7 @@ public class MoCEntityRat extends MoCEntityMob {
                 }
             }
         }
-        return super.hurt(damagesource, i);
+        return super.hurtServer(serverLevel, damagesource, i);
     }
 
     @Override
@@ -186,7 +187,7 @@ public class MoCEntityRat extends MoCEntityMob {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.RAT;
     }
 

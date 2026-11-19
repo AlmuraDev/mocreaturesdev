@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.passive;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIFollowOwnerPlayer;
@@ -26,7 +29,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
@@ -63,16 +66,16 @@ public class MoCEntityTurtle extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(IS_UPSIDE_DOWN, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IS_UPSIDE_DOWN, Boolean.FALSE);
         // rideable: 0 nothing, 1 saddle
-        this.entityData.define(IS_HIDING, Boolean.FALSE);
+        builder.define(IS_HIDING, Boolean.FALSE);
         // rideable: 0 nothing, 1 saddle
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         String tempText = "turtle.png";
 
         if (MoCreatures.proxy.easterEggs) {
@@ -171,7 +174,7 @@ public class MoCEntityTurtle extends MoCEntityTameableAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (!getIsUpsideDown() && !getIsTamed()) {
                 LivingEntity entityliving = getBoogey(4D);
                 if ((entityliving != null) && this.hasLineOfSight(entityliving)) {
@@ -212,13 +215,13 @@ public class MoCEntityTurtle extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         Entity entity = damagesource.getEntity();
         if (this.getVehicle() != null) {
             return false;
         }
         if (entity == null) {
-            return super.hurt(damagesource, i);
+            return super.hurtServer(serverLevel, damagesource, i);
         }
         if (getIsHiding()) {
             if (this.random.nextInt(10) == 0) {
@@ -226,7 +229,7 @@ public class MoCEntityTurtle extends MoCEntityTameableAnimal {
             }
             return false;
         } else {
-            boolean flag = super.hurt(damagesource, i);
+            boolean flag = super.hurtServer(serverLevel, damagesource, i);
             if (this.random.nextInt(3) == 0) {
                 flipflop(true);
             }
@@ -295,17 +298,17 @@ public class MoCEntityTurtle extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         super.addAdditionalSaveData(nbttagcompound);
         nbttagcompound.putBoolean("UpsideDown", getIsUpsideDown());
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
         // Older turtles were marked adult at age 90 and could never reach max age.
         if (getMoCAge() < getMoCMaxAge()) setAdult(false);
-        setIsUpsideDown(nbttagcompound.getBoolean("UpsideDown"));
+        setIsUpsideDown(nbttagcompound.getBooleanOr("UpsideDown", false));
     }
 
     @Override
@@ -324,22 +327,22 @@ public class MoCEntityTurtle extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.TURTLE;
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
-        super.dropCustomDeathLoot(source, looting, recentlyHitIn);
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
+        super.dropCustomDeathLoot(serverLevel, serverLevel, recentlyHitIn);
 
         // chance to drop turtle helmet
-        if (!this.level().isClientSide && !this.isBaby() && this.random.nextInt(10) == 0) {
+        if (!this.level().isClientSide() && !this.isBaby() && this.random.nextInt(10) == 0) {
             ItemStack helmet = new ItemStack(Items.TURTLE_HELMET);
             this.spawnAtLocation(helmet);
         }
 
         // teenage mutant ninja turtles drop weapons
-        if (isTMNT() && !this.level().isClientSide) {
+        if (isTMNT() && !this.level().isClientSide()) {
             if (getPetName().equalsIgnoreCase("Donatello")) {
                 ItemStack weapon = new ItemStack(MoCItems.BO.get());
                 weapon.setHoverName(Component.translatable("mocreatures.ninjaturtle.bo"));

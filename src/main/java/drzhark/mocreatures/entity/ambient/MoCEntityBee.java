@@ -7,6 +7,7 @@
 
 package drzhark.mocreatures.entity.ambient;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.entity.MoCEntityInsect;
 import drzhark.mocreatures.init.MoCLootTables;
@@ -21,7 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
 
@@ -77,7 +78,7 @@ public class MoCEntityBee extends MoCEntityInsect {
 
     @Nullable
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.BEE;
     }
 
@@ -87,8 +88,8 @@ public class MoCEntityBee extends MoCEntityInsect {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float damage) {
-        if (super.hurt(damagesource, damage)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float damage) {
+        if (super.hurtServer(serverLevel, damagesource, damage)) {
             Entity entity = damagesource.getEntity();
             if (entity instanceof LivingEntity) {
                 LivingEntity entityliving = (LivingEntity) entity;

@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.passive;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import com.google.common.collect.Sets;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
@@ -21,7 +22,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -101,7 +102,7 @@ public class MoCEntityFilchLizard extends MoCEntityAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("lizard_filch_sand.png");
@@ -142,7 +143,7 @@ public class MoCEntityFilchLizard extends MoCEntityAnimal {
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return xpReward;
     }
 
@@ -155,9 +156,9 @@ public class MoCEntityFilchLizard extends MoCEntityAnimal {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, EntitySpawnReason reason, @Nullable SpawnGroupData spawnDataIn) {
         if (random.nextInt(100 / MoCreatures.proxy.filchLizardSpawnItemChance) == 0) {
-            while (this.getMainHandItem().isEmpty() && !level().isClientSide) {
+            while (this.getMainHandItem().isEmpty() && !level().isClientSide()) {
                 this.setItemSlot(EquipmentSlot.MAINHAND, getRandomSpawnItem());
             }
         }
@@ -169,17 +170,17 @@ public class MoCEntityFilchLizard extends MoCEntityAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource par1DamageSource, float par2) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource par1DamageSource, float par2) {
         if (par1DamageSource.getEntity() != null) {
             this.setLastHurtByMob(par1DamageSource.getEntity() instanceof LivingEntity ? (LivingEntity) par1DamageSource.getEntity() : null);
         }
         ItemStack stack = this.getMainHandItem();
-        if (!stack.isEmpty() && !level().isClientSide) {
+        if (!stack.isEmpty() && !level().isClientSide()) {
             ItemStack newStack = new ItemStack(stack.getItem(), 1);
             this.dropItemStack(newStack, 1);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
-        return super.hurt(par1DamageSource, par2);
+        return super.hurtServer(serverLevel, par1DamageSource, par2);
     }
 
     // Sneaky...
@@ -188,18 +189,18 @@ public class MoCEntityFilchLizard extends MoCEntityAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.FILCH_LIZARD;
     }
 
     @Nullable
-    protected ResourceLocation getSpawnLootTable() {
+    protected Identifier getSpawnLootTable() {
         // Reference to loot_tables/entities/filch_lizard/filch_lizard_spawn.json
         return MoCLootTables.FILCH_LIZARD_SPAWN;
     }
 
     @Nullable
-    protected ResourceLocation getStealLootTable() {
+    protected Identifier getStealLootTable() {
         // Reference to loot_tables/entities/filch_lizard/filch_lizard_steal.json
         return MoCLootTables.FILCH_LIZARD_STEAL;
     }

@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.tameable;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
@@ -33,11 +36,11 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
@@ -59,11 +62,11 @@ public class MoCEntityTameableAnimal extends MoCEntityAnimal implements IMoCTame
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(OWNER_UNIQUE_ID, Optional.empty());
-        this.entityData.define(PET_ID, -1);
-        this.entityData.define(TAMED, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(OWNER_UNIQUE_ID, Optional.empty());
+        builder.define(PET_ID, -1);
+        builder.define(TAMED, false);
     }
 
     @Override
@@ -111,15 +114,15 @@ public class MoCEntityTameableAnimal extends MoCEntityAnimal implements IMoCTame
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity target) {
         if (target instanceof LivingEntity living && !canAttack(living)) {
             return false;
         }
-        return super.doHurtTarget(target);
+        return super.doHurtTarget(serverLevel, target);
     }
 
     @Override
-    public boolean hurt(net.minecraft.world.damagesource.DamageSource damagesource, float i) {
+    public boolean hurtOrSimulate(net.minecraft.world.damagesource.DamageSource damagesource, float i) {
         Entity entity = damagesource.getEntity();
         if ((this.isVehicle() && entity == this.getControllingPassenger()) || (this.getVehicle() != null && entity == this.getVehicle())) {
             return false;
@@ -130,7 +133,7 @@ public class MoCEntityTameableAnimal extends MoCEntityAnimal implements IMoCTame
             return false;
         }
 
-        return super.hurt(damagesource, i);
+        return super.hurtServer(serverLevel, damagesource, i);
     }
 
     private boolean checkOwnership(Player player, InteractionHand hand) {
@@ -313,7 +316,7 @@ public class MoCEntityTameableAnimal extends MoCEntityAnimal implements IMoCTame
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         super.addAdditionalSaveData(nbttagcompound);
         nbttagcompound.putBoolean("Tamed", getIsTamed());
         if (this.getOwnerId() != null) {
@@ -328,18 +331,18 @@ public class MoCEntityTameableAnimal extends MoCEntityAnimal implements IMoCTame
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
-        setTamed(nbttagcompound.getBoolean("Tamed"));
+        setTamed(nbttagcompound.getBooleanOr("Tamed", false));
         String s = "";
         if (nbttagcompound.contains("OwnerUUID", 8)) {
-            s = nbttagcompound.getString("OwnerUUID");
+            s = nbttagcompound.getStringOr("OwnerUUID", "");
         }
         if (!s.isEmpty()) {
             this.setOwnerId(UUID.fromString(s));
         }
         if (nbttagcompound.contains("PetId")) {
-            setOwnerPetId(nbttagcompound.getInt("PetId"));
+            setOwnerPetId(nbttagcompound.getIntOr("PetId", 0));
         }
         if (this.getIsTamed() && nbttagcompound.contains("PetId")) {
             MoCPetData petData = MoCreatures.instance.mapData.getPetData(this.getOwnerId());
@@ -347,7 +350,7 @@ public class MoCEntityTameableAnimal extends MoCEntityAnimal implements IMoCTame
                 ListTag tag = petData.getOwnerRootNBT().getList("TamedList", 10);
                 for (int i = 0; i < tag.size(); i++) {
                     CompoundTag nbt = tag.getCompound(i);
-                    if (nbt.getInt("PetId") == nbttagcompound.getInt("PetId")) {
+                    if (nbt.getIntOr("PetId", 0) == nbttagcompound.getIntOr("PetId", 0)) {
                         // update amulet flag
                         nbt.putBoolean("InAmulet", false);
                         // check if cloned and if so kill
@@ -381,7 +384,7 @@ public class MoCEntityTameableAnimal extends MoCEntityAnimal implements IMoCTame
             this.hurtTime = this.hurtDuration = 10;
             // hurtDir is only accessible via getter in 1.20.1
             playSound(getHurtSound(this.damageSources().generic()), getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-            hurt(this.damageSources().generic(), 0.0F);
+            hurtOrSimulate(this.damageSources().generic(), 0.0F);
         } else if (par1 == 3) {
             playSound(getDeathSound(), getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
             setHealth(0.0F);
@@ -507,7 +510,7 @@ public class MoCEntityTameableAnimal extends MoCEntityAnimal implements IMoCTame
             try {
                 String offspringName = this.getOffspringClazz((IMoCTameable) mate);
 
-                Mob offspring = (Mob) EntityType.byString(new ResourceLocation(MoCConstants.MOD_PREFIX + offspringName.toLowerCase()).toString()).map(type -> type.create(this.level())).orElse(null);
+                Mob offspring = (Mob) EntityType.byString(Identifier.parse(MoCConstants.MOD_PREFIX + offspringName.toLowerCase()).toString()).map(type -> type.create(this.level())).orElse(null);
                 if (offspring instanceof IMoCTameable) {
                     IMoCTameable baby = (IMoCTameable) offspring;
                     offspring.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);

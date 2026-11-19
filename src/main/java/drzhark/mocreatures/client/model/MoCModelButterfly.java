@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -13,16 +14,16 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelButterfly<T extends MoCEntityButterfly> extends EntityModel<T> implements IPartialTransparencyModel<T> {
+public class MoCModelButterfly<T extends MoCEntityButterfly> extends MoCEntityModel<T> implements IPartialTransparencyModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation("mocreatures", "butterfly"), "main");
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath("mocreatures", "butterfly"), "main");
 
     private final ModelPart head;
     private final ModelPart mouth;
@@ -43,6 +44,7 @@ public class MoCModelButterfly<T extends MoCEntityButterfly> extends EntityModel
     private boolean getIsFlying;
 
     public MoCModelButterfly(ModelPart root) {
+        super(root);
         this.head             = root.getChild("head");
         this.mouth            = root.getChild("mouth");
         this.right_antenna    = root.getChild("right_antenna");
@@ -274,36 +276,36 @@ public class MoCModelButterfly<T extends MoCEntityButterfly> extends EntityModel
     @Override
     public void renderOpaqueParts(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         // Render body parts in roughly the same order as original:
-        this.abdomen.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.front_legs.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.right_antenna.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.left_antenna.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rear_legs.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.mid_legs.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.thorax.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.mouth.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.abdomen.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.front_legs.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.right_antenna.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.left_antenna.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rear_legs.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.mid_legs.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.thorax.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.mouth.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
     
     @Override
     public void renderTransparentParts(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         // Render unfolded wings with transparency
-        this.wing_right.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_left.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_right_front.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_left_front.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_right_back.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_left_back.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.wing_right.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_left.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_right_front.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_left_front.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_right_back.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_left_back.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
     
     private void renderFoldedWings(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         // folded wings when idle
-        this.wing_right.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_left.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_right_front.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_left_front.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_right_back.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.wing_left_back.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.wing_right.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_left.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_right_front.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_left_front.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_right_back.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.wing_left_back.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
     
     @Override

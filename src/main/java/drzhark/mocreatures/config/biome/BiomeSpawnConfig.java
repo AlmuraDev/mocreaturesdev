@@ -12,11 +12,11 @@ import com.google.gson.JsonObject;
 import drzhark.mocreatures.MoCreatures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.File;
 import java.io.FileReader;
@@ -352,7 +352,7 @@ public class BiomeSpawnConfig {
         return spawnConfig.get(creatureName);
     }
     
-    public static boolean testBiome(String creatureName, Holder<Biome> biome, ResourceLocation biomeName) {
+    public static boolean testBiome(String creatureName, Holder<Biome> biome, Identifier biomeName) {
         CreatureSpawnData data = getSpawnData(creatureName);
         return data != null && data.enabled && data.biomes.matches(biome, biomeName);
     }
@@ -366,7 +366,7 @@ public class BiomeSpawnConfig {
         }
     }
     
-    public static SpawnBiomeData create(ResourceLocation id, SpawnBiomeData data) {
+    public static SpawnBiomeData create(Identifier id, SpawnBiomeData data) {
         // This method maintains compatibility with the old system
         return data;
     }

@@ -3,20 +3,20 @@
  */
 package drzhark.mocreatures.compat;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.compat.industrialforegoing.IndustrialForegoingIntegration;
 import drzhark.mocreatures.compat.jer.JERIntegration;
 import drzhark.mocreatures.compat.morph.MorphIntegration;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.ModList;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = MoCConstants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MoCConstants.MOD_ID)
 public class CompatHandler {
 
     /*static {

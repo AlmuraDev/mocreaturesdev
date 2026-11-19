@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.hostile.MoCEntitySilverSkeleton;
@@ -11,21 +12,21 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 Forge → 1.20.1 Forge.
  * All ModelRenderer → ModelPart; setRotationAngles(...) → setupAnim(...); render(...) → renderToBuffer(...).
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelSilverSkeleton<T extends MoCEntitySilverSkeleton> extends EntityModel<T> {
+public class MoCModelSilverSkeleton<T extends MoCEntitySilverSkeleton> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "silver_skeleton"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "silver_skeleton"), "main"
     );
 
     private final ModelPart head;
@@ -58,6 +59,7 @@ public class MoCModelSilverSkeleton<T extends MoCEntitySilverSkeleton> extends E
     private boolean ridingStored;
 
     public MoCModelSilverSkeleton(ModelPart root) {
+        super(root);
         this.head         = root.getChild("head");
         this.body         = root.getChild("body");
         this.back         = this.body.getChild("back");
@@ -319,23 +321,23 @@ public class MoCModelSilverSkeleton<T extends MoCEntitySilverSkeleton> extends E
             // Lift model slightly when riding
             poseStack.translate(0.0D, 0.5D, 0.0D);
         }
-        this.head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.back.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rightArm.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rightHand.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rightSwordA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rightSwordB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rightSwordC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftArm.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftHand.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftSwordA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftSwordB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftSwordC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rightThigh.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rightKnee.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftThigh.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftKnee.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.back.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rightArm.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rightHand.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rightSwordA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rightSwordB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rightSwordC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftArm.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftHand.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftSwordA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftSwordB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftSwordC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rightThigh.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rightKnee.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftThigh.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftKnee.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         poseStack.popPose();
     }
 }

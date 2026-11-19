@@ -24,9 +24,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.EntityType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -67,7 +67,7 @@ public class MoCItemPetAmulet extends MoCItem {
             emptyAmulet = new ItemStack(MoCItems.PET_AMULET.get(), 1);
         }
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             initAndReadNBT(stack);
             if (this.spawnClass.isEmpty()) {
                 return InteractionResultHolder.success(stack);
@@ -175,14 +175,14 @@ public class MoCItemPetAmulet extends MoCItem {
     }
 
     public void readFromNBT(CompoundTag nbt) {
-        this.PetId = nbt.getInt("PetId");
-        this.creatureType = nbt.getInt("CreatureType");
-        this.health = nbt.getFloat("Health");
-        this.age = nbt.getInt("Edad");
-        this.name = nbt.getString("Name");
-        this.spawnClass = nbt.getString("SpawnClass");
-        this.adult = nbt.getBoolean("Adult");
-        this.ownerName = nbt.getString("OwnerName");
+        this.PetId = nbt.getIntOr("PetId", 0);
+        this.creatureType = nbt.getIntOr("CreatureType", 0);
+        this.health = nbt.getFloatOr("Health", 0.0F);
+        this.age = nbt.getIntOr("Edad", 0);
+        this.name = nbt.getStringOr("Name", "");
+        this.spawnClass = nbt.getStringOr("SpawnClass", "");
+        this.adult = nbt.getBooleanOr("Adult", false);
+        this.ownerName = nbt.getStringOr("OwnerName", "");
         if (nbt.hasUUID("OwnerUUID")) {
             this.ownerUniqueId = nbt.getUUID("OwnerUUID");
         }

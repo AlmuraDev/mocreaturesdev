@@ -3,6 +3,8 @@
  */
 package drzhark.mocreatures.client.model.legacy;
 
+import net.minecraft.util.ARGB;
+import drzhark.mocreatures.client.model.MoCEntityModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.hostile.MoCEntityScorpion;
@@ -14,21 +16,21 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Legacy scorpion model ported to 1.20.1.  All ModelRenderer pieces are now ModelPart children,
  * and setRotationAngles(...) logic has been moved into setupAnim(...).
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCLegacyModelScorpion<T extends MoCEntityScorpion> extends EntityModel<T> {
+public class MoCLegacyModelScorpion<T extends MoCEntityScorpion> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "legacy_scorpion"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "legacy_scorpion"), "main"
     );
 
     // Flags controlled externally (e.g. in renderer):
@@ -60,6 +62,7 @@ public class MoCLegacyModelScorpion<T extends MoCEntityScorpion> extends EntityM
     private final ModelPart lHandB;
 
     public MoCLegacyModelScorpion(ModelPart root) {
+        super(root);
         this.head    = root.getChild("Head");
         this.rearEnd = root.getChild("RearEnd");
         this.leg1    = root.getChild("Leg1");
@@ -379,27 +382,27 @@ public class MoCLegacyModelScorpion<T extends MoCEntityScorpion> extends EntityM
                                float green,
                                float blue,
                                float alpha) {
-        this.head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rearEnd.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg8.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg6.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg7.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg5.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail7.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rArm.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.lArm.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rHand.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.lHand.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rHandB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.lHandB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail5.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rearEnd.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg8.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg6.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg7.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg5.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail7.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rArm.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.lArm.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rHand.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.lHand.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rHandB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.lHandB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail5.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

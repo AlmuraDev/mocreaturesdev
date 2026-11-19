@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.passive.MoCEntityDeer;
@@ -11,17 +12,17 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelDeer<T extends MoCEntityDeer> extends EntityModel<T> {
+public class MoCModelDeer<T extends MoCEntityDeer> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "deer"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "deer"), "main"
     );
 
     // All formerly ModelRenderer fields become ModelPart:
@@ -39,6 +40,7 @@ public class MoCModelDeer<T extends MoCEntityDeer> extends EntityModel<T> {
     private final ModelPart RightAntler;
 
     public MoCModelDeer(ModelPart root) {
+        super(root);
         this.Body       = root.getChild("Body");
         this.Neck       = root.getChild("Neck");
         this.Head       = root.getChild("Head");
@@ -169,17 +171,17 @@ public class MoCModelDeer<T extends MoCEntityDeer> extends EntityModel<T> {
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
                                int packedOverlay, float red, float green, float blue, float alpha) {
-        this.Body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Neck.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LEar.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.REar.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LeftAntler.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightAntler.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Neck.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LEar.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.REar.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LeftAntler.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightAntler.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

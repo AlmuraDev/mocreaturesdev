@@ -8,7 +8,7 @@ import drzhark.mocreatures.init.MoCLootTables;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class MoCEntityGreenOgre extends MoCEntityOgre {
@@ -25,7 +25,7 @@ public class MoCEntityGreenOgre extends MoCEntityOgre {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("ogre_green.png");
     }
 
@@ -38,7 +38,7 @@ public class MoCEntityGreenOgre extends MoCEntityOgre {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.GREEN_OGRE;
     }
 }

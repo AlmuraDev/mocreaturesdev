@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -15,9 +16,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 → 1.20.1. All ModelRenderer fields are now ModelParts,
@@ -25,11 +26,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * and render(...) is now renderToBuffer(...).
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelMediumFish<T extends MoCEntityMediumFish> extends EntityModel<T> {
+public class MoCModelMediumFish<T extends MoCEntityMediumFish> extends MoCEntityModel<T> {
         
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "medium_fish"),
+            Identifier.fromNamespaceAndPath("mocreatures", "medium_fish"),
             "main"
     );
 
@@ -57,6 +58,7 @@ public class MoCModelMediumFish<T extends MoCEntityMediumFish> extends EntityMod
     private MoCEntityMediumFish mediumFish;
 
     public MoCModelMediumFish(ModelPart root) {
+        super(root);
         // Grab each child by the names used in createBodyLayer()
         this.Head             = root.getChild("Head");
         this.LowerHead        = root.getChild("LowerHead");
@@ -365,25 +367,25 @@ public class MoCModelMediumFish<T extends MoCEntityMediumFish> extends EntityMod
         // translate
         poseStack.translate(xOffset, yOffset, zOffset);
         // rotate 90° around Y
-        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+        poseStack.rotate(Axis.YP.rotationDegrees(90.0F));
 
         // Render each part
-        this.Head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LowerHead.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Nose.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.MouthBottom.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.MouthBottomB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.BackUp.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.BackDown.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.TailFin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightPectoralFin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LeftPectoralFin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.UpperFin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LowerFin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightLowerFin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LeftLowerFin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LowerHead.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Nose.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.MouthBottom.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.MouthBottomB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.BackUp.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.BackDown.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.TailFin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightPectoralFin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LeftPectoralFin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.UpperFin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LowerFin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightLowerFin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LeftLowerFin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         poseStack.popPose();
     }

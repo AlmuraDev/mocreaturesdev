@@ -3,6 +3,8 @@
  */
 package drzhark.mocreatures.entity.item;
 
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.hostile.MoCEntityGolem;
@@ -26,13 +28,13 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.NetworkHooks;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 
 import java.util.List;
 
-public class MoCEntityThrowableRock extends Entity implements IEntityAdditionalSpawnData {
+public class MoCEntityThrowableRock extends Entity implements IEntityWithComplexSpawn {
 
     private static final EntityDataAccessor<Integer> ROCK_STATE = SynchedEntityData.defineId(MoCEntityThrowableRock.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> MASTERS_ID = SynchedEntityData.defineId(MoCEntityThrowableRock.class, EntityDataSerializers.INT);
@@ -85,14 +87,14 @@ public class MoCEntityThrowableRock extends Entity implements IEntityAdditionalS
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(BEHAVIOUR_TYPE, 0);
-        this.entityData.define(ROCK_STATE, 0);
-        this.entityData.define(MASTERS_ID, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(BEHAVIOUR_TYPE, 0);
+        builder.define(ROCK_STATE, 0);
+        builder.define(MASTERS_ID, 0);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         BlockState iblockstate = this.getState();
         nbttagcompound = MoCTools.getEntityData(this);
         nbttagcompound.putInt("Behavior", getBehavior());
@@ -106,11 +108,11 @@ public class MoCEntityThrowableRock extends Entity implements IEntityAdditionalS
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         nbttagcompound = MoCTools.getEntityData(this);
-        setBehavior(nbttagcompound.getInt("Behavior"));
-        setMasterID(nbttagcompound.getInt("MasterID"));
-        BlockState iblockstate = Block.stateById(nbttagcompound.getShort("BlockID") & 65535);
+        setBehavior(nbttagcompound.getIntOr("Behavior", 0));
+        setMasterID(nbttagcompound.getIntOr("MasterID", 0));
+        BlockState iblockstate = Block.stateById(nbttagcompound.getShortOr("BlockID", (short) 0) & 65535);
         this.setState(iblockstate);
     }
 
@@ -136,9 +138,9 @@ public class MoCEntityThrowableRock extends Entity implements IEntityAdditionalS
                 if (entity != null && !(entity instanceof LivingEntity)) continue;
                 if (entity instanceof LivingEntity) {
                     if (master instanceof LivingEntity) {
-                        entity.hurt(this.damageSources().mobAttack((LivingEntity) master), 4);
+                        entity.hurtOrSimulate(this.damageSources().mobAttack((LivingEntity) master), 4);
                     } else {
-                        entity.hurt(this.damageSources().generic(), 4);
+                        entity.hurtOrSimulate(this.damageSources().generic(), 4);
                     }
                 }
             }

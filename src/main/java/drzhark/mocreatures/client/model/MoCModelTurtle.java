@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.passive.MoCEntityTurtle;
@@ -14,14 +15,14 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
-public class MoCModelTurtle<T extends MoCEntityTurtle> extends EntityModel<T> {
+public class MoCModelTurtle<T extends MoCEntityTurtle> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "turtle"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "turtle"), "main"
     );
 
     private final ModelPart Shell;
@@ -43,6 +44,7 @@ public class MoCModelTurtle<T extends MoCEntityTurtle> extends EntityModel<T> {
     public boolean isSwimming;
 
     public MoCModelTurtle(ModelPart root) {
+        super(root);
         this.Shell = root.getChild("Shell");
         this.ShellUp = root.getChild("ShellUp");
         this.ShellTop = root.getChild("ShellTop");
@@ -242,17 +244,17 @@ public class MoCModelTurtle<T extends MoCEntityTurtle> extends EntityModel<T> {
      */
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        this.Shell.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.ShellUp.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Shell.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.ShellUp.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         if (!this.TMNT) {
-            this.ShellTop.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.ShellTop.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
-        this.Belly.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Belly.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

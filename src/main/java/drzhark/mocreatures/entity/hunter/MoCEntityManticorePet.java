@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
@@ -43,7 +43,7 @@ public class MoCEntityManticorePet extends MoCEntityBigCat {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("manticore_dark.png");
@@ -124,7 +124,7 @@ public class MoCEntityManticorePet extends MoCEntityBigCat {
 
     @Nullable
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCLootTables.DARK_MANTICORE;

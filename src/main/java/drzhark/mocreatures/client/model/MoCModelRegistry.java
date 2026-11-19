@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.client.model.legacy.MoCLegacyModelBigCat1;
@@ -11,17 +12,16 @@ import drzhark.mocreatures.client.model.legacy.MoCLegacyModelScorpion;
 import drzhark.mocreatures.client.model.legacy.MoCLegacyModelShark;
 import drzhark.mocreatures.init.MoCEntities;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 /**
  * Registers all model layers for MoCreatures entities
  */
-@Mod.EventBusSubscriber(modid = MoCConstants.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MoCConstants.MOD_ID, value = Dist.CLIENT)
 @OnlyIn(Dist.CLIENT)
 public class MoCModelRegistry {
 
@@ -99,7 +99,7 @@ public class MoCModelRegistry {
      */
     @SuppressWarnings("removal")
     private static ModelLayerLocation createModelLayer(String name) {
-        return new ModelLayerLocation(new ResourceLocation(MoCConstants.MOD_ID, name), "main");
+        return new ModelLayerLocation(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, name), "main");
     }
 
     /**

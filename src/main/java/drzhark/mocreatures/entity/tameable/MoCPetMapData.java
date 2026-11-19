@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.Map;
 import java.util.UUID;
@@ -107,7 +107,7 @@ public class MoCPetMapData extends SavedData {
 
             for (int i = 0; i < tag.size(); i++) {
                 CompoundTag nbt = tag.getCompound(i);
-                if (nbt.getInt("PetId") == id) {
+                if (nbt.getIntOr("PetId", 0) == id) {
                     nbt.put("Pos", newDoubleNBTList(((Entity) pet).getX(), ((Entity) pet).getY(), ((Entity) pet).getZ()));
                     nbt.putInt("ChunkX", ((Entity) pet).chunkPosition().x);
                     nbt.putInt("ChunkY", ((Entity) pet).chunkPosition().getWorldPosition().getY());
@@ -155,7 +155,7 @@ public class MoCPetMapData extends SavedData {
             ListTag tag = petData.getTamedList();
             for (int i = 0; i < tag.size(); i++) {
                 CompoundTag nbt = tag.getCompound(i);
-                if (nbt.getInt("PetId") == pet.getOwnerPetId()) {
+                if (nbt.getIntOr("PetId", 0) == pet.getOwnerPetId()) {
                     return true;
                 }
             }

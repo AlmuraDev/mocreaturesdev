@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.passive.MoCEntityBird;
@@ -12,16 +13,16 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelBird<T extends MoCEntityBird> extends EntityModel<T> {
+public class MoCModelBird<T extends MoCEntityBird> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation("mocreatures", "bird"), "main");
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath("mocreatures", "bird"), "main");
 
     private final ModelPart head;
     private final ModelPart beak;
@@ -33,6 +34,7 @@ public class MoCModelBird<T extends MoCEntityBird> extends EntityModel<T> {
     private final ModelPart tail;
 
     public MoCModelBird(ModelPart root) {
+        super(root);
         this.head     = root.getChild("head");
         this.beak     = root.getChild("beak");
         this.body     = root.getChild("body");
@@ -117,14 +119,14 @@ public class MoCModelBird<T extends MoCEntityBird> extends EntityModel<T> {
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {
-        head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        beak.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        leftLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rightLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        lWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        beak.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        leftLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rightLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        lWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 
     @Override

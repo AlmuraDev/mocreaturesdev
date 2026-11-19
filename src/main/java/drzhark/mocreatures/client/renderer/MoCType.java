@@ -1,8 +1,8 @@
 package drzhark.mocreatures.client.renderer;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.RenderType;
+import com.mojang.renderpearl.api.vertex.VertexFormat;
+import net.minecraft.client.renderer.rendertype.RenderType;
 
 public class MoCType extends RenderType {
 

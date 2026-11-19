@@ -65,7 +65,7 @@ public class MoCPetData {
     public boolean removePet(int id) {
         for (int i = this.tamedList.size() - 1; i >= 0; i--) {
             CompoundTag nbt = this.tamedList.getCompound(i);
-            if (nbt.contains("PetId") && nbt.getInt("PetId") == id) {
+            if (nbt.contains("PetId") && nbt.getIntOr("PetId", 0) == id) {
                 if (i >= 0 && i < this.tamedList.size()) {
                     this.tamedList.remove(i);
                 } else {
@@ -91,7 +91,7 @@ public class MoCPetData {
         if (this.tamedList != null) {
             for (int i = 0; i < this.tamedList.size(); i++) {
                 CompoundTag nbt = this.tamedList.getCompound(i);
-                if (nbt.contains("PetId") && nbt.getInt("PetId") == id) {
+                if (nbt.contains("PetId") && nbt.getIntOr("PetId", 0) == id) {
                     return nbt;
                 }
             }

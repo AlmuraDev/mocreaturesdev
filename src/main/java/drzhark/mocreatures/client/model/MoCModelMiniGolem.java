@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -14,9 +15,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 → 1.20.1. All ModelRenderer fields are now ModelParts,
@@ -24,11 +25,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * moved to renderToBuffer(...), and entity flags captured in prepareMobModel(...).
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelMiniGolem<T extends MoCEntityMiniGolem> extends EntityModel<T> {
+public class MoCModelMiniGolem<T extends MoCEntityMiniGolem> extends MoCEntityModel<T> {
         
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "mini_golem"),
+            Identifier.fromNamespaceAndPath("mocreatures", "mini_golem"),
             "main"
     );
 
@@ -55,6 +56,7 @@ public class MoCModelMiniGolem<T extends MoCEntityMiniGolem> extends EntityModel
     private boolean angry;
 
     public MoCModelMiniGolem(ModelPart root) {
+        super(root);
         this.Head            = root.getChild("Head");
         this.HeadRed         = root.getChild("HeadRed");
         this.Body            = root.getChild("Body");
@@ -342,25 +344,25 @@ public class MoCModelMiniGolem<T extends MoCEntityMiniGolem> extends EntityModel
     ) {
         // First, choose which head/body to render
         if (this.angry) {
-            this.HeadRed.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.BodyRed.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.HeadRed.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.BodyRed.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
-            this.Head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.Body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.Head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.Body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // Then all the other parts
-        this.LeftShoulder.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LeftArm.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LeftArmRingA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LeftArmRingB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightShoulder.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightArm.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightArmRingA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightArmRingB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightFoot.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LeftLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LeftFoot.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.LeftShoulder.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LeftArm.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LeftArmRingA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LeftArmRingB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightShoulder.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightArm.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightArmRingA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightArmRingB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightFoot.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LeftLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LeftFoot.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

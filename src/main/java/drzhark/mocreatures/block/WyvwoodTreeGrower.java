@@ -7,7 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.grower.AbstractTreeGrower;
@@ -19,13 +19,13 @@ import javax.annotation.Nullable;
 public class WyvwoodTreeGrower extends AbstractTreeGrower {
     
     private static final ResourceKey<ConfiguredFeature<?, ?>> WYVWOOD_DARK_OAK = 
-            ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation("mocreatures:wyvwood_dark_oak"));
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, Identifier.parse("mocreatures:wyvwood_dark_oak"));
     private static final ResourceKey<ConfiguredFeature<?, ?>> WYVWOOD_LARGE_DARK_OAK = 
-            ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation("mocreatures:wyvwood_large_dark_oak"));
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, Identifier.parse("mocreatures:wyvwood_large_dark_oak"));
     private static final ResourceKey<ConfiguredFeature<?, ?>> WYVWOOD_SPRUCE = 
-            ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation("mocreatures:wyvwood_spruce"));
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, Identifier.parse("mocreatures:wyvwood_spruce"));
     private static final ResourceKey<ConfiguredFeature<?, ?>> WYVWOOD_LARGE_SPRUCE = 
-            ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation("mocreatures:wyvwood_large_spruce"));
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, Identifier.parse("mocreatures:wyvwood_large_spruce"));
 
     @Nullable
     @Override

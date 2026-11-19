@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -14,9 +15,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 → 1.20.1. All ModelRenderer fields have become ModelParts,
@@ -24,11 +25,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * moved to renderToBuffer(...).
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelMouse<T extends MoCEntityMouse> extends EntityModel<T> {
+public class MoCModelMouse<T extends MoCEntityMouse> extends MoCEntityModel<T> {
         
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "mouse"),
+            Identifier.fromNamespaceAndPath("mocreatures", "mouse"),
             "main"
     );
 
@@ -47,6 +48,7 @@ public class MoCModelMouse<T extends MoCEntityMouse> extends EntityModel<T> {
     private final ModelPart BodyF;
 
     public MoCModelMouse(ModelPart root) {
+        super(root);
         this.Head      = root.getChild("Head");
         this.EarR      = root.getChild("EarR");
         this.EarL      = root.getChild("EarL");
@@ -248,16 +250,16 @@ public class MoCModelMouse<T extends MoCEntityMouse> extends EntityModel<T> {
             float            blue,
             float            alpha
     ) {
-        this.Head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.EarR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.EarL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.WhiskerR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.WhiskerL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.FrontL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.FrontR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RearL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RearR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.BodyF.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.EarR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.EarL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.WhiskerR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.WhiskerL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.FrontL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.FrontR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RearL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RearR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.BodyF.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

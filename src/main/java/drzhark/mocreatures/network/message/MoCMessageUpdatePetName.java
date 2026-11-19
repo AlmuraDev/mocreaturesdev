@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -62,7 +62,7 @@ public class MoCMessageUpdatePetName {
                         ListTag tag = petData.getOwnerRootNBT().getList("TamedList", 10);
                         for (int i = 0; i < tag.size(); i++) {
                             CompoundTag nbt = tag.getCompound(i);
-                            if (nbt.getInt("PetId") == id) {
+                            if (nbt.getIntOr("PetId", 0) == id) {
                                 nbt.putString("Name", message.name);
                                 ((IMoCTameable) pet).setPetName(message.name);
                             }

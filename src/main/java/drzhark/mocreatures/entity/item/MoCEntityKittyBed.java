@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.item;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.neutral.MoCEntityKitty;
@@ -29,7 +32,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.HitResult;
 
 public class MoCEntityKittyBed extends Mob {
@@ -46,7 +49,7 @@ public class MoCEntityKittyBed extends Mob {
         this.milkLevel = 0.0F;
     }
 
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("kitty_bed.png");
     }
 
@@ -55,12 +58,12 @@ public class MoCEntityKittyBed extends Mob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(HAS_MILK, false);
-        this.entityData.define(HAS_FOOD, false);
-        this.entityData.define(PICKED_UP, false);
-        this.entityData.define(SHEET_COLOR, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(HAS_MILK, false);
+        builder.define(HAS_FOOD, false);
+        builder.define(PICKED_UP, false);
+        builder.define(SHEET_COLOR, 0);
     }
 
     public boolean getHasFood() {
@@ -122,7 +125,7 @@ public class MoCEntityKittyBed extends Mob {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -213,15 +216,15 @@ public class MoCEntityKittyBed extends Mob {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        setHasMilk(compound.getBoolean("HasMilk"));
-        setSheetColor(compound.getInt("SheetColour"));
-        setHasFood(compound.getBoolean("HasFood"));
-        this.milkLevel = compound.getFloat("MilkLevel");
+    public void readAdditionalSaveData(ValueInput compound) {
+        setHasMilk(compound.getBooleanOr("HasMilk", false));
+        setSheetColor(compound.getIntOr("SheetColour", 0));
+        setHasFood(compound.getBooleanOr("HasFood", false));
+        this.milkLevel = compound.getFloatOr("MilkLevel", 0.0F);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(ValueOutput compound) {
         compound.putBoolean("HasMilk", getHasMilk());
         compound.putInt("SheetColour", getSheetColor());
         compound.putBoolean("HasFood", getHasFood());
@@ -229,7 +232,7 @@ public class MoCEntityKittyBed extends Mob {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         return false;
     }
 }

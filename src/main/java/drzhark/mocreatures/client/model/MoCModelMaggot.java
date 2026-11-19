@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -19,17 +20,17 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelMaggot<T extends MoCEntityMaggot> extends EntityModel<T> {
+public class MoCModelMaggot<T extends MoCEntityMaggot> extends MoCEntityModel<T> {
         
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "maggot"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "maggot"), "main"
     );
 
     // We store limbSwing & limbSwingAmount (set in prepareMobModel) for the Z‐scale in render.
@@ -43,6 +44,7 @@ public class MoCModelMaggot<T extends MoCEntityMaggot> extends EntityModel<T> {
     private final ModelPart Tailtip;
 
     public MoCModelMaggot(ModelPart root) {
+        super(root);
         this.Head    = root.getChild("Head");
         this.Body    = root.getChild("Body");
         this.Tail    = root.getChild("Tail");
@@ -158,10 +160,10 @@ public class MoCModelMaggot<T extends MoCEntityMaggot> extends EntityModel<T> {
         poseStack.scale(1.0F, 1.0F, 1.0F + f9);
 
         // Render each part with the same light/overlay/colour
-        this.Head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tailtip.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tailtip.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Disable blending and pop
         RenderSystem.disableBlend();

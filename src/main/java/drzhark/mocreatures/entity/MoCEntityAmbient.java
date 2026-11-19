@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.tameable.IMoCTameable;
@@ -12,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
@@ -29,8 +32,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -73,7 +76,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture(this.texture);
     }
 
@@ -96,8 +99,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty,
-                                        MobSpawnType reason, @Nullable SpawnGroupData spawnData,
-                                        @Nullable CompoundTag dataTag) {
+                                        EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         selectType();
         return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
     }
@@ -112,12 +114,12 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ADULT, false);
-        this.entityData.define(TYPE, 0);
-        this.entityData.define(AGE, 45);
-        this.entityData.define(NAME_STR, "");
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ADULT, false);
+        builder.define(TYPE, 0);
+        builder.define(AGE, 45);
+        builder.define(NAME_STR, "");
     }
 
     @Override
@@ -198,7 +200,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
 
     @Override
     public void tick() {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (isMovementCeased()) {
                 this.getNavigation().stop();
             }
@@ -258,9 +260,9 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     /**
      * Vanilla-style ambient spawn rules with light level check integration
      */
-    public static boolean checkMobSpawnRules(EntityType<MoCEntityAmbient> type, ServerLevelAccessor world, MobSpawnType reason, BlockPos pos, RandomSource random) {
+    public static boolean checkMobSpawnRules(EntityType<MoCEntityAmbient> type, ServerLevelAccessor world, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         // Always allow spawn eggs
-        if (reason == MobSpawnType.SPAWN_EGG) {
+        if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
             return true;
         }
         
@@ -281,7 +283,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         CompoundTag entityData = MoCTools.getEntityData(this);
         entityData.putBoolean("Adult", getIsAdult());
@@ -292,7 +294,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
+    public void readAdditionalSaveData(ValueInput compound) {
         super.readAdditionalSaveData(compound);
         CompoundTag entityData = MoCTools.getEntityData(this);
         if (compound.contains("MoCData", 10)) {
@@ -427,8 +429,8 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     }
 
     @Override
-    public boolean canBeLeashed(Player player) {
-        if (!this.level().isClientSide && !MoCTools.isThisPlayerAnOP(player) && this.getIsTamed()
+    public boolean canBeLeashed() {
+        if (!this.level().isClientSide() && !MoCTools.isThisPlayerAnOP(player) && this.getIsTamed()
                 && !player.getUUID().equals(this.getOwnerId())) {
             return false;
         }
@@ -477,7 +479,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false; // No fall damage for ambient
     }
 
@@ -501,7 +503,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     }
 
     public void moveEntityWithHeadingFlying(Vec3 vec) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             // Move relative partial for flying
             this.moveRelative(0.1F, vec);
             this.move(MoverType.SELF, this.getDeltaMovement());

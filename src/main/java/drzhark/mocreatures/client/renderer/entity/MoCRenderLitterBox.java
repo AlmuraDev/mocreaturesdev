@@ -8,12 +8,12 @@ import drzhark.mocreatures.client.model.MoCModelLitterBox;
 import drzhark.mocreatures.entity.item.MoCEntityLitterBox;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderLitterBox extends MobRenderer<MoCEntityLitterBox, MoCModelLitterBox<MoCEntityLitterBox>> {
+public class MoCRenderLitterBox extends MoCLivingRenderer<MoCEntityLitterBox, MoCModelLitterBox<MoCEntityLitterBox>> {
 
     public MoCModelLitterBox litterbox;
 
@@ -28,7 +28,7 @@ public class MoCRenderLitterBox extends MobRenderer<MoCEntityLitterBox, MoCModel
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityLitterBox entitylitterbox) {
+    public Identifier getTextureLocation(MoCEntityLitterBox entitylitterbox) {
         return entitylitterbox.getTexture();
     }
 }

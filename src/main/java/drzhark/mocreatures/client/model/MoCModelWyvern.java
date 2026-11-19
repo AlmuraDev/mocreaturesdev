@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -13,18 +14,18 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelWyvern<T extends MoCEntityWyvern> extends EntityModel<T> {
+public class MoCModelWyvern<T extends MoCEntityWyvern> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "wyvern"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "wyvern"), "main"
     );
 
     private final ModelPart Tail;
@@ -161,6 +162,7 @@ public class MoCModelWyvern<T extends MoCEntityWyvern> extends EntityModel<T> {
     private float transparency;
 
     public MoCModelWyvern(ModelPart root) {
+        super(root);
         this.Tail                   = root.getChild("Tail");
         this.back1                  = Tail.getChild("back1");
         this.tail1                  = Tail.getChild("tail1");
@@ -1377,38 +1379,38 @@ public class MoCModelWyvern<T extends MoCEntityWyvern> extends EntityModel<T> {
         }
 
         // Render spine+tail+chest in order:
-        this.back1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.chest.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.back1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.chest.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Wings:
-        this.LeftWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RightWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.LeftWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RightWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Shoulders:
-        this.rightshoulder.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftshoulder.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.rightshoulder.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftshoulder.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Neck “plates”:
-        this.neckplate3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.neck3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.neckplate3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.neck3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Torso:
-        this.torso.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.torso.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Chested storage (if chest flag set):
         if (isChested) {
-            this.storage.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.storage.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // Saddle + straps + belts (if isSaddled):
         if (isSaddled) {
-            this.saddle.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.saddle.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             this.mouthrod.visible      = true;
             this.helmetstrap1.visible  = true;
             this.helmetstrap2.visible  = true;
-            this.chestbelt.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.stomachbelt.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.chestbelt.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.stomachbelt.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
             if (isRidden) {
                 this.controlrope1.visible = true;
@@ -1490,20 +1492,20 @@ public class MoCModelWyvern<T extends MoCEntityWyvern> extends EntityModel<T> {
         }
 
         // Render head & legs last so they appear on top:
-        this.MainHead.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftupleg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rightupleg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.MainHead.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftupleg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rightupleg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Render chest armor & shoulder pads *after* legs/head so they overlay properly:
-        this.ironchestarmor.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.ironrightshoulderpad.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.ironleftshoulderpad.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.goldleftshoulder.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.goldchestarmor.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.goldrightshoulder.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.diamondleftshoulder.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.diamondrightshoulder.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.diamondchestarmor.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.ironchestarmor.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.ironrightshoulderpad.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.ironleftshoulderpad.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.goldleftshoulder.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.goldchestarmor.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.goldrightshoulder.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.diamondleftshoulder.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.diamondrightshoulder.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.diamondchestarmor.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // If ghost, disable blending so future renders aren’t translucent:
         if (isGhost) {

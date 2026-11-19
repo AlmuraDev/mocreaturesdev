@@ -15,7 +15,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
@@ -37,9 +37,9 @@ public class MoCEntitySnail extends MoCEntityAmbient {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(IS_HIDING, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IS_HIDING, Boolean.FALSE);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -62,7 +62,7 @@ public class MoCEntitySnail extends MoCEntityAmbient {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("snail_green.png");
@@ -130,7 +130,7 @@ public class MoCEntitySnail extends MoCEntityAmbient {
 
     @Nullable
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.SNAIL;
     }
 

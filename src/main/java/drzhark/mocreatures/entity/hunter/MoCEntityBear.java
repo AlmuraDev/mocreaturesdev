@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.hunter;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.entity.ai.*;
 import drzhark.mocreatures.entity.inventory.MoCAnimalChest;
@@ -42,7 +45,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityBear extends MoCEntityTameableAnimal {
 
@@ -61,7 +64,7 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
         //setSize(1.2F, 1.5F);
         setMoCAge(55);
         setAdult(this.random.nextInt(4) != 0);
-        this.setMaxUpStep(1.0F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0F);
         this.xpReward = 5;
     }
 
@@ -90,12 +93,12 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
      * server data to client.
      */
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(BEAR_STATE, 0);
-        this.entityData.define(RIDEABLE, Boolean.FALSE);
-        this.entityData.define(CHESTED, Boolean.FALSE);
-        this.entityData.define(GHOST, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(BEAR_STATE, 0);
+        builder.define(RIDEABLE, Boolean.FALSE);
+        builder.define(CHESTED, Boolean.FALSE);
+        builder.define(GHOST, Boolean.FALSE);
     }
 
     /**
@@ -150,14 +153,14 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return xpReward;
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         startAttack();
-        return super.doHurtTarget(entityIn);
+        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
     }
 
     /**
@@ -169,8 +172,8 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
-        if (super.hurt(damagesource, i)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             Entity entity = damagesource.getEntity();
             if (entity != null && this.isVehicle() && this.isPassengerOfSameVehicle(entity)) {
                 return true;
@@ -411,7 +414,7 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         super.addAdditionalSaveData(nbttagcompound);
         nbttagcompound.putBoolean("Saddle", getIsRideable());
         nbttagcompound.putBoolean("Chested", getIsChested());
@@ -436,12 +439,12 @@ public class MoCEntityBear extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
-        setRideable(nbttagcompound.getBoolean("Saddle"));
-        setIsChested(nbttagcompound.getBoolean("Chested"));
-        setIsGhost(nbttagcompound.getBoolean("Ghost"));
-        setBearState(nbttagcompound.getInt("BearState"));
+        setRideable(nbttagcompound.getBooleanOr("Saddle", false));
+        setIsChested(nbttagcompound.getBooleanOr("Chested", false));
+        setIsGhost(nbttagcompound.getBooleanOr("Ghost", false));
+        setBearState(nbttagcompound.getIntOr("BearState", 0));
         if (getIsChested()) {
             ListTag nbttaglist = nbttagcompound.getList("Items", 10);
             this.localchest = new MoCAnimalChest("BigBearChest", MoCAnimalChest.Size.small);

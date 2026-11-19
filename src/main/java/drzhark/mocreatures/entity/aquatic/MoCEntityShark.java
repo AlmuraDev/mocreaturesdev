@@ -3,6 +3,8 @@
  */
 package drzhark.mocreatures.entity.aquatic;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.syncher.SynchedEntityData;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityAquatic;
 import drzhark.mocreatures.entity.ai.EntityAIHunt;
@@ -22,13 +24,13 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
-import net.minecraft.world.entity.animal.Squid;
-import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.squid.Squid;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -89,12 +91,12 @@ public class MoCEntityShark extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return 5;
     }
 
@@ -120,8 +122,8 @@ public class MoCEntityShark extends MoCEntityTameableAquatic {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
-        if (super.hurt(damagesource, i) && (this.level().getDifficulty().getId() > 0)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
+        if (super.hurtServer(serverLevel, damagesource, i) && (this.level().getDifficulty().getId() > 0)) {
             Entity entity = damagesource.getEntity();
             if (entity != null && this.isVehicle() && entity == this.getPassengers().get(0)) {
                 return true;
@@ -138,17 +140,17 @@ public class MoCEntityShark extends MoCEntityTameableAquatic {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         // Don't attack players in boats, but we can still chase them
         if (entityIn instanceof Player player && player.getVehicle() instanceof Boat) {
             return false;
         }
         
-        return super.doHurtTarget(entityIn);
+        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.SHARK;
     }
 

@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.passive.MoCEntityFilchLizard;
@@ -12,17 +13,17 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelFilchLizard<T extends MoCEntityFilchLizard> extends EntityModel<T> {
+public class MoCModelFilchLizard<T extends MoCEntityFilchLizard> extends MoCEntityModel<T> {
     
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "filchlizard"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "filchlizard"), "main"
     );
 
     private final ModelPart body;
@@ -47,6 +48,7 @@ public class MoCModelFilchLizard<T extends MoCEntityFilchLizard> extends EntityM
     private boolean heldItem;
 
     public MoCModelFilchLizard(ModelPart root) {
+        super(root);
         this.body        = root.getChild("body");
         this.tail        = root.getChild("tail");
         this.leg1        = root.getChild("leg1");
@@ -160,20 +162,20 @@ public class MoCModelFilchLizard<T extends MoCEntityFilchLizard> extends EntityM
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         // If holding an item: render “head” (which has Filch children); otherwise, render folded head + folds
         if (this.heldItem) {
-            this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
-            this.foldHead.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.foldFilch1.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.foldFilch2.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.foldHead.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.foldFilch1.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.foldFilch2.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
-        this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 
     /**

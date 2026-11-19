@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.renderer.entity;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelKittyBed;
 import drzhark.mocreatures.client.model.MoCModelKittyBed2;
@@ -12,17 +13,16 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderKittyBed extends MobRenderer<MoCEntityKittyBed, MoCModelKittyBed<MoCEntityKittyBed>> {
+public class MoCRenderKittyBed extends MoCLivingRenderer<MoCEntityKittyBed, MoCModelKittyBed<MoCEntityKittyBed>> {
 
     public MoCModelKittyBed kittybed;
     private int mycolor;
@@ -43,7 +43,7 @@ public class MoCRenderKittyBed extends MobRenderer<MoCEntityKittyBed, MoCModelKi
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityKittyBed entitykittybed) {
+    public Identifier getTextureLocation(MoCEntityKittyBed entitykittybed) {
         return entitykittybed.getTexture();
     }
 
@@ -66,7 +66,7 @@ public class MoCRenderKittyBed extends MobRenderer<MoCEntityKittyBed, MoCModelKi
             // Render colored overlay model
             this.getParentModel().copyPropertiesTo(this.mocModel);
             this.mocModel.renderToBuffer(poseStack, buffer.getBuffer(
-                    RenderType.entityCutoutNoCull(this.getTextureLocation(entitykittybed))),
+                    RenderTypes.entityCutoutNoCull(this.getTextureLocation(entitykittybed))),
                     packedLightIn, OverlayTexture.NO_OVERLAY, rgb[0], rgb[1], rgb[2], 1.0F);
         }
     }

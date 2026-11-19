@@ -11,7 +11,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -47,7 +47,7 @@ public class ItemStaffPortal extends MoCItem {
     private ResourceKey<Level> portalDimension;
 
     public static final ResourceKey<Level> WYVERN_DIM =
-            ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("mocreatures", "wyvernlairworld"));
+            ResourceKey.create(Registries.DIMENSION, Identifier.fromNamespaceAndPath("mocreatures", "wyvernlairworld"));
 
     public ItemStaffPortal(Item.Properties properties) {
         super(properties.stacksTo(1).durability(3));
@@ -279,11 +279,11 @@ public class ItemStaffPortal extends MoCItem {
 
     @SuppressWarnings("removal")
     public void readFromNBT(CompoundTag nbt) {
-        this.portalPosX = nbt.getInt("portalPosX");
-        this.portalPosY = nbt.getInt("portalPosY");
-        this.portalPosZ = nbt.getInt("portalPosZ");
-        String dimKey = nbt.getString("portalDimension");
-        this.portalDimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(dimKey));
+        this.portalPosX = nbt.getIntOr("portalPosX", 0);
+        this.portalPosY = nbt.getIntOr("portalPosY", 0);
+        this.portalPosZ = nbt.getIntOr("portalPosZ", 0);
+        String dimKey = nbt.getStringOr("portalDimension", "");
+        this.portalDimension = ResourceKey.create(Registries.DIMENSION, Identifier.parse(dimKey));
     }
 
     public void writeToNBT(CompoundTag nbt) {

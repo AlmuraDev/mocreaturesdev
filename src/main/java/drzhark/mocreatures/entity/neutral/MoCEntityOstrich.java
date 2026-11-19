@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.neutral;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.EnumHashBiMap;
 import drzhark.mocreatures.MoCTools;
@@ -40,8 +43,8 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.Util;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Util;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
@@ -49,7 +52,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.ChestMenu;
@@ -105,7 +108,7 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
         setMoCAge(35);
         this.eggCounter = this.random.nextInt(1000) + 1000;
         // stepHeight renamed to maxUpStep in 1.20.1
-        setMaxUpStep(1.0F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0F);
     }
 
     @Override
@@ -126,15 +129,15 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(EGG_WATCH, Boolean.FALSE);
-        this.entityData.define(CHESTED, Boolean.FALSE);
-        this.entityData.define(RIDEABLE, Boolean.FALSE);
-        this.entityData.define(IS_HIDING, Boolean.FALSE);
-        this.entityData.define(FERTILE, Boolean.FALSE);
-        this.entityData.define(HELMET_TYPE, 0);
-        this.entityData.define(FLAG_COLOR, -1);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(EGG_WATCH, Boolean.FALSE);
+        builder.define(CHESTED, Boolean.FALSE);
+        builder.define(RIDEABLE, Boolean.FALSE);
+        builder.define(IS_HIDING, Boolean.FALSE);
+        builder.define(FERTILE, Boolean.FALSE);
+        builder.define(HELMET_TYPE, 0);
+        builder.define(FLAG_COLOR, -1);
     }
 
     @Override
@@ -215,7 +218,7 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         //dmg reduction
         if (getIsTamed() && getHelmet() != 0) {
             int j = 0;
@@ -246,7 +249,7 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
             }
         }
 
-        if (super.hurt(damagesource, i)) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             Entity entity = damagesource.getEntity();
 
             if (!(entity instanceof LivingEntity) || ((this.isVehicle()) && (entity == this.getFirstPassenger())) || (entity instanceof Player && getIsTamed())) {
@@ -270,13 +273,13 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         if (entityIn instanceof Player && !shouldAttackPlayers()) {
             return false;
         }
         openMouth();
         flapWings();
-        return super.doHurtTarget(entityIn);
+        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
     }
 
     public float calculateMaxHealth() {
@@ -326,7 +329,7 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (this.transformCounter != 0 && this.transformType > 4) {
             String newText = "ostrich_male.png";
             if (this.transformType == 5) {
@@ -438,7 +441,7 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     }
 
     public void transform(int tType) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with( () -> new PacketDistributor.TargetPoint(this.getX(), this.getY(), this.getZ(), 64, this.level().dimension())), new MoCMessageAnimation(this.getId(), tType));
         }
         this.transformType = tType;
@@ -462,11 +465,11 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     public void aiStep() {
         super.aiStep();
 
-        if (getIsTamed() && !this.level().isClientSide && (this.random.nextInt(300) == 0) && (getHealth() <= getMaxHealth()) && (this.deathTime == 0)) {
+        if (getIsTamed() && !this.level().isClientSide() && (this.random.nextInt(300) == 0) && (getHealth() <= getMaxHealth()) && (this.deathTime == 0)) {
             this.setHealth(getHealth() + 1);
         }
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             //ostrich buckle!
             if (getTypeMoC() == 8 && (this.sprintCounter > 0 && this.sprintCounter < 150) && (this.isVehicle()) && random.nextInt(15) == 0) {
                 MoCTools.buckleMobs(this, 2D, this.level());
@@ -810,12 +813,12 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.OSTRICH;
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
         boolean flag = (this.random.nextInt(100) < MoCreatures.proxy.rareItemDropChance);
         int i = this.random.nextInt(3);
 
@@ -843,7 +846,7 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         super.addAdditionalSaveData(nbttagcompound);
         nbttagcompound.putBoolean("Saddle", getIsRideable());
         nbttagcompound.putBoolean("EggWatch", getEggWatching());
@@ -869,15 +872,15 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
-        setRideable(nbttagcompound.getBoolean("Saddle"));
-        setEggWatching(nbttagcompound.getBoolean("EggWatch"));
-        setHiding(nbttagcompound.getBoolean("Hiding"));
-        setHelmet(nbttagcompound.getInt("Helmet"));
-        setFlagColorRaw(nbttagcompound.getInt("FlagColor"));
-        setIsChested(nbttagcompound.getBoolean("Bagged"));
-        setFertile(nbttagcompound.getBoolean("Fertile"));
+        setRideable(nbttagcompound.getBooleanOr("Saddle", false));
+        setEggWatching(nbttagcompound.getBooleanOr("EggWatch", false));
+        setHiding(nbttagcompound.getBooleanOr("Hiding", false));
+        setHelmet(nbttagcompound.getIntOr("Helmet", 0));
+        setFlagColorRaw(nbttagcompound.getIntOr("FlagColor", 0));
+        setIsChested(nbttagcompound.getBooleanOr("Bagged", false));
+        setFertile(nbttagcompound.getBooleanOr("Fertile", false));
 
         if (getIsChested()) {
             ListTag nbttaglist = nbttagcompound.getList("Items", 10);
@@ -952,7 +955,7 @@ public class MoCEntityOstrich extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         if (isFlyer()) {
             return false;
         }

@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.neutral;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityAnimal;
 import drzhark.mocreatures.entity.ai.EntityAIFleeFromPlayer;
@@ -18,7 +19,7 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
@@ -54,7 +55,7 @@ public class MoCEntityBoar extends MoCEntityAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (getIsAdult()) {
             return MoCreatures.proxy.getModelTexture("boar.png");
         }
@@ -62,8 +63,8 @@ public class MoCEntityBoar extends MoCEntityAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
-        if (super.hurt(damagesource, i)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             Entity entity = damagesource.getEntity();
             if (entity != null && this.isPassengerOfSameVehicle(entity)) {
                 return true;
@@ -104,7 +105,7 @@ public class MoCEntityBoar extends MoCEntityAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.BOAR;
     }
 

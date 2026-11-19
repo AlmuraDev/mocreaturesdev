@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.aquatic;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIPanicMoC;
@@ -27,12 +28,12 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.phys.Vec3;
 
@@ -90,7 +91,7 @@ public class MoCEntityDolphin extends MoCEntityTameableAquatic {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
 
         switch (getTypeMoC()) {
             case 2:
@@ -163,10 +164,10 @@ public class MoCEntityDolphin extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(IS_HUNGRY, Boolean.FALSE);
-        this.entityData.define(HAS_EATEN, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IS_HUNGRY, Boolean.FALSE);
+        builder.define(HAS_EATEN, Boolean.FALSE);
     }
 
     public boolean getIsHungry() {
@@ -196,8 +197,8 @@ public class MoCEntityDolphin extends MoCEntityTameableAquatic {
     }*/
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
-        if (super.hurt(damagesource, i) && (this.level().getDifficulty().getId() > 0)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
+        if (super.hurtServer(serverLevel, damagesource, i) && (this.level().getDifficulty().getId() > 0)) {
             Entity entity = damagesource.getEntity();
             if (entity instanceof LivingEntity) {
                 LivingEntity entityliving = (LivingEntity) entity;
@@ -256,7 +257,7 @@ public class MoCEntityDolphin extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {        
+    protected Identifier getDefaultLootTable() {        
         return MoCLootTables.DOLPHIN;
     }
 

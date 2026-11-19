@@ -3,6 +3,8 @@
  */
 package drzhark.mocreatures.client.model.legacy;
 
+import net.minecraft.util.ARGB;
+import drzhark.mocreatures.client.model.MoCEntityModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.hunter.MoCEntityBigCat;
@@ -14,17 +16,17 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCLegacyModelBigCat2<T extends MoCEntityBigCat> extends EntityModel<T> {
+public class MoCLegacyModelBigCat2<T extends MoCEntityBigCat> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "legacy_big_cat2"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "legacy_big_cat2"), "main"
     );
 
     // Public flags (set externally, e.g. in EntityRenderer or via setLivingAnimations):
@@ -44,6 +46,7 @@ public class MoCLegacyModelBigCat2<T extends MoCEntityBigCat> extends EntityMode
     private final ModelPart leg4;
 
     public MoCLegacyModelBigCat2(ModelPart root) {
+        super(root);
         // Grab each child by the exact name we gave it in createBodyLayer():
         this.ears   = root.getChild("ears");
         this.head   = root.getChild("head");
@@ -354,19 +357,19 @@ public class MoCLegacyModelBigCat2<T extends MoCEntityBigCat> extends EntityMode
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {
         // Render in roughly the same order you did originally:
-        this.snout.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.ears.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.snout.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.ears.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Only draw the collar if tamed == true:
         if (this.tamed) {
-            this.collar.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.collar.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
     }
 }

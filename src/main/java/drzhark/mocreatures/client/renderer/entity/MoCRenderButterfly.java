@@ -7,9 +7,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelButterfly;
 import drzhark.mocreatures.entity.ambient.MoCEntityButterfly;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderButterfly extends MoCRenderInsect<MoCEntityButterfly, MoCModelButterfly<MoCEntityButterfly>> {
@@ -35,7 +35,7 @@ public class MoCRenderButterfly extends MoCRenderInsect<MoCEntityButterfly, MoCM
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityButterfly entitybutterfly) {
+    public Identifier getTextureLocation(MoCEntityButterfly entitybutterfly) {
         return entitybutterfly.getTexture();
     }
 }

@@ -3,6 +3,8 @@
  */
 package drzhark.mocreatures.client.renderer.entity;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import drzhark.mocreatures.client.model.MoCEntityModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.MoCreatures;
@@ -15,19 +17,19 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import org.joml.Matrix4f;
 import com.mojang.math.Axis;
 import net.minecraft.network.chat.Component;
 
-public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRenderer<T, M> {
+public class MoCRenderMoC<T extends Mob, M extends MoCEntityModel<T>> extends MoCLivingRenderer<T, M> {
 
     private float prevPitch;
     private float prevRoll;
@@ -87,8 +89,8 @@ public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRe
         
         // Choose appropriate render type
         RenderType renderType = transparency < 1.0F
-                ? RenderType.entityTranslucent(getTextureLocation(entityIn))
-                : RenderType.entityCutout(getTextureLocation(entityIn));
+                ? RenderTypes.entityTranslucent(getTextureLocation(entityIn))
+                : RenderTypes.entityCutout(getTextureLocation(entityIn));
 
         VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
 
@@ -200,7 +202,7 @@ public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRe
                 
                 poseStack.pushPose();
                 poseStack.translate(0.0F, f7, 0.0F);
-                poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+                poseStack.rotate(this.entityRenderDispatcher.cameraOrientation());
                 poseStack.scale(-f3, -f3, f3);
                 int yOff = entityMoC.nameYOffset();
                 
@@ -218,17 +220,17 @@ public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRe
                     float barWidth = 40F * healthRatio;
                     
                     // Use static white texture for health bars
-                    ResourceLocation WHITE_TEXTURE = new ResourceLocation("textures/misc/white.png");
+                    Identifier WHITE_TEXTURE = Identifier.parse("textures/misc/white.png");
                     
                     // Red background (empty health)
-                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.text(WHITE_TEXTURE));
+                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderTypes.text(WHITE_TEXTURE));
                     vertexconsumer.vertex(matrix, -20F + barWidth, -10 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 0).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, -20F + barWidth, -6 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 1).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, 20F, -6 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 1).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, 20F, -10 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 0).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     
                     // Green health (filled health)
-                    vertexconsumer = buffer.getBuffer(RenderType.text(WHITE_TEXTURE));
+                    vertexconsumer = buffer.getBuffer(RenderTypes.text(WHITE_TEXTURE));
                     vertexconsumer.vertex(matrix, -20F, -10 + yOff, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 0).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, -20F, -6 + yOff, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 1).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, barWidth - 20F, -6 + yOff, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(1, 1).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
@@ -284,7 +286,7 @@ public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRe
                 
                 poseStack.pushPose();
                 poseStack.translate(0.0F, f7, 0.0F);
-                poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+                poseStack.rotate(this.entityRenderDispatcher.cameraOrientation());
                 poseStack.scale(-f3, -f3, f3);
                 int yOff = entityMoC.nameYOffset();
                 
@@ -302,17 +304,17 @@ public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRe
                     float barWidth = 40F * healthRatio;
                     
                     // Use static white texture for health bars
-                    ResourceLocation WHITE_TEXTURE = new ResourceLocation("textures/misc/white.png");
+                    Identifier WHITE_TEXTURE = Identifier.parse("textures/misc/white.png");
                     
                     // Red background (empty health)
-                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.text(WHITE_TEXTURE));
+                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderTypes.text(WHITE_TEXTURE));
                     vertexconsumer.vertex(matrix, -20F + barWidth, -10 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 0).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, -20F + barWidth, -6 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 1).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, 20F, -6 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 1).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, 20F, -10 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 0).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     
                     // Green health (filled health)
-                    vertexconsumer = buffer.getBuffer(RenderType.text(WHITE_TEXTURE));
+                    vertexconsumer = buffer.getBuffer(RenderTypes.text(WHITE_TEXTURE));
                     vertexconsumer.vertex(matrix, -20F, -10 + yOff, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 0).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, -20F, -6 + yOff, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 1).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix, barWidth - 20F, -6 + yOff, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(1, 1).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
@@ -362,13 +364,13 @@ public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRe
         float interpolatedYaw = prevYaw + (mocreature.yawRotationOffset() - prevYaw) * interpolationFactor;
         // Apply the interpolated transformations
         if (interpolatedPitch != 0) {
-            matrixStackIn.mulPose(Axis.XN.rotationDegrees(interpolatedPitch));
+            matrixStackIn.rotate(Axis.XN.rotationDegrees(interpolatedPitch));
         }
         if (interpolatedRoll != 0) {
-            matrixStackIn.mulPose(Axis.ZN.rotationDegrees(interpolatedRoll));
+            matrixStackIn.rotate(Axis.ZN.rotationDegrees(interpolatedRoll));
         }
         if (interpolatedYaw != 0) {
-            matrixStackIn.mulPose(Axis.YN.rotationDegrees(interpolatedYaw));
+            matrixStackIn.rotate(Axis.YN.rotationDegrees(interpolatedYaw));
         }
         // Save the current values for the next frame's interpolation
         prevPitch = interpolatedPitch;
@@ -392,7 +394,7 @@ public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRe
         float f = mocreature.pitchRotationOffset();
 
         if (f != 0) {
-            matrixStackIn.mulPose(Axis.XN.rotationDegrees(f));
+            matrixStackIn.rotate(Axis.XN.rotationDegrees(f));
         }
     }
 
@@ -403,14 +405,14 @@ public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRe
         float f = mocreature.rollRotationOffset();
 
         if (f != 0) {
-            matrixStackIn.mulPose(Axis.ZN.rotationDegrees(f));
+            matrixStackIn.rotate(Axis.ZN.rotationDegrees(f));
         }
     }
 
     protected void adjustYaw(IMoCEntity mocreature, PoseStack matrixStackIn) {
         float f = mocreature.yawRotationOffset();
         if (f != 0) {
-            matrixStackIn.mulPose(Axis.YN.rotationDegrees(f));
+            matrixStackIn.rotate(Axis.YN.rotationDegrees(f));
         }
     }
 
@@ -426,7 +428,7 @@ public class MoCRenderMoC<T extends Mob, M extends EntityModel<T>> extends MobRe
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Mob entity) {
+    public Identifier getTextureLocation(Mob entity) {
         return ((IMoCEntity) entity).getTexture();
     }
 }

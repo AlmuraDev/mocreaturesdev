@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.hostile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityMob;
@@ -15,7 +18,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -26,7 +29,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
@@ -75,10 +78,10 @@ public class MoCEntityWerewolf extends MoCEntityMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(IS_HUMAN, Boolean.FALSE);
-        this.entityData.define(IS_HUNCHED, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IS_HUMAN, Boolean.FALSE);
+        builder.define(IS_HUNCHED, Boolean.FALSE);
     }
 
     @Override
@@ -106,7 +109,7 @@ public class MoCEntityWerewolf extends MoCEntityMob {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (this.getIsHumanForm()) {
             return MoCreatures.proxy.getModelTexture("wereblank.png");
         }
@@ -155,19 +158,19 @@ public class MoCEntityWerewolf extends MoCEntityMob {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         if (getIsHumanForm()) {
             setTarget(null);
             return false;
         }
         if (this.getTypeMoC() == 4 && entityIn instanceof LivingEntity) {
-            entityIn.setSecondsOnFire(10);
+            entityIn.igniteForSeconds(10);
         }
-        return super.doHurtTarget(entityIn);
+        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         Entity entity = damagesource.getEntity();
         if (!getIsHumanForm() && (entity instanceof Player)) {
             Player entityplayer = (Player) entity;
@@ -198,7 +201,7 @@ public class MoCEntityWerewolf extends MoCEntityMob {
                 }
             }
         }
-        return super.hurt(damagesource, i);
+        return super.hurtServer(serverLevel, damagesource, i);
     }
 
     @Override
@@ -237,7 +240,7 @@ public class MoCEntityWerewolf extends MoCEntityMob {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         if (getIsHumanForm()) {
             return MoCLootTables.WEREHUMAN;
         }
@@ -245,7 +248,7 @@ public class MoCEntityWerewolf extends MoCEntityMob {
     }
 
     public boolean IsNight() {
-        return !this.level().isDay();
+        return !this.level().isBrightOutside();
     }
 
     @Override
@@ -267,7 +270,7 @@ public class MoCEntityWerewolf extends MoCEntityMob {
                 this.tcounter++;
                 if ((this.tcounter % 2) == 0) {
                     this.setPos(this.getX() + 0.3D, this.getY() + (double) this.tcounter / 30, this.getZ());
-                    hurt(this.damageSources().mobAttack(this), 1);
+                    hurtOrSimulate(this.damageSources().mobAttack(this), 1);
                 }
                 if ((this.tcounter % 2) != 0) {
                     this.setPos(this.getX() - 0.3D, this.getY(), this.getZ());
@@ -291,7 +294,7 @@ public class MoCEntityWerewolf extends MoCEntityMob {
         }
     }
 
-    public static boolean getCanSpawnHere(EntityType<? extends MoCEntityMob> type, ServerLevel world, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean getCanSpawnHere(EntityType<? extends MoCEntityMob> type, ServerLevel world, EntitySpawnReason reason, BlockPos pos, Random randomIn) {
         return MoCEntityMob.getCanSpawnHere(type, world, reason, pos, randomIn) && world.canSeeSky(new BlockPos(pos));
     }
 
@@ -337,13 +340,13 @@ public class MoCEntityWerewolf extends MoCEntityMob {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
-        setHumanForm(nbttagcompound.getBoolean("HumanForm"));
+        setHumanForm(nbttagcompound.getBooleanOr("HumanForm", false));
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         super.addAdditionalSaveData(nbttagcompound);
         nbttagcompound.putBoolean("HumanForm", getIsHumanForm());
     }

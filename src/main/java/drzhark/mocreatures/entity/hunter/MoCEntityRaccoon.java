@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.hunter;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.entity.ai.*;
 import drzhark.mocreatures.entity.tameable.MoCEntityTameableAnimal;
@@ -19,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
 
@@ -56,8 +57,8 @@ public class MoCEntityRaccoon extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
-        if (super.hurt(damagesource, i)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             Entity entity = damagesource.getEntity();
             if (entity != null && this.isPassengerOfSameVehicle(entity)) {
                 return true;
@@ -114,7 +115,7 @@ public class MoCEntityRaccoon extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.RACCOON;
     }
 

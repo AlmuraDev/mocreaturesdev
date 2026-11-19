@@ -3,25 +3,26 @@
  */
 package drzhark.mocreatures.client.renderer.entity;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import drzhark.mocreatures.client.model.MoCModelWraith;
 import drzhark.mocreatures.entity.hostile.MoCEntityFlameWraith;
 import drzhark.mocreatures.entity.hostile.MoCEntityWraith;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderWraith extends MobRenderer<MoCEntityWraith, MoCModelWraith<MoCEntityWraith>> {
+public class MoCRenderWraith extends MoCLivingRenderer<MoCEntityWraith, MoCModelWraith<MoCEntityWraith>> {
 
     public MoCRenderWraith(EntityRendererProvider.Context renderManagerIn, MoCModelWraith modelbiped, float f) {
         super(renderManagerIn, modelbiped, f);
@@ -45,7 +46,7 @@ public class MoCRenderWraith extends MobRenderer<MoCEntityWraith, MoCModelWraith
         this.setupRotations(wraith, poseStack, wraith.tickCount + partialTicks, bodyRot, partialTicks);
     
         // Get your translucent render type
-        RenderType renderType = RenderType.entityTranslucent(getTextureLocation(wraith));
+        RenderType renderType = RenderTypes.entityTranslucent(getTextureLocation(wraith));
         VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
     
         // Setup animation (important!)
@@ -66,7 +67,7 @@ public class MoCRenderWraith extends MobRenderer<MoCEntityWraith, MoCModelWraith
 
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityWraith wraith) {
+    public Identifier getTextureLocation(MoCEntityWraith wraith) {
         return wraith.getTexture();
     }
 }

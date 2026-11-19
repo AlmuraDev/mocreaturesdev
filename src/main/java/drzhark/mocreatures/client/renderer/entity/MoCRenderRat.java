@@ -9,13 +9,13 @@ import drzhark.mocreatures.entity.hostile.MoCEntityRat;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderRat<T extends MoCEntityRat, M extends MoCModelRat<T>> extends MobRenderer<T, M> {
+public class MoCRenderRat<T extends MoCEntityRat, M extends MoCModelRat<T>> extends MoCLivingRenderer<T, M> {
 
     public MoCRenderRat(EntityRendererProvider.Context renderManagerIn, M modelbase, float f) {
         super(renderManagerIn, modelbase, f);
@@ -35,7 +35,7 @@ public class MoCRenderRat<T extends MoCEntityRat, M extends MoCModelRat<T>> exte
     }
 
     protected void rotateAnimal(T entityrat, PoseStack poseStack) {
-        poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
+        poseStack.rotate(Axis.XN.rotationDegrees(90.0F));
         poseStack.translate(0.0F, 0.4F, 0.0F);
     }
 
@@ -45,7 +45,7 @@ public class MoCRenderRat<T extends MoCEntityRat, M extends MoCModelRat<T>> exte
     }
 
     @Override
-    public ResourceLocation getTextureLocation(T entityrat) {
+    public Identifier getTextureLocation(T entityrat) {
         return entityrat.getTexture();
     }
 }

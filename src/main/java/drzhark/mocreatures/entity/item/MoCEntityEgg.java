@@ -1,5 +1,7 @@
 package drzhark.mocreatures.entity.item;
 
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.aquatic.*;
@@ -16,7 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.AgeableMob;
@@ -27,7 +29,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.NetworkHooks;
 import net.minecraft.world.item.ItemStack;
 
 public class MoCEntityEgg extends Mob {
@@ -61,7 +63,7 @@ public class MoCEntityEgg extends Mob {
         return 0.4F;
     }
 
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("egg.png");
     }
 
@@ -81,7 +83,7 @@ public class MoCEntityEgg extends Mob {
         if (this.lCounter > 10 && player.getInventory().add(eggStack)) {
 
             this.playSound(SoundEvents.ITEM_PICKUP, 0.2F, (this.random.nextFloat() - this.random.nextFloat()) * 0.7F + 1.0F);
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 player.awardStat(Stats.ITEM_PICKED_UP.get(MoCItems.MOC_EGG.get()));
                 this.discard();
             }
@@ -94,7 +96,7 @@ public class MoCEntityEgg extends Mob {
         this.yHeadRot = this.getYRot();
         this.yBodyRot = this.getYRot();
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.random.nextInt(20) == 0) this.lCounter++;
             if (this.lCounter > 500 && this.level().getNearestPlayer(this, 24D) == null) this.discard();
 
@@ -226,13 +228,13 @@ public class MoCEntityEgg extends Mob {
     public void setEggType(int eggType) { this.eggType = eggType; }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
+    public void readAdditionalSaveData(ValueInput compound) {
         super.readAdditionalSaveData(compound);
-        this.eggType = compound.getInt("EggType");
+        this.eggType = compound.getIntOr("EggType", 0);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("EggType", this.eggType);
     }

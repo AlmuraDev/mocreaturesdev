@@ -14,7 +14,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
 
@@ -55,7 +55,7 @@ public class MoCEntityCricket extends MoCEntityAmbient {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (getTypeMoC() == 1) {
             return MoCreatures.proxy.getModelTexture("cricket_light_brown.png");
         } else {
@@ -93,7 +93,7 @@ public class MoCEntityCricket extends MoCEntityAmbient {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        if (!level().isDay()) {
+        if (!level().isBrightOutside()) {
             return level().getRandom().nextDouble() <= 0.1D ? MoCSoundEvents.ENTITY_CRICKET_AMBIENT.get() : null;
         } else {
             return level().getRandom().nextDouble() <= 0.1D ? MoCSoundEvents.ENTITY_CRICKET_CHIRP.get() : null;
@@ -112,7 +112,7 @@ public class MoCEntityCricket extends MoCEntityAmbient {
 
     @Nullable
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.CRICKET;
     }
 

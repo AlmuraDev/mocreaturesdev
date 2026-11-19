@@ -3,6 +3,8 @@
  */
 package drzhark.mocreatures.entity.hostile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityMob;
@@ -17,13 +19,13 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
@@ -97,7 +99,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
      * 38 nightmare
      */
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
 
         switch (getTypeMoC()) {
             case 23://undead horse
@@ -294,8 +296,8 @@ public class MoCEntityHorseMob extends MoCEntityMob {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
-        super.dropCustomDeathLoot(source, looting, recentlyHitIn);
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
+        super.dropCustomDeathLoot(serverLevel, serverLevel, recentlyHitIn);
         boolean flag = (this.random.nextInt(100) < MoCreatures.proxy.rareItemDropChance);
         if (this.getTypeMoC() == 32 && MoCreatures.proxy.rareItemDropChance < 25) {
             flag = (this.random.nextInt(100) < 25);
@@ -344,7 +346,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         if (entityIn instanceof Player && !shouldAttackPlayers()) {
             return false;
         }
@@ -353,7 +355,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
         }
         openMouth();
         MoCTools.playCustomSound(this, MoCSoundEvents.ENTITY_HORSE_ANGRY_UNDEAD.get());
-        return super.doHurtTarget(entityIn);
+        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
     }
 
     @Override
@@ -370,7 +372,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
         return (this.getBbHeight() * 0.75D) - 0.1D;
     }
 
-    public boolean checkSpawnRules(LevelAccessor worldIn, MobSpawnType spawnReasonIn) {
+    public boolean checkSpawnRules(LevelAccessor worldIn, EntitySpawnReason spawnReasonIn) {
         if (this.getY() < 50D && !level().dimensionType().ultraWarm()) {
             setTypeMoC(32);
         }

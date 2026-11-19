@@ -15,7 +15,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
 
@@ -47,7 +47,7 @@ public class MoCEntityGrasshopper extends MoCEntityInsect {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (getTypeMoC() == 1) {
             return MoCreatures.proxy.getModelTexture("grasshopper_bright_green.png");
         } else {
@@ -89,7 +89,7 @@ public class MoCEntityGrasshopper extends MoCEntityInsect {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        if (level().isDay()) {
+        if (level().isBrightOutside()) {
             // TODO: Add grasshopper daytime ambient sound
             return level().getRandom().nextDouble() <= 0.1D ? MoCSoundEvents.ENTITY_GRASSHOPPER_CHIRP.get() : null;
         } else {
@@ -109,7 +109,7 @@ public class MoCEntityGrasshopper extends MoCEntityInsect {
 
     @Nullable
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.GRASSHOPPER;
     }
 

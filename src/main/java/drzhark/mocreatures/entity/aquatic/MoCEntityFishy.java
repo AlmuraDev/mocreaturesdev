@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.aquatic;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIFleeFromEntityMoC;
@@ -39,11 +40,11 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class MoCEntityFishy extends MoCEntityTameableAquatic {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("fishy_orange.png");
@@ -117,9 +118,9 @@ public class MoCEntityFishy extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(HAS_EATEN, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(HAS_EATEN, Boolean.FALSE);
     }
 
     public boolean getHasEaten() {
@@ -131,12 +132,12 @@ public class MoCEntityFishy extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
         int i = this.random.nextInt(100);
         if (i < 70) {
             Item[] fishTypes = new Item[] { Items.COD, Items.SALMON, Items.TROPICAL_FISH };
             Item fish = fishTypes[this.random.nextInt(fishTypes.length)];
-            spawnAtLocation(new ItemStack(fish), 0.0F);
+            spawnAtLocation((ServerLevel) this.level(), new ItemStack(fish), 0.0F);
         } else {
             int j = this.random.nextInt(2);
 
@@ -145,12 +146,12 @@ public class MoCEntityFishy extends MoCEntityTameableAquatic {
 
             fishyEgg.getOrCreateTag().putInt("EggType", fishyEggType);
 
-            spawnAtLocation(fishyEgg, 0.0F);
+            spawnAtLocation((ServerLevel) this.level(), fishyEgg, 0.0F);
         }
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.FISHY;
     }
 

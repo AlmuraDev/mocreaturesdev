@@ -74,25 +74,25 @@ public class CommandMoCPets {
             if (ownerPetData != null) {
                 for (int i = 0; i < ownerPetData.getTamedList().size(); i++) {
                     CompoundTag nbt = ownerPetData.getTamedList().getCompound(i);
-                    if (nbt.contains("PetId") && !foundIds.contains(nbt.getInt("PetId"))) {
+                    if (nbt.contains("PetId") && !foundIds.contains(nbt.getIntOr("PetId", 0))) {
                         unloadedCount++;
                         double posX = nbt.getList("Pos", 6).getDouble(0);
                         double posY = nbt.getList("Pos", 6).getDouble(1);
                         double posZ = nbt.getList("Pos", 6).getDouble(2);
                         
-                        if (nbt.getBoolean("InAmulet")) {
+                        if (nbt.getBooleanOr("InAmulet", false)) {
                             tamedList.add("Found unloaded pet in AMULET with Type: " + 
                                     nbt.getString("id").replace("MoCreatures.", "") + 
-                                    ", Name: " + nbt.getString("Name") + 
-                                    ", Owner: " + nbt.getString("Owner") + 
-                                    ", PetId: " + nbt.getInt("PetId"));
+                                    ", Name: " + nbt.getStringOr("Name", "") + 
+                                    ", Owner: " + nbt.getStringOr("Owner", "") + 
+                                    ", PetId: " + nbt.getIntOr("PetId", 0));
                         } else {
                             tamedList.add("Found unloaded pet with Type: " + 
                                     nbt.getString("id").replace("MoCreatures.", "") + 
-                                    ", Name: " + nbt.getString("Name") + 
-                                    ", Owner: " + nbt.getString("Owner") + 
-                                    ", PetId: " + nbt.getInt("PetId") + 
-                                    ", Dimension: " + nbt.getString("Dimension") + 
+                                    ", Name: " + nbt.getStringOr("Name", "") + 
+                                    ", Owner: " + nbt.getStringOr("Owner", "") + 
+                                    ", PetId: " + nbt.getIntOr("PetId", 0) + 
+                                    ", Dimension: " + nbt.getStringOr("Dimension", "") + 
                                     ", Pos: " + Math.round(posX) + 
                                     ", " + Math.round(posY) + 
                                     ", " + Math.round(posZ));

@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.item.MoCEntityKittyBed;
@@ -11,19 +12,19 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelKittyBed (1.16.5) to Minecraft 1.20.1.
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelKittyBed<T extends MoCEntityKittyBed> extends EntityModel<T> {
+public class MoCModelKittyBed<T extends MoCEntityKittyBed> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "kitty_bed"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "kitty_bed"), "main"
     );
 
     public boolean hasMilk;
@@ -44,6 +45,7 @@ public class MoCModelKittyBed<T extends MoCEntityKittyBed> extends EntityModel<T
     private final ModelPart Bottom;
 
     public MoCModelKittyBed(ModelPart root) {
+        super(root);
         this.TableL         = root.getChild("TableL");
         this.TableR         = root.getChild("TableR");
         this.Table_B        = root.getChild("Table_B");
@@ -171,28 +173,28 @@ public class MoCModelKittyBed<T extends MoCEntityKittyBed> extends EntityModel<T
                                float blue,
                                float alpha) {
         // Always render table surfaces and bottom
-        this.TableL.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        this.TableR.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        this.Table_B.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        this.Bottom.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        this.TableL.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.TableR.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Table_B.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Bottom.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
 
         if (!this.pickedUp) {
             // Render food tray and sides
-            this.FoodT.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-            this.FoodTraySide.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-            this.FoodTraySideB.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-            this.FoodTraySideC.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-            this.FoodTraySideD.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+            this.FoodT.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.FoodTraySide.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.FoodTraySideB.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.FoodTraySideC.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.FoodTraySideD.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
 
             // If milk present, adjust Milk pivot Y and render
             if (this.hasMilk) {
                 this.Milk.y = 21F + this.milklevel;
-                this.Milk.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+                this.Milk.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
             }
             // If pet food present, adjust PetFood pivot Y and render
             if (this.hasFood) {
                 this.PetFood.y = 21F + this.milklevel;
-                this.PetFood.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+                this.PetFood.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, ARGB.colorFromFloat(alpha, red, green, blue));
             }
         }
     }

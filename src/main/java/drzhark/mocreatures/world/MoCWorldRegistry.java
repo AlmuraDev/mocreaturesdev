@@ -1,5 +1,6 @@
 package drzhark.mocreatures.world;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import org.apache.commons.lang3.tuple.Pair;
 
 import drzhark.mocreatures.MoCConstants;
@@ -12,20 +13,19 @@ import drzhark.mocreatures.entity.MoCEntityData;
 import drzhark.mocreatures.init.MoCEntities;
 import drzhark.mocreatures.world.MoCSpawnRegistryCache;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraftforge.common.world.ModifiableBiomeInfo;
-import net.minecraftforge.common.world.ModifiableStructureInfo;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
+import net.neoforged.neoforge.common.world.ModifiableStructureInfo;
 
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = MoCConstants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MoCConstants.MOD_ID)
 public class MoCWorldRegistry {
 
     public static void modifyStructure(Holder<Structure> structure, ModifiableStructureInfo.StructureInfo.Builder builder) {
@@ -57,7 +57,7 @@ public class MoCWorldRegistry {
 
 
 
-    private static ResourceLocation getBiomeName(Holder<Biome> biome) {
+    private static Identifier getBiomeName(Holder<Biome> biome) {
         return biome.unwrap().map((resourceKey) -> resourceKey.location(), (noKey) -> null);
     }
 
@@ -78,7 +78,7 @@ public class MoCWorldRegistry {
             return;
         }
         
-        ResourceLocation biomeRL = getBiomeName(biome);
+        Identifier biomeRL = getBiomeName(biome);
         if (biomeRL == null) {
             return;
         }

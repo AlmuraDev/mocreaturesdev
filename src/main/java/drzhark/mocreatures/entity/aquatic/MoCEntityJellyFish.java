@@ -17,7 +17,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -55,9 +55,9 @@ public class MoCEntityJellyFish extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(GLOWS, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(GLOWS, Boolean.FALSE);
     }
 
     public boolean isGlowing() {
@@ -69,7 +69,7 @@ public class MoCEntityJellyFish extends MoCEntityTameableAquatic {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("jellyfish_purple_gray.png");
@@ -104,7 +104,7 @@ public class MoCEntityJellyFish extends MoCEntityTameableAquatic {
 
         if (!this.level().isClientSide()) {
             if (this.random.nextInt(200) == 0) {
-                setGlowing(!this.level().isDay());
+                setGlowing(!this.level().isBrightOutside());
             }
 
             if (!getIsTamed() && ++this.poisoncounter > 250 && (this.shouldAttackPlayers()) && this.random.nextInt(30) == 0) {
@@ -126,7 +126,7 @@ public class MoCEntityJellyFish extends MoCEntityTameableAquatic {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.JELLYFISH;
     }
 

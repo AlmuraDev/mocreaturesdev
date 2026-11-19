@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.renderer;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.client.model.*;
 import drzhark.mocreatures.client.model.legacy.MoCLegacyModelBigCat1;
@@ -11,15 +12,14 @@ import drzhark.mocreatures.client.renderer.entity.*;
 import drzhark.mocreatures.client.renderer.entity.legacy.MoCLegacyRenderBigCat;
 import drzhark.mocreatures.init.MoCEntities;
 import drzhark.mocreatures.MoCreatures;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 /**
  * Handles entity renderer registration using Forge events system
  */
-@Mod.EventBusSubscriber(modid = MoCConstants.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MoCConstants.MOD_ID, value = Dist.CLIENT)
 public class MoCRendererRegistry {
 
     /**

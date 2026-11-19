@@ -11,6 +11,7 @@
 
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.aquatic.MoCEntityRay;
@@ -19,17 +20,17 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelRay<T extends MoCEntityRay> extends EntityModel<T> {
+public class MoCModelRay<T extends MoCEntityRay> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "ray"),
+            Identifier.fromNamespaceAndPath("mocreatures", "ray"),
             "main"
     );
 
@@ -60,6 +61,7 @@ public class MoCModelRay<T extends MoCEntityRay> extends EntityModel<T> {
     private boolean attacking;
 
     public MoCModelRay(ModelPart root) {
+        super(root);
         this.tail      = root.getChild("tail");
         this.body      = root.getChild("body");
         this.right     = root.getChild("right");
@@ -238,37 +240,37 @@ public class MoCModelRay<T extends MoCEntityRay> extends EntityModel<T> {
                                float alpha) {
 
         // Always draw these (body + “core” parts + tail)
-        tail.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-        body.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-        bodyU.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-        bodyTail.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
+        tail.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        body.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        bodyU.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        bodyTail.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Wings part A & B are drawn in both manta & non‐manta (they form the broad base)
-        rWingA.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-        rWingB.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-        lWingA.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-        lWingB.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
+        rWingA.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rWingB.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        lWingA.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        lWingB.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         if (this.isMantaRay) {
             // Draw manta‐only detail: the “fins” (right & left), and the entire wing chain C→G
-            right.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            left.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
+            right.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            left.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-            rWingC.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            rWingD.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            rWingE.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            rWingF.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            rWingG.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
+            rWingC.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            rWingD.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            rWingE.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            rWingF.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            rWingG.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-            lWingC.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            lWingD.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            lWingE.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            lWingF.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            lWingG.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
+            lWingC.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            lWingD.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            lWingE.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            lWingF.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            lWingG.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
             // Draw non‐manta “eyes” only
-            rEye.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
-            lEye.render(stack, builder, packedLight, packedOverlay, red, green, blue, alpha);
+            rEye.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            lEye.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
     }
 

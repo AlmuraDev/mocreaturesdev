@@ -3,13 +3,13 @@
  */
 package drzhark.mocreatures.init;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import drzhark.mocreatures.MoCConstants;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
-@Mod.EventBusSubscriber(modid = MoCConstants.MOD_ID)
+@EventBusSubscriber(modid = MoCConstants.MOD_ID)
 public class MoCRecipes {
 
     @SubscribeEvent

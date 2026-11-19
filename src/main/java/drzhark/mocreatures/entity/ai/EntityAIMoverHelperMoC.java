@@ -200,10 +200,10 @@ public class EntityAIMoverHelperMoC extends MoveControl {
         if (((IMoCEntity) theCreature).getIsFlying()) {
             int distY = MoCTools.distanceToFloor(this.theCreature);
             if (distY <= ((IMoCEntity) theCreature).minFlyingHeight()
-                    && (this.theCreature.horizontalCollision || this.theCreature.level().random.nextInt(100) == 0)) {
+                    && (this.theCreature.horizontalCollision || this.theCreature.level().getRandom().nextInt(100) == 0)) {
                 this.theCreature.setDeltaMovement(this.theCreature.getDeltaMovement().add(0.0F, 0.02D, 0.0F));
             }
-            if (distY > ((IMoCEntity) theCreature).maxFlyingHeight() || this.theCreature.level().random.nextInt(150) == 0) {
+            if (distY > ((IMoCEntity) theCreature).maxFlyingHeight() || this.theCreature.level().getRandom().nextInt(150) == 0) {
                 this.theCreature.setDeltaMovement(this.theCreature.getDeltaMovement().subtract(0.0F, 0.02D, 0.0F));
             }
 

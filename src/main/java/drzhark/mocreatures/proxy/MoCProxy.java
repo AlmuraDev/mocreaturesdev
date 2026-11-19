@@ -11,7 +11,7 @@ import drzhark.mocreatures.entity.IMoCEntity;
 import drzhark.mocreatures.entity.MoCEntityData;
 import drzhark.mocreatures.entity.hostile.MoCEntityGolem;
 import drzhark.mocreatures.entity.passive.MoCEntityHorse;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -161,27 +161,27 @@ public class MoCProxy {
         return 0;
     }
 
-    public ResourceLocation getArmorTexture(String texture) {
+    public Identifier getArmorTexture(String texture) {
         return null;
     }
 
-    public ResourceLocation getBlockTexture(String texture) {
+    public Identifier getBlockTexture(String texture) {
         return null;
     }
 
-    public ResourceLocation getItemTexture(String texture) {
+    public Identifier getItemTexture(String texture) {
         return null;
     }
 
-    public ResourceLocation getModelTexture(String texture) {
+    public Identifier getModelTexture(String texture) {
         return null;
     }
 
-    public ResourceLocation getGuiTexture(String texture) {
+    public Identifier getGuiTexture(String texture) {
         return null;
     }
 
-    public ResourceLocation getMiscTexture(String texture) {
+    public Identifier getMiscTexture(String texture) {
         return null;
     }
 
@@ -239,7 +239,7 @@ public class MoCProxy {
                     cleanBiomeName = "minecraft:" + cleanBiomeName; // Default to minecraft namespace
                 }
                 
-                TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, new ResourceLocation(cleanBiomeName));
+                TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, Identifier.parse(cleanBiomeName));
                 biomeTypes.add(biomeTag);
                 
                 if (MoCreatures.isDebug()) {
@@ -250,8 +250,8 @@ public class MoCProxy {
                 // Try to create a fallback tag if the original fails
                 try {
                     String fallback = biomeName.replaceAll("[^a-z0-9_/:-]", "").toLowerCase();
-                    if (fallback.contains(":") && ResourceLocation.isValidResourceLocation(fallback)) {
-                        TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, new ResourceLocation(fallback));
+                    if (fallback.contains(":") && Identifier.isValidResourceLocation(fallback)) {
+                        TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, Identifier.parse(fallback));
                         biomeTypes.add(biomeTag);
                         MoCreatures.LOGGER.info("Using fallback biome tag: {} -> {}", biomeName, fallback);
                     }
@@ -346,7 +346,7 @@ public class MoCProxy {
         // Helper method to create TagKey from string
         java.util.function.Function<String, TagKey<Biome>> createBiomeTag = (tagName) -> {
             try {
-                return TagKey.create(net.minecraft.core.registries.Registries.BIOME, new ResourceLocation(tagName));
+                return TagKey.create(net.minecraft.core.registries.Registries.BIOME, Identifier.parse(tagName));
             } catch (Exception e) {
                 MoCreatures.LOGGER.warn("Failed to create biome tag: {}", tagName);
                 return null;
@@ -746,7 +746,7 @@ public class MoCProxy {
         this.verboseEntityNames = this.mocSettingsConfig.get(CATEGORY_MOC_GENERAL_SETTINGS, "VerboseEntityNames", false, "Enables displaying a verbose name of type on pets.").getBoolean(false);
         this.weaponEffects = this.mocSettingsConfig.get(CATEGORY_MOC_GENERAL_SETTINGS, "WeaponEffects", true, "Applies weapon effects when attacking with silver weapons.").getBoolean(true);
         this.wyvernEggDropChance = this.mocSettingsConfig.get(CATEGORY_MOC_CREATURE_GENERAL_SETTINGS, "WyvernEggDropChance", 5, "Percentage chance of a wyvern to drop an egg when killed.").getInt(5);
-        this.wyvernDimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("mocreatures:wyvernlairworld"));
+        this.wyvernDimension = ResourceKey.create(Registries.DIMENSION, Identifier.parse("mocreatures:wyvernlairworld"));
 
         // Custom ID settings
         this.allowInstaSpawn = this.mocSettingsConfig.get(CATEGORY_MOC_ID_SETTINGS, "AllowInstaSpawn", false, "Used for debugging purposes.").getBoolean(false);

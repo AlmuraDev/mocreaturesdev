@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import drzhark.mocreatures.MoCTools;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityDimensions;
@@ -58,8 +59,8 @@ public abstract class MoCEntityInsect extends MoCEntityAmbient {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
     }
 
     @Override
@@ -86,7 +87,7 @@ public abstract class MoCEntityInsect extends MoCEntityAmbient {
             this.setDeltaMovement(this.getDeltaMovement().add(1.0D, 0.6D, 1.0D));
         }
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.random.nextInt(50) == 0) {
                 int[] ai = MoCTools.returnNearestBlockCoord(
                         this,

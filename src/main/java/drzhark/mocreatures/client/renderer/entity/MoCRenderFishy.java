@@ -9,12 +9,12 @@ import drzhark.mocreatures.entity.aquatic.MoCEntityFishy;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderFishy extends MobRenderer<MoCEntityFishy, MoCModelFishy<MoCEntityFishy>> {
+public class MoCRenderFishy extends MoCLivingRenderer<MoCEntityFishy, MoCModelFishy<MoCEntityFishy>> {
 
     public MoCRenderFishy(EntityRendererProvider.Context renderManagerIn, MoCModelFishy modelbase, float f) {
         super(renderManagerIn, modelbase, f);
@@ -39,7 +39,7 @@ public class MoCRenderFishy extends MobRenderer<MoCEntityFishy, MoCModelFishy<Mo
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityFishy entityfishy) {
+    public Identifier getTextureLocation(MoCEntityFishy entityfishy) {
         return entityfishy.getTexture();
     }
 }

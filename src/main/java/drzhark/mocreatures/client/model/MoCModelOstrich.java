@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.neutral.MoCEntityOstrich;
@@ -10,9 +11,9 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 to 1.20.1. All ModelRenderer fields are now ModelPart
@@ -21,11 +22,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * in prepareMobModel(...).
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelOstrich<T extends MoCEntityOstrich> extends EntityModel<T> {
+public class MoCModelOstrich<T extends MoCEntityOstrich> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "ostrich"),
+            Identifier.fromNamespaceAndPath("mocreatures", "ostrich"),
             "main"
     );
 
@@ -133,6 +134,7 @@ public class MoCModelOstrich<T extends MoCEntityOstrich> extends EntityModel<T> 
     private int flagColor;
 
     public MoCModelOstrich(ModelPart root) {
+        super(root);
         // Bind each ModelPart by name:
         this.UBeak           = root.getChild("UBeak");
         this.UBeak2          = root.getChild("UBeak2");
@@ -1257,136 +1259,136 @@ public class MoCModelOstrich<T extends MoCEntityOstrich> extends EntityModel<T> 
             float            blue,
             float            alpha
     ) {
-        this.Head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.NeckU.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.NeckD.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.NeckL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LLegA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LLegB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LLegC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LFoot.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RLegA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RLegB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RLegC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RFoot.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.NeckU.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.NeckD.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.NeckL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LLegA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LLegB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LLegC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LFoot.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RLegA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RLegB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RLegC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RFoot.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // UniHorn for type 8
         if (this.typeI == 8) {
-            this.UniHorn.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.UniHorn.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // Wings
         if (this.typeI == 5 || this.typeI == 6) {
-            this.LWingD.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.LWingE.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.RWingD.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.RWingE.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.NeckUFeather.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.NeckLFeather.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.LWingD.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.LWingE.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.RWingD.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.RWingE.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.NeckUFeather.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.NeckLFeather.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
-            this.LWingB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.LWingC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.RWingB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.RWingC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.LWingB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.LWingC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.RWingB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.RWingC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // Tail segments for darkness ostrich
         if (this.typeI == 6) {
-            this.Tailpart1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.Tailpart2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.Tailpart3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.Tailpart4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.Tailpart5.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.Tailpart1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.Tailpart2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.Tailpart3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.Tailpart4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.Tailpart5.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
-            this.Tail1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.Tail2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.Tail3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.Tail1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.Tail2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.Tail3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // Beak open/closed
         if (openMouth) {
-            this.UBeakb.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.UBeak2b.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.LBeakb.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.LBeak2b.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.UBeakb.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.UBeak2b.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.LBeakb.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.LBeak2b.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
-            this.UBeak.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.UBeak2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.LBeak.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.LBeak2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.UBeak.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.UBeak2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.LBeak.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.LBeak2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // Saddle elements
         if (isSaddled) {
-            this.SaddleA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.SaddleB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.SaddleC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.SaddleL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.SaddleR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.SaddleL2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.SaddleR2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.NeckHarness.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.NeckHarness2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.SaddleA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.SaddleB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.SaddleC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.SaddleL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.SaddleR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.SaddleL2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.SaddleR2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.NeckHarness.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.NeckHarness2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             if (rider) {
-                this.NeckHarnessLeft.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.NeckHarnessRight.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.NeckHarnessLeft.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.NeckHarnessRight.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
         }
 
         // Saddlebag and flag
         if (bagged) {
-            this.Saddlebag.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.Flagpole.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.Saddlebag.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.Flagpole.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             switch (this.flagColor) {
-                case 0 -> this.FlagWhite.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 1 -> this.FlagOrange.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 2 -> this.FlagPurple.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 3 -> this.FlagLightBlue.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 4 -> this.FlagYellow.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 5 -> this.FlagGreen.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 6 -> this.FlagLightRed.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 7 -> this.FlagDarkGrey.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 8 -> this.FlagGrey.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 9 -> this.FlagCyan.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 10-> this.FlagDarkPurple.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 11-> this.FlagDarkBlue.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 12-> this.FlagBrown.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 13-> this.FlagDarkGreen.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 14-> this.FlagRed.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                case 15-> this.FlagBlack.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                case 0 -> this.FlagWhite.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 1 -> this.FlagOrange.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 2 -> this.FlagPurple.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 3 -> this.FlagLightBlue.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 4 -> this.FlagYellow.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 5 -> this.FlagGreen.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 6 -> this.FlagLightRed.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 7 -> this.FlagDarkGrey.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 8 -> this.FlagGrey.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 9 -> this.FlagCyan.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 10-> this.FlagDarkPurple.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 11-> this.FlagDarkBlue.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 12-> this.FlagBrown.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 13-> this.FlagDarkGreen.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 14-> this.FlagRed.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                case 15-> this.FlagBlack.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
         }
 
         // Render selected helmet
         switch (this.helmet) {
-            case 1 -> this.HelmetLeather.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            case 2 -> this.HelmetIron.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            case 3 -> this.HelmetGold.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            case 4 -> this.HelmetDiamond.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            case 1 -> this.HelmetLeather.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            case 2 -> this.HelmetIron.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            case 3 -> this.HelmetGold.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            case 4 -> this.HelmetDiamond.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             case 5 -> {
-                this.HelmetHide.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.HelmetNeckHide.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.HelmetHideEar1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.HelmetHideEar2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.HelmetHide.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.HelmetNeckHide.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.HelmetHideEar1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.HelmetHideEar2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
             case 6 -> {
-                this.HelmetFur.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.HelmetNeckFur.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.HelmetFurEar1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.HelmetFurEar2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.HelmetFur.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.HelmetNeckFur.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.HelmetFurEar1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.HelmetFurEar2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
             case 7 -> {
-                this.HelmetReptile.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.HelmetReptileEar1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.HelmetReptileEar2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.HelmetReptile.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.HelmetReptileEar1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.HelmetReptileEar2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
-            case 8 -> this.HelmetGreenChitin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            case 9 -> this.HelmetYellowChitin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            case 10-> this.HelmetBlueChitin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            case 11-> this.HelmetBlackChitin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            case 12-> this.HelmetRedChitin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            case 8 -> this.HelmetGreenChitin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            case 9 -> this.HelmetYellowChitin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            case 10-> this.HelmetBlueChitin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            case 11-> this.HelmetBlackChitin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            case 12-> this.HelmetRedChitin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
     }
 }

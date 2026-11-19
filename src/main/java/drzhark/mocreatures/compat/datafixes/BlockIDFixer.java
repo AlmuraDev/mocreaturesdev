@@ -3,38 +3,39 @@
  */
 package drzhark.mocreatures.compat.datafixes;
 
+import net.minecraft.core.registries.Registries;
 import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.TypeRewriteRule;
-import com.mojang.datafixers.schemas.Schema;
+import net.minecraft.server.jsonrpc.api.Schema;
 import drzhark.mocreatures.MoCConstants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.MissingMappingsEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.neoforged.neoforge.registries.MissingMappingsEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("removal")
 public class BlockIDFixer extends DataFix {
-    private static final Map<ResourceLocation, ResourceLocation> BLOCK_NAME_MAPPINGS = new HashMap<>();
+    private static final Map<Identifier, Identifier> BLOCK_NAME_MAPPINGS = new HashMap<>();
 
     static {
-        BLOCK_NAME_MAPPINGS.put(new ResourceLocation(MoCConstants.MOD_ID, "mocstone"), new ResourceLocation(MoCConstants.MOD_ID, "wyvstone"));
-        BLOCK_NAME_MAPPINGS.put(new ResourceLocation(MoCConstants.MOD_ID, "mocgrass"), new ResourceLocation(MoCConstants.MOD_ID, "wyvgrass"));
-        BLOCK_NAME_MAPPINGS.put(new ResourceLocation(MoCConstants.MOD_ID, "mocdirt"), new ResourceLocation(MoCConstants.MOD_ID, "wyvdirt"));
-        BLOCK_NAME_MAPPINGS.put(new ResourceLocation(MoCConstants.MOD_ID, "mocleaves"), new ResourceLocation(MoCConstants.MOD_ID, "wyvwood_leaves"));
-        BLOCK_NAME_MAPPINGS.put(new ResourceLocation(MoCConstants.MOD_ID, "moclog"), new ResourceLocation(MoCConstants.MOD_ID, "wyvwood_log"));
-        BLOCK_NAME_MAPPINGS.put(new ResourceLocation(MoCConstants.MOD_ID, "moctallgrass"), new ResourceLocation(MoCConstants.MOD_ID, "tall_wyvgrass"));
-        BLOCK_NAME_MAPPINGS.put(new ResourceLocation(MoCConstants.MOD_ID, "mocwoodplank"), new ResourceLocation(MoCConstants.MOD_ID, "wyvwood_planks"));
+        BLOCK_NAME_MAPPINGS.put(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "mocstone"), Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "wyvstone"));
+        BLOCK_NAME_MAPPINGS.put(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "mocgrass"), Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "wyvgrass"));
+        BLOCK_NAME_MAPPINGS.put(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "mocdirt"), Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "wyvdirt"));
+        BLOCK_NAME_MAPPINGS.put(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "mocleaves"), Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "wyvwood_leaves"));
+        BLOCK_NAME_MAPPINGS.put(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "moclog"), Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "wyvwood_log"));
+        BLOCK_NAME_MAPPINGS.put(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "moctallgrass"), Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "tall_wyvgrass"));
+        BLOCK_NAME_MAPPINGS.put(Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "mocwoodplank"), Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "wyvwood_planks"));
     }
 
     public BlockIDFixer(Schema outputSchema, boolean changesType) {
         super(outputSchema, changesType);
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -44,11 +45,11 @@ public class BlockIDFixer extends DataFix {
 
     @SubscribeEvent
     public void onMissingBlockMappings(MissingMappingsEvent event) {
-        event.getMappings(ForgeRegistries.BLOCKS.getRegistryKey(), MoCConstants.MOD_ID).forEach(mapping -> {
-            ResourceLocation oldName = mapping.getKey();
-            ResourceLocation newName = BLOCK_NAME_MAPPINGS.get(oldName);
+        event.getMappings(Registries.BLOCK, MoCConstants.MOD_ID).forEach(mapping -> {
+            Identifier oldName = mapping.getKey();
+            Identifier newName = BLOCK_NAME_MAPPINGS.get(oldName);
             if (newName != null) {
-                Block newBlock = ForgeRegistries.BLOCKS.getValue(newName);
+                Block newBlock = BuiltInRegistries.BLOCK.getValue(newName);
                 if (newBlock != null) {
                     mapping.remap(newBlock);
                 }
@@ -58,11 +59,11 @@ public class BlockIDFixer extends DataFix {
 
     @SubscribeEvent
     public void onMissingItemMappings(MissingMappingsEvent event) {
-        event.getMappings(ForgeRegistries.ITEMS.getRegistryKey(), MoCConstants.MOD_ID).forEach(mapping -> {
-            ResourceLocation oldName = mapping.getKey();
-            ResourceLocation newName = BLOCK_NAME_MAPPINGS.get(oldName);
+        event.getMappings(Registries.ITEM, MoCConstants.MOD_ID).forEach(mapping -> {
+            Identifier oldName = mapping.getKey();
+            Identifier newName = BLOCK_NAME_MAPPINGS.get(oldName);
             if (newName != null) {
-                Item newItem = ForgeRegistries.ITEMS.getValue(newName);
+                Item newItem = BuiltInRegistries.ITEM.getValue(newName);
                 if (newItem != null) {
                     mapping.remap(newItem);
                 }

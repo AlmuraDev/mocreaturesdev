@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class MoCEntityToxicManticore extends MoCEntityManticore {
@@ -29,7 +29,7 @@ public class MoCEntityToxicManticore extends MoCEntityManticore {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("manticore_toxic.png");
     }
 
@@ -46,7 +46,7 @@ public class MoCEntityToxicManticore extends MoCEntityManticore {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.TOXIC_MANTICORE;
     }
 }

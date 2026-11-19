@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -39,14 +39,14 @@ public class MoCEntityFlameWraith extends MoCEntityWraith implements Enemy {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.FLAME_WRAITH;
     }
 
     @Override
     public void aiStep() {
         if (!this.level().isClientSide()) {
-            if (this.level().isDay()) {
+            if (this.level().isBrightOutside()) {
                 float f = this.getLightLevelDependentMagicValue();
                 if ((f > 0.5F) && this.level().canSeeSky(new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()))) && ((this.random.nextFloat() * 30F) < ((f - 0.4F) * 2.0F))) {
                     this.setHealth(getHealth() - 2);
@@ -69,7 +69,7 @@ public class MoCEntityFlameWraith extends MoCEntityWraith implements Enemy {
     @Override
     public void doEnchantDamageEffects(LivingEntity attacker, Entity target) {
         if (!this.level().isClientSide() && !this.level().dimensionType().ultraWarm()) {
-            target.setSecondsOnFire(this.burningTime);
+            target.igniteForSeconds(this.burningTime);
         }
         super.doEnchantDamageEffects(attacker, target);
     }

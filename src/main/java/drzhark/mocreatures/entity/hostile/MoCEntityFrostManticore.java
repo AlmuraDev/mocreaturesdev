@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class MoCEntityFrostManticore extends MoCEntityManticore {
@@ -29,7 +29,7 @@ public class MoCEntityFrostManticore extends MoCEntityManticore {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("manticore_frost.png");
     }
 
@@ -37,7 +37,7 @@ public class MoCEntityFrostManticore extends MoCEntityManticore {
     public void doEnchantDamageEffects(LivingEntity attacker, Entity target) {
         if (!getIsPoisoning() && this.random.nextInt(5) == 0 && target instanceof LivingEntity livingTarget) {
             setPoisoning(true);
-            livingTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 25 * 20, 0)); // 25 seconds
+            livingTarget.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 25 * 20, 0)); // 25 seconds
         } else {
             openMouth();
         }
@@ -45,7 +45,7 @@ public class MoCEntityFrostManticore extends MoCEntityManticore {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.FROST_MANTICORE;
     }
 }

@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.renderer.entity;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -13,14 +14,14 @@ import drzhark.mocreatures.client.model.MoCModelHorse;
 import drzhark.mocreatures.entity.passive.MoCEntityHorse;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderHorse extends MoCRenderMoC<MoCEntityHorse, MoCModelHorse<MoCEntityHorse>> {
@@ -52,8 +53,8 @@ public class MoCRenderHorse extends MoCRenderMoC<MoCEntityHorse, MoCModelHorse<M
 
             // Explicitly select translucent or opaque render type based on transparency
             RenderType renderType = transparency < 1.0F
-                    ? RenderType.entityTranslucent(getTextureLocation(entityHorse))
-                    : RenderType.entityCutout(getTextureLocation(entityHorse));
+                    ? RenderTypes.entityTranslucent(getTextureLocation(entityHorse))
+                    : RenderTypes.entityCutout(getTextureLocation(entityHorse));
 
             // Get VertexConsumer explicitly from original buffer
             VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
@@ -90,7 +91,7 @@ public class MoCRenderHorse extends MoCRenderMoC<MoCEntityHorse, MoCModelHorse<M
 
                     poseStack.pushPose();
                     poseStack.translate(0.0F, f7, 0.0F);
-                    poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+                    poseStack.rotate(this.entityRenderDispatcher.cameraOrientation());
                     poseStack.scale(-f3, -f3, f3);
                     int yOff = entityHorse.nameYOffset();
 
@@ -108,10 +109,10 @@ public class MoCRenderHorse extends MoCRenderMoC<MoCEntityHorse, MoCModelHorse<M
                         float barWidth = 40F * healthRatio;
 
                         // Use static white texture for health bars
-                        ResourceLocation WHITE_TEXTURE = new ResourceLocation("textures/misc/white.png");
+                        Identifier WHITE_TEXTURE = Identifier.parse("textures/misc/white.png");
 
                         // Red background (empty health)
-                        VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.text(WHITE_TEXTURE));
+                        VertexConsumer vertexconsumer = buffer.getBuffer(RenderTypes.text(WHITE_TEXTURE));
                         vertexconsumer.vertex(matrix, -20F + barWidth, -10 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F)
                                 .uv(0, 0).overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                         vertexconsumer.vertex(matrix, -20F + barWidth, -6 + yOff, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F)
@@ -122,7 +123,7 @@ public class MoCRenderHorse extends MoCRenderMoC<MoCEntityHorse, MoCModelHorse<M
                                 .overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
 
                         // Green health (filled health)
-                        vertexconsumer = buffer.getBuffer(RenderType.text(WHITE_TEXTURE));
+                        vertexconsumer = buffer.getBuffer(RenderTypes.text(WHITE_TEXTURE));
                         vertexconsumer.vertex(matrix, -20F, -10 + yOff, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 0)
                                 .overlayCoords(0).uv2(packedLight).normal(0, 1, 0).endVertex();
                         vertexconsumer.vertex(matrix, -20F, -6 + yOff, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 1)
@@ -170,7 +171,7 @@ public class MoCRenderHorse extends MoCRenderMoC<MoCEntityHorse, MoCModelHorse<M
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityHorse entityhorse) {
+    public Identifier getTextureLocation(MoCEntityHorse entityhorse) {
         return entityhorse.getTexture();
     }
 

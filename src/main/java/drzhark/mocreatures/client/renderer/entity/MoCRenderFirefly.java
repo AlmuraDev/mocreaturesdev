@@ -3,22 +3,23 @@
  */
 package drzhark.mocreatures.client.renderer.entity;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.client.model.MoCModelFirefly;
 import drzhark.mocreatures.entity.ambient.MoCEntityFirefly;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderFirefly extends MoCRenderInsect<MoCEntityFirefly, MoCModelFirefly<MoCEntityFirefly>> {
@@ -38,11 +39,11 @@ public class MoCRenderFirefly extends MoCRenderInsect<MoCEntityFirefly, MoCModel
     }
 
     protected void rotateFirefly(MoCEntityFirefly entityfirefly, PoseStack poseStack) {
-        poseStack.mulPose(Axis.XN.rotationDegrees(40F));
+        poseStack.rotate(Axis.XN.rotationDegrees(40F));
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityFirefly entityfirefly) {
+    public Identifier getTextureLocation(MoCEntityFirefly entityfirefly) {
         return entityfirefly.getTexture();
     }
 
@@ -59,7 +60,7 @@ public class MoCRenderFirefly extends MoCRenderInsect<MoCEntityFirefly, MoCModel
                            float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, 
                            float netHeadYaw, float headPitch) {
             this.setTailBrightness(poseStack, entity, partialTicks);
-            VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(
+            VertexConsumer vertexConsumer = buffer.getBuffer(RenderTypes.entityCutoutNoCull(
                     MoCreatures.proxy.getModelTexture("firefly_glow.png")));
             
             // Use the parent model directly - it will have already been set up with the right properties

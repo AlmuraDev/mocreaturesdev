@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.passive;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIWanderMoC2;
@@ -21,12 +22,12 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
@@ -52,14 +53,14 @@ public class MoCEntityMole extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("mole.png");
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(MOLE_STATE, 0); // state - 0 outside / 1 digging / 2 underground / 3 pick-a-boo
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(MOLE_STATE, 0); // state - 0 outside / 1 digging / 2 underground / 3 pick-a-boo
 
     }
 
@@ -151,7 +152,7 @@ public class MoCEntityMole extends MoCEntityTameableAnimal {
     public void aiStep() {
         super.aiStep();
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.random.nextInt(10) == 0 && getState() == 1) {
                 setState(2);
             }
@@ -194,9 +195,9 @@ public class MoCEntityMole extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         if (getState() != 2) {
-            return super.hurt(damagesource, i);
+            return super.hurtServer(serverLevel, damagesource, i);
         }
         return false;
     }
@@ -250,7 +251,7 @@ public class MoCEntityMole extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.MOLE;
     }
 

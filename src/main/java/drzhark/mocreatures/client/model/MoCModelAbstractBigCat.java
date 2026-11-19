@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -12,18 +13,18 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class MoCModelAbstractBigCat<T extends Entity> extends EntityModel<T> {
+public abstract class MoCModelAbstractBigCat<T extends Entity> extends MoCEntityModel<T> {
         
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "abstract_big_cat"),
+            Identifier.fromNamespaceAndPath("mocreatures", "abstract_big_cat"),
             "main"
     );
 
@@ -136,6 +137,7 @@ public abstract class MoCModelAbstractBigCat<T extends Entity> extends EntityMod
     private final ModelPart RightHindFoot;
 
     public MoCModelAbstractBigCat(ModelPart root) {
+        super(root);
         // Grab every child by the exact same name used in createBodyLayer():
         this.Chest            = root.getChild("Chest");
         this.NeckBase         = this.Chest.getChild("NeckBase");
@@ -1261,33 +1263,33 @@ public abstract class MoCModelAbstractBigCat<T extends Entity> extends EntityMod
         }
 
         // 2) Draw the main Chest (all its children go automatically)
-        this.Chest.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Chest.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // 3) Wings if flying
         if (this.isFlyer) {
-            this.InnerWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.MidWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.OuterWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.InnerWingR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.MidWingR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.OuterWingR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.InnerWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.MidWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.OuterWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.InnerWingR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.MidWingR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.OuterWingR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // 4) Stinger parts if hasStinger
         if (this.hasStinger) {
-            this.STailRoot.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.STail2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.STail3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.STail4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.STail5.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.StingerLump.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.Stinger.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.STailRoot.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.STail2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.STail3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.STail4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.STail5.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.StingerLump.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.Stinger.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // 5) Harness rings if ridden
         if (this.isSaddled && this.isRidden) {
-            this.LeftHarness.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.RightHarness.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.LeftHarness.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.RightHarness.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         if (this.isGhost) {

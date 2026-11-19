@@ -16,7 +16,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -24,9 +24,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -61,7 +61,7 @@ public class MoCItemHorseAmulet extends MoCItem {
             return InteractionResultHolder.pass(stack);
         }
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             initAndReadNBT(stack);
         }
 
@@ -70,7 +70,7 @@ public class MoCItemHorseAmulet extends MoCItem {
         double newPosX = player.getX() - (dist * Math.cos((MoCTools.realAngle(player.getYRot() - 90F)) / 57.29578F));
         double newPosZ = player.getZ() - (dist * Math.sin((MoCTools.realAngle(player.getYRot() - 90F)) / 57.29578F));
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             try {
                 MoCEntityTameableAnimal storedCreature;
                 this.spawnClass = this.spawnClass.replace(MoCConstants.MOD_PREFIX, "").toLowerCase();
@@ -82,7 +82,7 @@ public class MoCItemHorseAmulet extends MoCItem {
                 } else if (this.spawnClass.equalsIgnoreCase("WildHorse")) {
                     storedCreature = MoCEntities.WILDHORSE.get().create(level);
                 } else {
-                    ResourceLocation res = new ResourceLocation(MoCConstants.MOD_PREFIX + this.spawnClass.toLowerCase());
+                    Identifier res = Identifier.parse(MoCConstants.MOD_PREFIX + this.spawnClass.toLowerCase());
                     storedCreature = (MoCEntityTameableAnimal) BuiltInRegistries.ENTITY_TYPE.get(res).create(level);
                     if (storedCreature instanceof MoCEntityBigCat) {
                         this.isGhost = true;
@@ -154,13 +154,13 @@ public class MoCItemHorseAmulet extends MoCItem {
     }
 
     public void readFromNBT(CompoundTag tag) {
-        this.PetId = tag.getInt("PetId");
-        this.creatureType = tag.getInt("CreatureType");
-        this.health = tag.getFloat("Health");
-        this.age = tag.getInt("Edad");
-        this.name = tag.getString("Name");
+        this.PetId = tag.getIntOr("PetId", 0);
+        this.creatureType = tag.getIntOr("CreatureType", 0);
+        this.health = tag.getFloatOr("Health", 0.0F);
+        this.age = tag.getIntOr("Edad", 0);
+        this.name = tag.getStringOr("Name", "");
 
-        int spawnClassOld = tag.getInt("SpawnClass");
+        int spawnClassOld = tag.getIntOr("SpawnClass", 0);
         if (spawnClassOld > 0) {
             if (spawnClassOld == 100) {
                 this.spawnClass = "Wyvern";
@@ -170,13 +170,13 @@ public class MoCItemHorseAmulet extends MoCItem {
             }
             tag.remove("SpawnClass");
         } else {
-            this.spawnClass = tag.getString("SpawnClass");
+            this.spawnClass = tag.getStringOr("SpawnClass", "");
         }
 
-        this.rideable = tag.getBoolean("Rideable");
-        this.armor = tag.getByte("Armor");
-        this.adult = tag.getBoolean("Adult");
-        this.ownerName = tag.getString("OwnerName");
+        this.rideable = tag.getBooleanOr("Rideable", false);
+        this.armor = tag.getByteOr("Armor", (byte) 0);
+        this.adult = tag.getBooleanOr("Adult", false);
+        this.ownerName = tag.getStringOr("OwnerName", "");
         if (tag.hasUUID("OwnerUUID")) {
             this.ownerUniqueId = tag.getUUID("OwnerUUID");
         }

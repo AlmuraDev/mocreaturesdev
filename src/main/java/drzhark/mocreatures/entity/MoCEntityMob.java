@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIMoverHelperMoC;
@@ -18,7 +21,7 @@ import net.minecraft.client.resources.language.I18n; // was net.minecraft.client
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;               // was CompoundNBT
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;     // same
+import net.minecraft.resources.Identifier;     // same
 import net.minecraft.server.level.ServerLevel;       // replaces IServerWorld :contentReference[oaicite:1]{index=1}
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -27,7 +30,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;     // replaces AttributeModifierMap.MutableAttribute :contentReference[oaicite:4]{index=4}
 import net.minecraft.world.entity.ai.attributes.Attributes;            // same
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
-import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.monster.Monster;                       // replaces MonsterEntity :contentReference[oaicite:5]{index=5}
 import net.minecraft.world.entity.ai.navigation.PathNavigation;          // replaces PathNavigator :contentReference[oaicite:9]{index=9}
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;     // replaces PathNavigateFlyer
@@ -40,9 +43,9 @@ import net.minecraft.network.syncher.SynchedEntityData;                    // re
 import net.minecraft.world.Difficulty;                                     // same
 import net.minecraft.world.DifficultyInstance;                             // same
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -97,14 +100,13 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty,
-                                   MobSpawnType reason, @Nullable SpawnGroupData spawnData,
-                                   @Nullable CompoundTag dataTag) {
+                                   EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         selectType();
         return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture(this.texture);
     }
 
@@ -117,12 +119,12 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ADULT, false);
-        this.entityData.define(TYPE, 0);
-        this.entityData.define(AGE, 45);
-        this.entityData.define(NAME_STR, "");
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ADULT, false);
+        builder.define(TYPE, 0);
+        builder.define(AGE, 45);
+        builder.define(NAME_STR, "");
     }
 
     @Override
@@ -187,13 +189,13 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     public void setOwnerPetId(int petId) {
     }
 
-    public static boolean getCanSpawnHere(EntityType<? extends MoCEntityMob> type, ServerLevel world, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean getCanSpawnHere(EntityType<? extends MoCEntityMob> type, ServerLevel world, EntitySpawnReason reason, BlockPos pos, Random randomIn) {
         return checkMobSpawnRules(type, world, reason, pos, world.getRandom());
     }
 
     /** Explicit JSON light limits override vanilla darkness, but never difficulty/surface rules. */
-    public static boolean checkMobSpawnRules(EntityType<? extends MoCEntityMob> type, ServerLevelAccessor world, MobSpawnType reason, BlockPos pos, RandomSource random) {
-        if (reason == MobSpawnType.SPAWN_EGG) {
+    public static boolean checkMobSpawnRules(EntityType<? extends MoCEntityMob> type, ServerLevelAccessor world, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
+        if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
             return true;
         }
         boolean override = drzhark.mocreatures.config.biome.BiomeSpawnConfig.hasLightLevelOverride(type);
@@ -223,7 +225,7 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     @SuppressWarnings("deprecated")
     @Override
     public void tick() {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (getIsTamed() && this.random.nextInt(200) == 0) {
                 MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(
                         () -> new PacketDistributor.TargetPoint(
@@ -232,14 +234,14 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
                 ), new MoCMessageHealth(this.getId(), this.getHealth()));
             }
 
-            if (this.isDaylightSensitive() && this.level().isDay()) {
+            if (this.isDaylightSensitive() && this.level().isBrightOutside()) {
                 float brightness = this.getLightLevelDependentMagicValue();
                 if (brightness > 0.5F
                         && this.level().canSeeSky(new BlockPos(
                         Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ())))
                         && this.random.nextFloat() * 30.0F < (brightness - 0.4F) * 2.0F)
                 {
-                    this.setSecondsOnFire(8);
+                    this.igniteForSeconds(8);
                 }
             }
 
@@ -269,15 +271,15 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (!this.level().isClientSide && getIsTamed()) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
+        if (!this.level().isClientSide() && getIsTamed()) {
             MoCMessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(
                     () -> new PacketDistributor.TargetPoint(
                             this.getX(), this.getY(), this.getZ(), 64, this.level().dimension()
                     )
             ), new MoCMessageHealth(this.getId(), this.getHealth()));
         }
-        return super.hurt(source, amount);
+        return super.hurtServer(serverLevel, source, amount);
     }
 
     /** Boolean used to select pathfinding behavior */
@@ -286,7 +288,7 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("Adult", getIsAdult());
         tag.putInt("Edad", getMoCAge());
@@ -295,16 +297,16 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        setAdult(tag.getBoolean("Adult"));
-        setMoCAge(tag.getInt("Edad"));
-        setPetName(tag.getString("Name"));
-        setTypeMoC(tag.getInt("TypeInt"));
+        setAdult(tag.getBooleanOr("Adult", false));
+        setMoCAge(tag.getIntOr("Edad", 0));
+        setPetName(tag.getStringOr("Name", ""));
+        setTypeMoC(tag.getIntOr("TypeInt", 0));
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         if (!isFlyer()) {
             return super.causeFallDamage(distance, damageMultiplier, source);
         }
@@ -326,7 +328,7 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     }
 
     protected void navigateFlying(Vec3 delta) {
-        if (this.isAlive() && !this.level().isClientSide) {
+        if (this.isAlive() && !this.level().isClientSide()) {
             this.moveRelative(0.1F, delta);
             this.move(MoverType.SELF, this.getDeltaMovement());
             this.setDeltaMovement(this.getDeltaMovement().scale(0.9D));
@@ -454,8 +456,8 @@ public abstract class MoCEntityMob extends Monster implements IMoCEntity {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
-        boolean flag = target.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity target) {
+        boolean flag = target.hurtOrSimulate(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         if (flag) {
             this.doEnchantDamageEffects(this, target);
         }

@@ -20,7 +20,7 @@ public class MoCItemLitterBox extends MoCItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (!player.isCreative()) {
                 stack.shrink(1);
             }

@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.proxy;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.client.gui.MoCGUIEntityNamer;
 import drzhark.mocreatures.client.renderer.fx.MoCParticles;
@@ -20,20 +21,19 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 /**
  * Client-side proxy for Mo' Creatures
  */
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(modid = "mocreatures", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = "mocreatures", value = Dist.CLIENT)
 public class MoCProxyClient extends MoCProxy {
 
     public static Minecraft mc = Minecraft.getInstance();
@@ -50,32 +50,32 @@ public class MoCProxyClient extends MoCProxy {
     }
 
     @Override
-    public ResourceLocation getArmorTexture(String texture) {
+    public Identifier getArmorTexture(String texture) {
         return mocTextures.getArmorTexture(texture);
     }
 
     @Override
-    public ResourceLocation getBlockTexture(String texture) {
+    public Identifier getBlockTexture(String texture) {
         return mocTextures.getBlockTexture(texture);
     }
 
     @Override
-    public ResourceLocation getItemTexture(String texture) {
+    public Identifier getItemTexture(String texture) {
         return mocTextures.getItemTexture(texture);
     }
 
     @Override
-    public ResourceLocation getModelTexture(String texture) {
+    public Identifier getModelTexture(String texture) {
         return mocTextures.getModelTexture(texture);
     }
 
     @Override
-    public ResourceLocation getGuiTexture(String texture) {
+    public Identifier getGuiTexture(String texture) {
         return mocTextures.getGuiTexture(texture);
     }
 
     @Override
-    public ResourceLocation getMiscTexture(String texture) {
+    public Identifier getMiscTexture(String texture) {
         return mocTextures.getMiscTexture(texture);
     }
 

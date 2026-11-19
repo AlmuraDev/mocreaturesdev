@@ -7,9 +7,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelRat;
 import drzhark.mocreatures.entity.hostile.MoCEntityHellRat;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderHellRat extends MoCRenderRat<MoCEntityHellRat, MoCModelRat<MoCEntityHellRat>> {
@@ -25,7 +25,7 @@ public class MoCRenderHellRat extends MoCRenderRat<MoCEntityHellRat, MoCModelRat
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityHellRat entityhellrat) {
+    public Identifier getTextureLocation(MoCEntityHellRat entityhellrat) {
         return entityhellrat.getTexture();
     }
 }

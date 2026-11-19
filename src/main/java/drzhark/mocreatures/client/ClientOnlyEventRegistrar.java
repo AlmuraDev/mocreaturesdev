@@ -1,11 +1,11 @@
 package drzhark.mocreatures.client;
 
 import drzhark.mocreatures.event.MoCEventHooksClient;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 public class ClientOnlyEventRegistrar {
     public static void registerClientEvents() {
-        MinecraftForge.EVENT_BUS.register(new MoCEventHooksClient());
-        MinecraftForge.EVENT_BUS.register(new MoCKeyHandler());
+        NeoForge.EVENT_BUS.register(new MoCEventHooksClient());
+        NeoForge.EVENT_BUS.register(new MoCKeyHandler());
     }
 }

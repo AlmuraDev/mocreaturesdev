@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.renderer.entity;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.MoCreatures;
@@ -12,15 +13,15 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import org.joml.Matrix4f;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderShark extends MobRenderer<MoCEntityShark, MoCModelShark<MoCEntityShark>> {
+public class MoCRenderShark extends MoCLivingRenderer<MoCEntityShark, MoCModelShark<MoCEntityShark>> {
 
     public MoCRenderShark(EntityRendererProvider.Context renderManagerIn, MoCModelShark modelbase, float f) {
         super(renderManagerIn, modelbase, f);
@@ -43,7 +44,7 @@ public class MoCRenderShark extends MobRenderer<MoCEntityShark, MoCModelShark<Mo
                 
                 poseStack.pushPose();
                 poseStack.translate(0.0F, f5, 0.0F);
-                poseStack.mulPose(Axis.YP.rotationDegrees(-this.entityRenderDispatcher.camera.getYRot()));
+                poseStack.rotate(Axis.YP.rotationDegrees(-this.entityRenderDispatcher.camera.getYRot()));
                 poseStack.scale(-f3, -f3, f3);
 
                 byte byte0 = -50;
@@ -60,14 +61,14 @@ public class MoCRenderShark extends MobRenderer<MoCEntityShark, MoCModelShark<Mo
                     float f9 = 40F * f8;
                     
                     // Red background
-                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.text(new ResourceLocation("textures/misc/white.png")));
+                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderTypes.text(Identifier.parse("textures/misc/white.png")));
                     vertexconsumer.vertex(matrix4f, -20F + f9, -10 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 0).uv2(packedLightIn).endVertex();
                     vertexconsumer.vertex(matrix4f, -20F + f9, -6 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 1).uv2(packedLightIn).endVertex();
                     vertexconsumer.vertex(matrix4f, 20F, -6 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 1).uv2(packedLightIn).endVertex();
                     vertexconsumer.vertex(matrix4f, 20F, -10 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 0).uv2(packedLightIn).endVertex();
                     
                     // Green health
-                    vertexconsumer = buffer.getBuffer(RenderType.text(new ResourceLocation("textures/misc/white.png")));
+                    vertexconsumer = buffer.getBuffer(RenderTypes.text(Identifier.parse("textures/misc/white.png")));
                     vertexconsumer.vertex(matrix4f, -20F, -10 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 0).uv2(packedLightIn).endVertex();
                     vertexconsumer.vertex(matrix4f, -20F, -6 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 1).uv2(packedLightIn).endVertex();
                     vertexconsumer.vertex(matrix4f, f9 - 20F, -6 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(1, 1).uv2(packedLightIn).endVertex();
@@ -82,7 +83,7 @@ public class MoCRenderShark extends MobRenderer<MoCEntityShark, MoCModelShark<Mo
                     
                     // Name background
                     Matrix4f matrix4f = poseStack.last().pose();
-                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.textBackground());
+                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderTypes.textBackground());
                     vertexconsumer.vertex(matrix4f, textX - 1, textY - 1, 0.0F).color(0.0F, 0.0F, 0.0F, 0.25F).uv2(packedLightIn).endVertex();
                     vertexconsumer.vertex(matrix4f, textX - 1, textY + 8, 0.0F).color(0.0F, 0.0F, 0.0F, 0.25F).uv2(packedLightIn).endVertex();
                     vertexconsumer.vertex(matrix4f, textX + textWidth + 1, textY + 8, 0.0F).color(0.0F, 0.0F, 0.0F, 0.25F).uv2(packedLightIn).endVertex();
@@ -108,7 +109,7 @@ public class MoCRenderShark extends MobRenderer<MoCEntityShark, MoCModelShark<Mo
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityShark entityshark) {
+    public Identifier getTextureLocation(MoCEntityShark entityshark) {
         return entityshark.getTexture();
     }
 }

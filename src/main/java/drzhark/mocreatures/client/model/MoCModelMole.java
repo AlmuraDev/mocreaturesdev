@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -14,9 +15,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 → 1.20.1. All ModelRenderer fields are now ModelParts,
@@ -24,11 +25,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * moved to renderToBuffer(...), and entity offsets captured in prepareMobModel(...).
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelMole<T extends MoCEntityMole> extends EntityModel<T> {
+public class MoCModelMole<T extends MoCEntityMole> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "mole"),
+            Identifier.fromNamespaceAndPath("mocreatures", "mole"),
             "main"
     );
     
@@ -50,6 +51,7 @@ public class MoCModelMole<T extends MoCEntityMole> extends EntityModel<T> {
     private final float RADIAN_CONV = 57.29578F;
 
     public MoCModelMole(ModelPart root) {
+        super(root);
         this.Nose       = root.getChild("Nose");
         this.Head       = root.getChild("Head");
         this.Body       = root.getChild("Body");
@@ -279,17 +281,17 @@ public class MoCModelMole<T extends MoCEntityMole> extends EntityModel<T> {
         poseStack.pushPose();
         poseStack.translate(0.0F, this.yOffset, 0.0F);
 
-        this.Nose.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Back.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LFingers.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RFingers.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LRearLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.RRearLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Nose.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Back.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LFingers.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RFingers.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LRearLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.RRearLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         poseStack.popPose();
     }

@@ -12,13 +12,13 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class MoCDebugSpawnCommand {
 
@@ -50,9 +50,9 @@ public class MoCDebugSpawnCommand {
         
         // Get current biome
         Holder<Biome> biome = level.getBiome(pos);
-        ResourceLocation biomeName = biome.unwrap().map(
+        Identifier biomeName = biome.unwrap().map(
             resourceKey -> resourceKey.location(),
-            biomeObj -> net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("unknown", "biome")
+            biomeObj -> net.minecraft.resources.Identifier.fromNamespaceAndPath("unknown", "biome")
         );
         
         source.sendSuccess(() -> Component.literal("=== MoCreatures Spawn Debug Info ==="), false);

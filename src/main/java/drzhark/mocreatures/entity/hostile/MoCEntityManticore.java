@@ -14,14 +14,14 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityManticore extends MoCEntityMob {
 
@@ -57,7 +57,7 @@ public class MoCEntityManticore extends MoCEntityMob {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -125,7 +125,7 @@ public class MoCEntityManticore extends MoCEntityMob {
             }
 
             // TODO: Particles while flying?
-            /*if (this.wingFlapCounter != 0 && this.wingFlapCounter % 5 == 0 && this.level().isClientSide) {
+            /*if (this.wingFlapCounter != 0 && this.wingFlapCounter % 5 == 0 && this.level().isClientSide()) {
                 MoCreatures.proxy.StarFX(this);
             }*/
 

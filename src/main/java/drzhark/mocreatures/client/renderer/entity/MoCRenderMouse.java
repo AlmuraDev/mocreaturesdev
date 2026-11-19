@@ -8,9 +8,9 @@ import com.mojang.math.Axis;
 import drzhark.mocreatures.client.model.MoCModelMouse;
 import drzhark.mocreatures.entity.passive.MoCEntityMouse;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderMouse extends MoCRenderMoC<MoCEntityMouse, MoCModelMouse<MoCEntityMouse>> {
@@ -33,7 +33,7 @@ public class MoCRenderMouse extends MoCRenderMoC<MoCEntityMouse, MoCModelMouse<M
     }
 
     protected void rotateAnimal(PoseStack poseStack) {
-        poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
+        poseStack.rotate(Axis.XN.rotationDegrees(90.0F));
         poseStack.translate(0.0F, 0.4F, 0.0F);
     }
 
@@ -43,12 +43,12 @@ public class MoCRenderMouse extends MoCRenderMoC<MoCEntityMouse, MoCModelMouse<M
     }
 
     protected void upsideDown(PoseStack poseStack) {
-        poseStack.mulPose(Axis.XN.rotationDegrees(-90.0F));
+        poseStack.rotate(Axis.XN.rotationDegrees(-90.0F));
         poseStack.translate(-0.55F, 0.0F, 0.0F);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityMouse entitymouse) {
+    public Identifier getTextureLocation(MoCEntityMouse entitymouse) {
         return entitymouse.getTexture();
     }
 }

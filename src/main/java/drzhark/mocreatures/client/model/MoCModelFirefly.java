@@ -1,8 +1,9 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import drzhark.mocreatures.entity.ambient.MoCEntityFirefly;
 import net.minecraft.client.model.EntityModel;
@@ -15,16 +16,16 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelFirefly<T extends MoCEntityFirefly> extends EntityModel<T> {
+public class MoCModelFirefly<T extends MoCEntityFirefly> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "firefly"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "firefly"), "main"
     );
 
     private final ModelPart antenna;
@@ -46,6 +47,7 @@ public class MoCModelFirefly<T extends MoCEntityFirefly> extends EntityModel<T> 
     private boolean day;
 
     public MoCModelFirefly(ModelPart root) {
+        super(root);
         this.head            = root.getChild("head");
         this.antenna         = root.getChild("antenna");
         this.thorax          = root.getChild("thorax");
@@ -73,7 +75,7 @@ public class MoCModelFirefly<T extends MoCEntityFirefly> extends EntityModel<T> 
     ) {
         // Determine whether it is flying or it is “daytime”
         this.flying = entity.getIsFlying() || entity.getDeltaMovement().y < -0.1D;
-        this.day    = entity.level().isDay();
+        this.day    = entity.level().isBrightOutside();
 
         float legMov, legMovB, frontLegAdj = 0F;
         if (this.flying) {
@@ -120,31 +122,31 @@ public class MoCModelFirefly<T extends MoCEntityFirefly> extends EntityModel<T> 
             float alpha
     ) {
         // Antenna, legs, head, abdomen, front legs, thorax, tail
-        this.antenna.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rearLegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.midLegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.abdomen.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.frontLegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.thorax.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.antenna.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rearLegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.midLegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.abdomen.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.frontLegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.thorax.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         if (!this.flying) {
             // When not flying, render closed shells
-            this.rightShell.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.leftShell.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.rightShell.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.leftShell.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
             // Flying: open shells + wings with partial alpha
-            this.rightShellOpen.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.leftShellOpen.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.rightShellOpen.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.leftShellOpen.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
             poseStack.pushPose();
             RenderSystem.enableBlend();
             float transparency = 0.6F;
             RenderSystem.defaultBlendFunc();
             RenderSystem.clearColor(0.8F, 0.8F, 0.8F, transparency);
-            this.leftWing.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.rightWing.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.leftWing.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.rightWing.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             RenderSystem.disableBlend();
             poseStack.popPose();
         }

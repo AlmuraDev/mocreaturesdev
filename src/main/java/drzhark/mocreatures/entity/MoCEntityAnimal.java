@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIMoverHelperMoC;
@@ -19,7 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -32,7 +35,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -47,8 +50,8 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -118,7 +121,7 @@ public abstract class MoCEntityAnimal extends Animal implements IMoCEntity {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         selectType();
         return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
     }
@@ -129,12 +132,12 @@ public abstract class MoCEntityAnimal extends Animal implements IMoCEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ADULT, false);
-        this.entityData.define(TYPE, 0);
-        this.entityData.define(AGE, 45);
-        this.entityData.define(NAME_STR, "");
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ADULT, false);
+        builder.define(TYPE, 0);
+        builder.define(AGE, 45);
+        builder.define(NAME_STR, "");
     }
 
     @Override
@@ -306,7 +309,7 @@ public abstract class MoCEntityAnimal extends Animal implements IMoCEntity {
 
     @Override
     public void tick() {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (rideableEntity() && this.isVehicle()) {
                 riding();
             }
@@ -464,7 +467,7 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
                 }
                 float dist = (float) this.distanceTo(ent);
                 if (dist < 2.0F && this.random.nextInt(10) == 0) {
-                    ent.hurt(
+                    ent.hurtOrSimulate(
                             ent.level().damageSources().mobAttack((LivingEntity) ent),
                             (float) ((Monster) ent).getAttributeValue(Attributes.ATTACK_DAMAGE)
                     );
@@ -503,7 +506,7 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
         }
     }
 
-    public static boolean getCanSpawnHere(EntityType<MoCEntityAnimal> type, LevelAccessor world, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean getCanSpawnHere(EntityType<MoCEntityAnimal> type, LevelAccessor world, EntitySpawnReason reason, BlockPos pos, Random randomIn) {
         BlockState blockBelow = world.getBlockState(pos.below());
         boolean willSpawn = world.getBrightness(LightLayer.SKY, pos) > 8 && blockBelow.isValidSpawn(world, pos, type);
         
@@ -519,7 +522,7 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         CompoundTag data = MoCTools.getEntityData(this);
         data.putBoolean("Adult", getIsAdult());
@@ -530,14 +533,14 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
+    public void readAdditionalSaveData(ValueInput compound) {
         super.readAdditionalSaveData(compound);
         if (compound.contains("MoCData", 10)) {
             CompoundTag data = compound.getCompound("MoCData");
-            setAdult(data.getBoolean("Adult"));
-            setMoCAge(data.getInt("Edad"));
-            setPetName(data.getString("Name"));
-            setTypeMoC(data.getInt("TypeInt"));
+            setAdult(data.getBooleanOr("Adult", false));
+            setMoCAge(data.getIntOr("Edad", 0));
+            setPetName(data.getStringOr("Name", ""));
+            setTypeMoC(data.getIntOr("TypeInt", 0));
         }
     }
 
@@ -613,7 +616,7 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
     }
 
     public void moveEntityWithRiderUntamed(Vec3 vec, LivingEntity passenger) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.random.nextInt(10) == 0) {
                 this.setDeltaMovement(this.random.nextGaussian() / 30D, this.getDeltaMovement().y, this.random.nextGaussian() / 10D);
             }
@@ -741,26 +744,26 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
 
     @Override
     public void die(DamageSource source) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             dropMyStuff();
         }
         super.die(source);
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
         if (isNotScared()) {
             LivingEntity tempTarget = this.getTarget();
-            boolean flag = super.hurt(source, amount);
+            boolean flag = super.hurtServer(serverLevel, source, amount);
             this.setTarget(tempTarget);
             return flag;
         }
-        return super.hurt(source, amount);
+        return super.hurtServer(serverLevel, source, amount);
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
-        boolean flag = entityIn.hurt(
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
+        boolean flag = entityIn.hurtOrSimulate(
                 this.level().damageSources().mobAttack(this),
                 (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE)
         );
@@ -779,8 +782,8 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
     }
 
     @Override
-    public boolean canBeLeashed(Player player) {
-        if (!this.level().isClientSide && !MoCTools.isThisPlayerAnOP(player) && this.getIsTamed() && !player.getUUID().equals(this.getOwnerId())) {
+    public boolean canBeLeashed() {
+        if (!this.level().isClientSide() && !MoCTools.isThisPlayerAnOP(player) && this.getIsTamed() && !player.getUUID().equals(this.getOwnerId())) {
             return false;
         }
         return super.canBeLeashed(player);
@@ -987,7 +990,7 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
 
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture(this.texture);
     }
 
@@ -997,9 +1000,9 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
     }
 
     @Override
-    public boolean checkSpawnRules(LevelAccessor world, MobSpawnType reason) {
+    public boolean checkSpawnRules(LevelAccessor world, EntitySpawnReason reason) {
         // Always allow spawn eggs to work
-        if (reason == MobSpawnType.SPAWN_EGG) {
+        if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
             return true;
         }
         
@@ -1014,9 +1017,9 @@ public void faceLocation(double x, double y, double z, float maxTurn) {
     /**
      * Vanilla-style animal spawn rules with light level check integration
      */
-    public static boolean checkAnimalSpawnRules(EntityType<MoCEntityAnimal> type, ServerLevelAccessor world, MobSpawnType reason, BlockPos pos, RandomSource random) {
+    public static boolean checkAnimalSpawnRules(EntityType<MoCEntityAnimal> type, ServerLevelAccessor world, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         // Always allow spawn eggs
-        if (reason == MobSpawnType.SPAWN_EGG) {
+        if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
             return true;
         }
         

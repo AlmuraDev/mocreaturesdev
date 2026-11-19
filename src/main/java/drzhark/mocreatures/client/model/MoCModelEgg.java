@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.item.MoCEntityEgg;
@@ -11,16 +12,16 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelEgg<T extends MoCEntityEgg> extends EntityModel<T> {
+public class MoCModelEgg<T extends MoCEntityEgg> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "egg"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "egg"), "main"
     );
 
     private final ModelPart egg1;
@@ -30,6 +31,7 @@ public class MoCModelEgg<T extends MoCEntityEgg> extends EntityModel<T> {
     private final ModelPart egg5;
 
     public MoCModelEgg(ModelPart root) {
+        super(root);
         this.egg1 = root.getChild("egg1");
         this.egg2 = root.getChild("egg2");
         this.egg3 = root.getChild("egg3");
@@ -102,10 +104,10 @@ public class MoCModelEgg<T extends MoCEntityEgg> extends EntityModel<T> {
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer,
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {
-        egg1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        egg2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        egg3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        egg4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        egg5.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        egg1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        egg2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        egg3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        egg4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        egg5.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

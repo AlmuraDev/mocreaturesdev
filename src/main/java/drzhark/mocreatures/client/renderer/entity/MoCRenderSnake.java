@@ -8,9 +8,9 @@ import drzhark.mocreatures.client.model.MoCModelSnake;
 import drzhark.mocreatures.entity.hunter.MoCEntitySnake;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderSnake extends MoCRenderMoC<MoCEntitySnake, MoCModelSnake<MoCEntitySnake>> {
@@ -20,7 +20,7 @@ public class MoCRenderSnake extends MoCRenderMoC<MoCEntitySnake, MoCModelSnake<M
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntitySnake par1Entity) {
+    public Identifier getTextureLocation(MoCEntitySnake par1Entity) {
         return par1Entity.getTexture();
     }
 
@@ -50,7 +50,7 @@ public class MoCRenderSnake extends MoCRenderMoC<MoCEntitySnake, MoCModelSnake<M
                 //-0.5 puts it in the right shoulder
             }
             /*
-             * //if(small) //works for small snakes poseStack.mulPose(Axis.XP.rotationDegrees(20F));
+             * //if(small) //works for small snakes poseStack.rotate(Axis.XP.rotationDegrees(20F));
              * if(mod_mocreatures.mc.isMultiplayerWorld()) {
              * poseStack.translate(-0.5F, 1.4F, 0F); } else {
              * poseStack.translate(0.7F, 0F, 1.2F); }

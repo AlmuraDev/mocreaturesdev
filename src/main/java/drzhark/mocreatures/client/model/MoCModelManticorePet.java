@@ -7,8 +7,8 @@ import drzhark.mocreatures.entity.hunter.MoCEntityManticorePet;
 
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCModelManticorePet<T extends MoCEntityManticorePet> extends MoCModelBigCat<T> {

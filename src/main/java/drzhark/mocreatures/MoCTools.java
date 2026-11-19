@@ -29,7 +29,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -48,16 +48,16 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Skeleton;
-import net.minecraft.world.entity.monster.Slime;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.entity.monster.cubemob.Slime;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -73,13 +73,13 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -94,7 +94,7 @@ public class MoCTools {
      * spawns tiny slimes
      */
     public static void spawnSlimes(Level level, Entity entity) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             RandomSource random = level.getRandom();
             int count = 1 + random.nextInt(1); // 0–1 slimes
 
@@ -122,7 +122,7 @@ public class MoCTools {
      * Drops saddle
      */
     public static void dropSaddle(MoCEntityAnimal entity, Level level) {
-        if (!entity.getIsRideable() || level.isClientSide) {
+        if (!entity.getIsRideable() || level.isClientSide()) {
             return;
         }
 
@@ -134,7 +134,7 @@ public class MoCTools {
      * Drops item
      */
     public static void dropCustomItem(Entity entity, Level level, ItemStack itemstack) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
 
@@ -197,7 +197,7 @@ public class MoCTools {
             );
 
 
-            entityTarget.hurt(source, 2.0F);
+            entityTarget.hurtOrSimulate(source, 2.0F);
             bigSmack(entityAttacker, entityTarget, 0.6F);
             playCustomSound(entityAttacker, MoCSoundEvents.ENTITY_GENERIC_TUD.get());
         }
@@ -220,7 +220,7 @@ public class MoCTools {
                     attacker
             );
 
-            target.hurt(source, 2.0F);
+            target.hurtOrSimulate(source, 2.0F);
             bigSmack(attacker, target, 0.6F);
             playCustomSound(attacker, MoCSoundEvents.ENTITY_GENERIC_TUD.get());
         }
@@ -253,7 +253,7 @@ public class MoCTools {
     }
 
     public static void playCustomSound(Entity entity, SoundEvent customSound, float volume) {
-        float pitch = 1.0F + ((entity.level().random.nextFloat() - entity.level().random.nextFloat()) * 0.2F);
+        float pitch = 1.0F + ((entity.level().getRandom().nextFloat() - entity.level().getRandom().nextFloat()) * 0.2F);
         entity.level().playSound(
                 null,                      // null = plays for all nearby players
                 entity.blockPosition(),    // sound origin
@@ -519,7 +519,7 @@ public class MoCTools {
                 MoCSoundEvents.ENTITY_GENERIC_DESTROY.get(),
                 SoundSource.HOSTILE,
                 4.0F,
-                (1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.2F) * 0.7F
+                (1.0F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F) * 0.7F
         );
 
         boolean mobGrief = mobGriefing(level);
@@ -542,7 +542,7 @@ public class MoCTools {
                     dy /= dist;
                     dz /= dist;
 
-                    float power = strength * (0.7F + level.random.nextFloat() * 0.6F);
+                    float power = strength * (0.7F + level.getRandom().nextFloat() * 0.6F);
                     double px = x;
                     double py = y;
                     double pz = z;
@@ -570,7 +570,7 @@ public class MoCTools {
             }
         }
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             AABB blastBox = new AABB(
                     x - blastRadius, y - blastRadius, z - blastRadius,
                     x + blastRadius, y + blastRadius, z + blastRadius
@@ -599,7 +599,7 @@ public class MoCTools {
                     double impact = (1.0D - distance) * exposure;
                     float damage = (float) (((impact * impact + impact) / 2.0D) * 7.0D * blastRadius + 1.0D);
 
-                    e.hurt(level.damageSources().explosion(entity, null), damage);
+                    e.hurtOrSimulate(level.damageSources().explosion(entity, null), damage);
                     Vec3 motion = e.getDeltaMovement().add(dx * impact, dy * impact, dz * impact);
                     e.setDeltaMovement(motion);
                 }
@@ -607,13 +607,13 @@ public class MoCTools {
         }
 
         // CLIENT: Spawn particles
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             for (BlockPos pos : affectedBlocks) {
                 for (int i = 0; i < 5; i++) {
                     Vec3 spawn = new Vec3(pos.getX(), pos.getY(), pos.getZ()).add(
-                            level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble()
+                            level.getRandom().nextDouble(), level.getRandom().nextDouble(), level.getRandom().nextDouble()
                     );
-                    Vec3 motion = spawn.subtract(x, y, z).normalize().scale(level.random.nextDouble() * 0.5);
+                    Vec3 motion = spawn.subtract(x, y, z).normalize().scale(level.getRandom().nextDouble() * 0.5);
                     level.addParticle(ParticleTypes.SMOKE, spawn.x, spawn.y, spawn.z, motion.x, motion.y, motion.z);
                 }
                 entity.setDeltaMovement(entity.getDeltaMovement().subtract(0.001D, 0.001D, 0));
@@ -621,7 +621,7 @@ public class MoCTools {
         }
 
         // SERVER: Destroy blocks
-        if (!level.isClientSide && mobGrief) {
+        if (!level.isClientSide() && mobGrief) {
             ServerLevel serverLevel = (ServerLevel) level;
 
             for (BlockPos pos : affectedBlocks) {
@@ -629,7 +629,7 @@ public class MoCTools {
                 if (!state.isAir()) {
                     BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(serverLevel, pos, state,
                             FakePlayerFactory.get(serverLevel, MoCreatures.MOCFAKEPLAYER));
-                    if (!MinecraftForge.EVENT_BUS.post(breakEvent)) {
+                    if (!NeoForge.EVENT_BUS.post(breakEvent)) {
                         level.removeBlock(pos, false);
                         Explosion explosion = new Explosion(level, entity, pos.getX(), pos.getY(), pos.getZ(), 3f, false, Explosion.BlockInteraction.KEEP);
                         state.onBlockExploded(level, pos, explosion);
@@ -639,13 +639,13 @@ public class MoCTools {
         }
 
         // SERVER: Set blocks on fire
-        if (!level.isClientSide && mobGrief && fire) {
+        if (!level.isClientSide() && mobGrief && fire) {
             for (BlockPos pos : affectedBlocks) {
-                if (level.getBlockState(pos).isAir() && level.random.nextInt(8) == 0) {
+                if (level.getBlockState(pos).isAir() && level.getRandom().nextInt(8) == 0) {
                     ServerLevel serverLevel = (ServerLevel) level;
                     BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(serverLevel, pos, Blocks.AIR.defaultBlockState(),
                             FakePlayerFactory.get(serverLevel, MoCreatures.MOCFAKEPLAYER));
-                    if (!MinecraftForge.EVENT_BUS.post(breakEvent)) {
+                    if (!NeoForge.EVENT_BUS.post(breakEvent)) {
                         level.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
                     }
                 }
@@ -679,7 +679,7 @@ public class MoCTools {
         // Frost Scorpion Armor Set Effect - Resistance
         if (boots == MoCItems.BOOTS_SCORP_F.get() && legs == MoCItems.LEGS_SCORP_F.get() &&
                 plate == MoCItems.PLATE_SCORP_F.get() && helmet == MoCItems.HELMET_SCORP_F.get()) {
-            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 300, 0));
+            player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 300, 0));
             return;
         }
 
@@ -693,7 +693,7 @@ public class MoCTools {
         // Undead Scorpion Armor Set Effect - Strength
         if (boots == MoCItems.BOOTS_SCORP_U.get() && legs == MoCItems.LEGS_SCORP_U.get() &&
                 plate == MoCItems.PLATE_SCORP_U.get() && helmet == MoCItems.HELMET_SCORP_U.get()) {
-            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 300, 0));
+            player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, 300, 0));
         }
     }
 
@@ -703,9 +703,9 @@ public class MoCTools {
         Level level = entity.level();
 
         for (int i = 0; i < l; i++) {
-            int x = (int) (entity.getX() + level.random.nextInt((int) distance) - (distance / 2));
-            int y = (int) (entity.getY() + level.random.nextInt((int) distance) - (distance / 2));
-            int z = (int) (entity.getZ() + level.random.nextInt((int) distance) - (distance / 2));
+            int x = (int) (entity.getX() + level.getRandom().nextInt((int) distance) - (distance / 2));
+            int y = (int) (entity.getY() + level.getRandom().nextInt((int) distance) - (distance / 2));
+            int z = (int) (entity.getZ() + level.getRandom().nextInt((int) distance) - (distance / 2));
             BlockPos pos = new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z));
             BlockState stateAbove = level.getBlockState(pos.above());
             BlockState stateTarget = level.getBlockState(pos);
@@ -717,7 +717,7 @@ public class MoCTools {
             if (!stateTarget.isAir() && stateTarget.getBlock() != Blocks.WATER && stateTarget.getBlock() != Blocks.BEDROCK && stateAbove.isAir()) {
                 if (mobGriefing(level)) {
                     BlockEvent.BreakEvent event = null;
-                    if (!level.isClientSide) {
+                    if (!level.isClientSide()) {
                         event = new BlockEvent.BreakEvent(level, pos, stateTarget, FakePlayerFactory.get((ServerLevel) level, MoCreatures.MOCFAKEPLAYER));
                     }
                     if (event != null && !event.isCanceled()) {
@@ -782,7 +782,7 @@ public class MoCTools {
             }
         }
 
-        if (!ep.level().isClientSide && MoCreatures.proxy.alwaysNamePets && ep instanceof ServerPlayer) {
+        if (!ep.level().isClientSide() && MoCreatures.proxy.alwaysNamePets && ep instanceof ServerPlayer) {
             ServerPlayer serverPlayer = (ServerPlayer) ep;
             Entity entity = (Entity) storedCreature;
 
@@ -841,13 +841,13 @@ public class MoCTools {
             BlockState blockstate = entity.level().getBlockState(pos);
             if (!blockstate.isAir() && blockstate.getDestroySpeed(entity.level(), pos) <= strength) {
                 BlockEvent.BreakEvent event = null;
-                if (!entity.level().isClientSide) {
+                if (!entity.level().isClientSide()) {
                     event = new BlockEvent.BreakEvent(entity.level(), pos, blockstate,
                             FakePlayerFactory.get((ServerLevel) entity.level(), MoCreatures.MOCFAKEPLAYER));
                 }
                 if (event != null && !event.isCanceled()) {
                     entity.level().removeBlock(pos, false);
-                    if (entity.level().random.nextInt(3) == 0) {
+                    if (entity.level().getRandom().nextInt(3) == 0) {
                         playCustomSound(entity, MoCSoundEvents.ENTITY_GOLEM_WALK.get());
                         count++; // only counts recovered blocks
                     }
@@ -858,7 +858,7 @@ public class MoCTools {
     }
 
     public static void dropInventory(Entity entity, MoCAnimalChest animalchest) {
-        if (animalchest == null || entity.level().isClientSide) {
+        if (animalchest == null || entity.level().isClientSide()) {
             return;
         }
 
@@ -895,7 +895,7 @@ public class MoCTools {
      * Drops an amulet with the stored information of the entity passed
      */
     public static void dropHorseAmulet(MoCEntityTameableAnimal entity) {
-        if (entity.level().isClientSide) {
+        if (entity.level().isClientSide()) {
             return;
         }
 
@@ -952,7 +952,7 @@ public class MoCTools {
      * Drops a new amulet/fishnet with the stored information of the entity
      */
     public static void dropAmulet(IMoCEntity entity, int amuletType, Player player) {
-        if (player.level().isClientSide) return;
+        if (player.level().isClientSide()) return;
 
         ItemStack stack = switch (amuletType) {
             case 2 -> new ItemStack(MoCItems.PET_AMULET_FULL.get());
@@ -1013,13 +1013,13 @@ public class MoCTools {
     }
 
     public static boolean isThisPlayerAnOP(Player player) {
-        if (player.level().isClientSide) return false;
+        if (player.level().isClientSide()) return false;
 
         return player.getServer().getPlayerList().isOp(player.getGameProfile());
     }
 
     public static void spawnMaggots(Level level, Entity entity) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             RandomSource rand = level.getRandom();
             int count = 1 + rand.nextInt(4);
             for (int i = 0; i < count; ++i) {
@@ -1112,7 +1112,7 @@ public class MoCTools {
             return true;
         }
 
-        return tag.contains("Tamed") && tag.getBoolean("Tamed");
+        return tag.contains("Tamed") && tag.getBooleanOr("Tamed", false);
     }
 
     /**
@@ -1255,7 +1255,7 @@ public class MoCTools {
         if (access == null) return Collections.emptyList();
 
         Registry<Biome> biomeRegistry = access.registryOrThrow(Registries.BIOME);
-        Set<ResourceLocation> tagSet = new HashSet<>();
+        Set<Identifier> tagSet = new HashSet<>();
 
         biomeRegistry.holders().forEach(biomeHolder -> {
             biomeHolder.tags().forEach(tagKey -> tagSet.add(tagKey.location()));
@@ -1263,7 +1263,7 @@ public class MoCTools {
 
         return tagSet.stream()
                 .sorted()
-                .map(ResourceLocation::toString)
+                .map(Identifier::toString)
                 .collect(Collectors.toList());
     }
 
@@ -1301,7 +1301,7 @@ public class MoCTools {
             EntityType<?> entityType = entity.getType();
             
             // Check by entity type name as a safer approach
-            ResourceLocation entityId = EntityType.getKey(entityType);
+            Identifier entityId = EntityType.getKey(entityType);
             String entityName = entityId.getPath();
             
             return entityName.equals("wyvern") || 
@@ -1327,7 +1327,7 @@ public class MoCTools {
         }
         
         ResourceKey<Level> dimension = entity.level().dimension();
-        ResourceLocation dimensionLocation = dimension.location();
+        Identifier dimensionLocation = dimension.location();
         
         // Check if this is the Wyvern Lair dimension
         return dimensionLocation.toString().equals("mocreatures:wyvernlairworld");

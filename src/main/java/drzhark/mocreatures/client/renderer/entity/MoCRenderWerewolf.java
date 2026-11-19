@@ -3,6 +3,8 @@
  */
 package drzhark.mocreatures.client.renderer.entity;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import drzhark.mocreatures.client.model.MoCEntityModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.MoCreatures;
@@ -13,17 +15,17 @@ import drzhark.mocreatures.entity.hostile.MoCEntityWerewolf;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderWerewolf<M extends EntityModel<MoCEntityWerewolf>> extends MobRenderer<MoCEntityWerewolf, M> {
+public class MoCRenderWerewolf<M extends MoCEntityModel<MoCEntityWerewolf>> extends MoCLivingRenderer<MoCEntityWerewolf, M> {
 
     private final MoCModelWerewolf tempWerewolf;
 
@@ -41,7 +43,7 @@ public class MoCRenderWerewolf<M extends EntityModel<MoCEntityWerewolf>> extends
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityWerewolf entity) {
+    public Identifier getTextureLocation(MoCEntityWerewolf entity) {
         return entity.getTexture();
     }
 
@@ -76,7 +78,7 @@ public class MoCRenderWerewolf<M extends EntityModel<MoCEntityWerewolf>> extends
             if (!entity.getIsHumanForm() || this.humanModel == null) return;
 
             // Pick correct texture
-            ResourceLocation texture;
+            Identifier texture;
             switch (entity.getTypeMoC()) {
                 case 1:
                     texture = MoCreatures.proxy.getModelTexture("werehuman_dude.png");
@@ -103,7 +105,7 @@ public class MoCRenderWerewolf<M extends EntityModel<MoCEntityWerewolf>> extends
 
                 poseStack.scale(1.0F, 1.0F, 1.0F); // Adjust if needed
 
-                VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
+                VertexConsumer vertexConsumer = buffer.getBuffer(RenderTypes.entityCutoutNoCull(texture));
                 humanModel.renderToBuffer(poseStack, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY,
                         1.0F, 1.0F, 1.0F, 1.0F);
 

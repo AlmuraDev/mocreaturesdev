@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class MoCEntityLiger extends MoCEntityBigCat {
@@ -41,7 +41,7 @@ public class MoCEntityLiger extends MoCEntityBigCat {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (MoCreatures.proxy.legacyBigCatModels) return MoCreatures.proxy.getModelTexture("big_cat_liger_legacy.png");
         return MoCreatures.proxy.getModelTexture("big_cat_liger.png");
     }
@@ -79,7 +79,7 @@ public class MoCEntityLiger extends MoCEntityBigCat {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.LIGER;
     }
 

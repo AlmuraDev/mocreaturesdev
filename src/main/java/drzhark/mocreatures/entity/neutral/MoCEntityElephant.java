@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.neutral;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIFollowAdult;
@@ -43,10 +46,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
@@ -83,7 +86,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
         setMoCAge(50);
         // TODO: Different hitboxes for each elephant type
         //setSize(1.1F, 3F);
-        this.setMaxUpStep(1.0F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0F);
         this.xpReward = 10;
 
         if (!this.level().isClientSide()) {
@@ -120,11 +123,11 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(TUSK_TYPE, 0);// tusks: 0 nothing, 1 wood, 2 iron, 3 diamond
-        this.entityData.define(STORAGE_TYPE, 0);// storage: 0 nothing, 1 chest, 2 chests....
-        this.entityData.define(HARNESS_TYPE, 0);// harness: 0 nothing, 1 harness, 2 cabin
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TUSK_TYPE, 0);// tusks: 0 nothing, 1 wood, 2 iron, 3 diamond
+        builder.define(STORAGE_TYPE, 0);// storage: 0 nothing, 1 chest, 2 chests....
+        builder.define(HARNESS_TYPE, 0);// harness: 0 nothing, 1 harness, 2 cabin
     }
 
     public int getTusks() {
@@ -154,7 +157,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("elephant_asian.png");
@@ -170,7 +173,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return this.xpReward;
     }
 
@@ -620,7 +623,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         super.addAdditionalSaveData(nbttagcompound);
         nbttagcompound.putInt("Tusks", getTusks());
         nbttagcompound.putInt("Harness", getArmorType());
@@ -686,13 +689,13 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
-        setTusks(nbttagcompound.getInt("Tusks"));
-        setArmorType(nbttagcompound.getInt("Harness"));
-        setStorage(nbttagcompound.getInt("Storage"));
-        this.temper = nbttagcompound.getByte("Temper");
-        this.tuskUses = nbttagcompound.getByte("TuskUses");
+        setTusks(nbttagcompound.getIntOr("Tusks", 0));
+        setArmorType(nbttagcompound.getIntOr("Harness", 0));
+        setStorage(nbttagcompound.getIntOr("Storage", 0));
+        this.temper = nbttagcompound.getByteOr("Temper", (byte) 0);
+        this.tuskUses = nbttagcompound.getByteOr("TuskUses", (byte) 0);
         if (getStorage() > 0) {
             ListTag nbttaglist = nbttagcompound.getList("Items", 10);
             this.localelephantchest = new MoCAnimalChest("ElephantChest", MoCAnimalChest.Size.small);
@@ -864,7 +867,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
         int i = this.random.nextInt(3);
 
         if (looting > 0) {
@@ -912,7 +915,7 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
 
     @Override
     public void dropArmor() {
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             return;
         }
         if (getArmorType() >= 1) {
@@ -950,8 +953,8 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     }
     
     @Override
-    public boolean hurt(DamageSource damagesource, float amount) {
-        if (super.hurt(damagesource, amount)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float amount) {
+        if (super.hurtServer(serverLevel, damagesource, amount)) {
             Entity entity = damagesource.getEntity();
             if ((entity != null && getIsTamed() && entity instanceof Player) || !(entity instanceof LivingEntity)) {
                 return false;
@@ -968,16 +971,16 @@ public class MoCEntityElephant extends MoCEntityTameableAnimal {
     }
     
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         int i = (int) Math.ceil(distance - 3F);
         if ((i > 0)) {
             i /= 2;
             if (i > 0) {
-                this.hurt(this.damageSources().fall(), i);
+                this.hurtOrSimulate(this.damageSources().fall(), i);
             }
             if ((this.isVehicle()) && (i > 0)) {
                 for (Entity entity : this.getPassengers()) {
-                    entity.hurt(this.damageSources().fall(), i);
+                    entity.hurtOrSimulate(this.damageSources().fall(), i);
                 }
             }
             BlockPos blockPos = this.blockPosition();

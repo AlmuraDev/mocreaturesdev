@@ -17,12 +17,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.ITeleporter;
+import net.neoforged.neoforge.common.util.ITeleporter;
 
 import java.util.function.Function;
 
@@ -54,10 +54,10 @@ public class CommandMoCTP {
         if (ownerPetData != null) {
             for (int i = 0; i < ownerPetData.getTamedList().size(); i++) {
                 CompoundTag nbt = ownerPetData.getTamedList().getCompound(i);
-                if (nbt.contains("PetId") && nbt.getInt("PetId") == petId) {
-                    String petName = nbt.getString("Name");
+                if (nbt.contains("PetId") && nbt.getIntOr("PetId", 0) == petId) {
+                    String petName = nbt.getStringOr("Name", "");
                     ResourceKey<Level> dimensionKey = ResourceKey.create(Registries.DIMENSION, 
-                            new ResourceLocation(nbt.getString("Dimension")));
+                            Identifier.parse(nbt.getStringOr("Dimension", "")));
                     ServerLevel world = source.getServer().getLevel(dimensionKey);
                     
                     if (world != null) {
@@ -70,9 +70,9 @@ public class CommandMoCTP {
                             int z = (int) Math.floor(posZ);
                             
                             source.sendSuccess(() -> Component.literal("Found unloaded pet " + 
-                                    nbt.getString("id") + " with name " + 
+                                    nbt.getStringOr("id", "") + " with name " + 
                                     petName + " at location " + x + ", " + y + ", " + z + 
-                                    " with Pet ID " + nbt.getInt("PetId")), true);
+                                    " with Pet ID " + nbt.getIntOr("PetId", 0)), true);
                                     
                             // Attempt to TP again
                             boolean result = teleportLoadedPet(world, player, petId, petName, source);
@@ -99,8 +99,8 @@ public class CommandMoCTP {
                 entity.save(compound);
                 
                 if (!compound.isEmpty() && !compound.getString("Owner").isEmpty()) {
-                    String owner = compound.getString("Owner");
-                    String name = compound.getString("Name");
+                    String owner = compound.getStringOr("Owner", "");
+                    String name = compound.getStringOr("Name", "");
                     
                     if (!owner.isEmpty() && owner.equalsIgnoreCase(player.getName().getString())) {
                         // Check if in same dimension

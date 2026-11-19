@@ -5,16 +5,16 @@ package drzhark.mocreatures.network;
 
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.network.message.*;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.resources.Identifier;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
+import net.neoforged.neoforge.network.simple.SimpleChannel;
 
 @SuppressWarnings("removal")
 public class MoCMessageHandler {
 
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(MoCConstants.MOD_ID, "channel"),
+            Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "channel"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals);

@@ -13,11 +13,11 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderTRock extends EntityRenderer<MoCEntityThrowableRock> {
@@ -32,7 +32,7 @@ public class MoCRenderTRock extends EntityRenderer<MoCEntityThrowableRock> {
         poseStack.pushPose();
         BlockState state = entitytrock.getState();
         poseStack.translate(-0.5F, 0.25F, -0.5F);
-        poseStack.mulPose(Axis.YN.rotationDegrees(((100 - entitytrock.acceleration) / 10F) * 36F));
+        poseStack.rotate(Axis.YN.rotationDegrees(((100 - entitytrock.acceleration) / 10F) * 36F));
         RenderSystem.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
         
         // Render the block state
@@ -48,7 +48,7 @@ public class MoCRenderTRock extends EntityRenderer<MoCEntityThrowableRock> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityThrowableRock par1Entity) {
+    public Identifier getTextureLocation(MoCEntityThrowableRock par1Entity) {
         return TextureAtlas.LOCATION_BLOCKS;
     }
 }

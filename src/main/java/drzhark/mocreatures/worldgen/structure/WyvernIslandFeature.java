@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Mirror;
@@ -82,7 +82,7 @@ public class WyvernIslandFeature extends Feature<NoneFeatureConfiguration> {
             
             // Get template
             StructureTemplateManager templateManager = context.level().getLevel().getStructureManager();
-            ResourceLocation location = new ResourceLocation("mocreatures", structureName);
+            Identifier location = Identifier.fromNamespaceAndPath("mocreatures", structureName);
             
             // Try loading the template
             StructureTemplate template = null;

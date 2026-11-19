@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.neutral;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIFollowAdult;
@@ -34,7 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class MoCEntityGoat extends MoCEntityTameableAnimal {
 
@@ -82,10 +83,10 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(IS_CHARGING, Boolean.FALSE);
-        this.entityData.define(IS_UPSET, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IS_CHARGING, Boolean.FALSE);
+        builder.define(IS_UPSET, Boolean.FALSE);
     }
 
     public boolean getUpset() {
@@ -138,7 +139,7 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("goat_brown_light.png");
@@ -173,8 +174,8 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
             this.setDeltaMovement(this.getDeltaMovement().x, 0.5D, this.getDeltaMovement().z);
         }
 
-        if (this.hasEffect(MobEffects.JUMP)) {
-            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, (this.getEffect(MobEffects.JUMP).getAmplifier() + 1) * 0.1F, 0.0D));
+        if (this.hasEffect(MobEffects.JUMP_BOOST)) {
+            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, (this.getEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1) * 0.1F, 0.0D));
         }
         if (this.isSprinting()) {
             float f = this.getYRot() * 0.01745329F;
@@ -369,7 +370,7 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         this.attacking = 30;
         if (entityIn instanceof MoCEntityGoat) {
             MoCTools.bigSmack(this, entityIn, 0.4F);
@@ -384,7 +385,7 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
         if (this.random.nextInt(3) == 0) {
             calm();
         }
-        return super.doHurtTarget(entityIn);
+        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
     }
 
     @Override
@@ -432,8 +433,8 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
-        if (super.hurt(damagesource, i)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             Entity entity = damagesource.getEntity();
 
             if (entity != this && entity instanceof LivingEntity && super.shouldAttackPlayers() && getTypeMoC() > 4) {
@@ -497,7 +498,7 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -588,7 +589,7 @@ public class MoCEntityGoat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.GOAT;
     }
 

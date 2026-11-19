@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.aquatic;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIFollowHerd;
 import drzhark.mocreatures.init.MoCLootTables;
@@ -16,7 +17,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class MoCEntityPiranha extends MoCEntitySmallFish {
@@ -45,7 +46,7 @@ public class MoCEntityPiranha extends MoCEntitySmallFish {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("smallfish_piranha.png");
     }
 
@@ -60,13 +61,13 @@ public class MoCEntityPiranha extends MoCEntitySmallFish {
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return 3;
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
-        if (super.hurt(damagesource, i) && (this.level().getDifficulty().getId() > 0)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
+        if (super.hurtServer(serverLevel, damagesource, i) && (this.level().getDifficulty().getId() > 0)) {
             Entity entity = damagesource.getEntity();
             if (entity instanceof LivingEntity) {
                 if (this.isVehicle() && entity == this.getPassengers().get(0)) {
@@ -87,7 +88,7 @@ public class MoCEntityPiranha extends MoCEntitySmallFish {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.PIRANHA;
     }
 }

@@ -27,7 +27,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -66,7 +66,7 @@ public class MoCEntityBird extends MoCEntityTameableAnimal {
         this.fleeing = false;
         this.textureSet = false;
         setTamed(false);
-        setMaxUpStep(1.0F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0F);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class MoCEntityBird extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
 
         switch (getTypeMoC()) {
             case 1:
@@ -126,10 +126,10 @@ public class MoCEntityBird extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(PRE_TAMED, Boolean.FALSE);
-        this.entityData.define(IS_FLYING, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(PRE_TAMED, Boolean.FALSE);
+        builder.define(IS_FLYING, Boolean.FALSE);
     }
 
     public boolean getPreTamed() {
@@ -149,7 +149,7 @@ public class MoCEntityBird extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -292,7 +292,7 @@ public class MoCEntityBird extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.BIRD;
     }
 
@@ -314,7 +314,7 @@ public class MoCEntityBird extends MoCEntityTameableAnimal {
         final ItemStack stack = player.getItemInHand(hand);
         if (!stack.isEmpty() && getPreTamed() && !getIsTamed() && stack.getItem() == Items.WHEAT_SEEDS) {
             if (!player.isCreative()) stack.shrink(1);
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 MoCTools.tameWithName(player, this);
             }
             return InteractionResult.SUCCESS;
@@ -358,7 +358,7 @@ public class MoCEntityBird extends MoCEntityTameableAnimal {
         this.wingb += this.wingh * 2.0F;
 
         //check added to avoid duplicating behavior on client / server
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
 
             if (isMovementCeased() && getIsFlying()) {
                 setIsFlying(false);

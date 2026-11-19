@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.ambient;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIFollowOwnerPlayer;
@@ -21,12 +22,12 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -65,7 +66,7 @@ public class MoCEntityCrab extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("crab_blue.png");
@@ -81,13 +82,13 @@ public class MoCEntityCrab extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return 1 + this.level().getRandom().nextInt(3);
     }
 
     @Nullable
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.CRAB;
     }
 
@@ -107,16 +108,16 @@ public class MoCEntityCrab extends MoCEntityTameableAnimal {
     @Override
     protected void doPush(Entity entity) {
         if (entity instanceof Player && this.getTarget() == null && !(entity.level().getDifficulty() == Difficulty.PEACEFUL)) {
-            entity.hurt(this.damageSources().mobAttack(this), 1.5F);
+            entity.hurtOrSimulate(this.damageSources().mobAttack(this), 1.5F);
         }
 
         super.doPush(entity);
     }
 
     @Override
-    public boolean doHurtTarget(Entity entity) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entity) {
         this.playSound(MoCSoundEvents.ENTITY_GOAT_SMACK.get(), 1.0F, 2.0F);
-        return super.doHurtTarget(entity);
+        return super.doHurtTarget(serverLevel, serverLevel, entity);
     }
 
     @OnlyIn(Dist.CLIENT)

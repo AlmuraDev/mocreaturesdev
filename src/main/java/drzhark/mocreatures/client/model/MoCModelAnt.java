@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.ambient.MoCEntityAnt;
@@ -8,18 +9,18 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelAnt<T extends MoCEntityAnt> extends EntityModel<T> {
+public class MoCModelAnt<T extends MoCEntityAnt> extends MoCEntityModel<T> {
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(
-                    new ResourceLocation("mocreatures", "ant"),
+                    Identifier.fromNamespaceAndPath("mocreatures", "ant"),
                     "main"
             );
 
@@ -35,6 +36,7 @@ public class MoCModelAnt<T extends MoCEntityAnt> extends EntityModel<T> {
     private final ModelPart rearLegs;
 
     public MoCModelAnt(ModelPart root) {
+        super(root);
         this.root = root;
         this.head = root.getChild("head");
         this.mouth = root.getChild("mouth");
@@ -197,6 +199,6 @@ public class MoCModelAnt<T extends MoCEntityAnt> extends EntityModel<T> {
             float alpha
     ) {
         // Just render the root; it will draw all nine children.
-        this.root.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.root.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

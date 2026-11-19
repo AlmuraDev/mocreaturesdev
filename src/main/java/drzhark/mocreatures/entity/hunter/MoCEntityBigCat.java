@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.hunter;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIFollowAdult;
@@ -54,7 +57,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MoCEntityBigCat extends MoCEntityTameableAnimal {
 
@@ -83,7 +86,7 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
         } else {
             setMoCAge(20); // Much younger for babies to prevent mane issues
         }
-        setMaxUpStep(1.0F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0F);
         xpReward = 5;
     }
 
@@ -122,13 +125,13 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
      * server data to client.
      */
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(RIDEABLE, Boolean.FALSE);
-        this.entityData.define(SITTING, Boolean.FALSE);
-        this.entityData.define(GHOST, Boolean.FALSE);
-        this.entityData.define(HAS_AMULET, Boolean.FALSE);
-        this.entityData.define(CHESTED, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(RIDEABLE, Boolean.FALSE);
+        builder.define(SITTING, Boolean.FALSE);
+        builder.define(GHOST, Boolean.FALSE);
+        builder.define(HAS_AMULET, Boolean.FALSE);
+        builder.define(CHESTED, Boolean.FALSE);
     }
 
     public boolean getHasAmulet() {
@@ -175,19 +178,19 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return xpReward;
     }
 
     // Method used for receiving damage from another source
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         Entity entity = damagesource.getEntity();
         if ((this.isPassenger()) && (entity == this.getVehicle())) {
             return false;
         }
 
-        if (super.hurt(damagesource, i)) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             if (entity != null && getIsTamed() && entity instanceof Player) {
                 return false;
             }
@@ -392,7 +395,7 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         super.addAdditionalSaveData(nbttagcompound);
         nbttagcompound.putBoolean("Saddle", getIsRideable());
         nbttagcompound.putBoolean("Sitting", getIsSitting());
@@ -418,13 +421,13 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
-        setRideable(nbttagcompound.getBoolean("Saddle"));
-        setSitting(nbttagcompound.getBoolean("Sitting"));
-        setIsChested(nbttagcompound.getBoolean("Chested"));
-        setIsGhost(nbttagcompound.getBoolean("Ghost"));
-        setHasAmulet(nbttagcompound.getBoolean("Amulet"));
+        setRideable(nbttagcompound.getBooleanOr("Saddle", false));
+        setSitting(nbttagcompound.getBooleanOr("Sitting", false));
+        setIsChested(nbttagcompound.getBooleanOr("Chested", false));
+        setIsGhost(nbttagcompound.getBooleanOr("Ghost", false));
+        setHasAmulet(nbttagcompound.getBooleanOr("Amulet", false));
         if (getIsChested()) {
             ListTag nbttaglist = nbttagcompound.getList("Items", 10);
             this.localchest = new MoCAnimalChest("BigCatChest", MoCAnimalChest.Size.small);
@@ -530,7 +533,7 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource damageSource) {
         if (isFlyer()) {
             return false;
         }
@@ -538,11 +541,11 @@ public class MoCEntityBigCat extends MoCEntityTameableAnimal {
         if (!this.level().isClientSide() && (i > 0)) {
             i /= 2;
             if (i > 1F) {
-                hurt(damageSource, i);
+                hurtOrSimulate(damageSource, i);
             }
             if ((this.isVehicle()) && (i > 1F)) {
                 for (Entity entity : this.getPassengers()) {
-                    entity.hurt(damageSource, i);
+                    entity.hurtOrSimulate(damageSource, i);
                 }
             }
             BlockPos blockpos = BlockPos.containing(this.getX(), this.getY() - 0.2D - this.xRotO, this.getZ());

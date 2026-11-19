@@ -3,8 +3,8 @@ package drzhark.mocreatures.client.renderer.fx.impl;
 import drzhark.mocreatures.client.renderer.fx.data.VanishParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCEntityFXVanish extends TextureSheetParticle {

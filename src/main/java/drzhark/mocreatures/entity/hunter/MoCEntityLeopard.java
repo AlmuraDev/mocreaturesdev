@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -64,7 +64,7 @@ public class MoCEntityLeopard extends MoCEntityBigCat {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (MoCreatures.proxy.legacyBigCatModels) {
             if (getTypeMoC() == 2) {
                 return MoCreatures.proxy.getModelTexture("big_cat_snow_leopard_legacy.png");
@@ -98,7 +98,7 @@ public class MoCEntityLeopard extends MoCEntityBigCat {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.LEOPARD;
     }
 

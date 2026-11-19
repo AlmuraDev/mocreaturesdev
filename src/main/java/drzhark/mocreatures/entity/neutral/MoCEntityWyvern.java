@@ -3,6 +3,10 @@
  */
 package drzhark.mocreatures.entity.neutral;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityAnimal;
@@ -46,8 +50,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
@@ -92,7 +96,7 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
         //setSize(1.45F, 1.55F);
         setAdult(true);
         setTamed(false);
-        this.setMaxUpStep(1.0F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0F);
 
         // TODO: Make hitboxes adjust depending on size
         /*if (this.random.nextInt(6) == 0) {
@@ -136,23 +140,23 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(RIDEABLE, Boolean.FALSE); // rideable: 0 nothing, 1 saddle
-        this.entityData.define(SITTING, Boolean.FALSE); // rideable: 0 nothing, 1 saddle
-        this.entityData.define(CHESTED, Boolean.FALSE);
-        this.entityData.define(FLYING, Boolean.FALSE);
-        this.entityData.define(GHOST, Boolean.FALSE);
-        this.entityData.define(ARMOR_TYPE, 0);// armor 0 by default, 1 metal, 2 gold, 3 diamond, 4 crystaline
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(RIDEABLE, Boolean.FALSE); // rideable: 0 nothing, 1 saddle
+        builder.define(SITTING, Boolean.FALSE); // rideable: 0 nothing, 1 saddle
+        builder.define(CHESTED, Boolean.FALSE);
+        builder.define(FLYING, Boolean.FALSE);
+        builder.define(GHOST, Boolean.FALSE);
+        builder.define(ARMOR_TYPE, 0);// armor 0 by default, 1 metal, 2 gold, 3 diamond, 4 crystaline
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return xpReward;
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, EntitySpawnReason reason, @Nullable SpawnGroupData spawnDataIn) {
         // Set persistence for wyverns in the wyvern dimension or if they are tamed
         if (worldIn.getLevel().dimension() == MoCreatures.proxy.wyvernDimension || this.getIsTamed()) {
             this.setPersistenceRequired();
@@ -164,8 +168,8 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
-    public static boolean getCanSpawnHere(EntityType<MoCEntityWyvern> type, LevelAccessor world, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
-        if (reason == MobSpawnType.SPAWN_EGG) {
+    public static boolean getCanSpawnHere(EntityType<MoCEntityWyvern> type, LevelAccessor world, EntitySpawnReason reason, BlockPos pos, RandomSource randomIn) {
+        if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
             return true;
         }
         
@@ -334,7 +338,7 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
      * 9-12 extra wyverns
      */
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (this.transformCounter != 0 && this.transformType > 5) {
             String newText = "wyvern_mother_dark.png";
             if (this.transformType == 6) {
@@ -668,7 +672,7 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
                 entityegg.setEggType(i);
                 entityegg.setPos(player.getX(), player.getY(), player.getZ());
                 this.level().addFreshEntity(entityegg);
-                entityegg.setDeltaMovement(entityegg.getDeltaMovement().add((this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.3F, this.level().random.nextFloat() * 0.05F, (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.3F));
+                entityegg.setDeltaMovement(entityegg.getDeltaMovement().add((this.level().getRandom().nextFloat() - this.level().getRandom().nextFloat()) * 0.3F, this.level().getRandom().nextFloat() * 0.05F, (this.level().getRandom().nextFloat() - this.level().getRandom().nextFloat()) * 0.3F));
             }
             return InteractionResult.SUCCESS;
         }
@@ -780,7 +784,7 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.WYVERN;
     }
 
@@ -800,7 +804,7 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -823,13 +827,13 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         if (entityIn instanceof Player && !shouldAttackPlayers()) {
             return false;
         }
         openMouth();
         
-        boolean hit = super.doHurtTarget(entityIn);
+        boolean hit = super.doHurtTarget(serverLevel, serverLevel, entityIn);
         if (hit && entityIn instanceof Player player && this.random.nextInt(3) == 0) {
             player.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
         }
@@ -837,12 +841,12 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         Entity entity = damagesource.getEntity();
         if (entity != null && this.isPassengerOfSameVehicle(entity)) {
             return false;
         }
-        if (super.hurt(damagesource, i)) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             if (entity != null && getIsTamed() && entity instanceof Player) {
                 return false;
             }
@@ -856,7 +860,7 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         super.addAdditionalSaveData(nbttagcompound);
         nbttagcompound.putBoolean("Saddle", getIsRideable());
         nbttagcompound.putBoolean("Chested", getIsChested());
@@ -879,13 +883,13 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
-        setRideable(nbttagcompound.getBoolean("Saddle"));
-        setIsChested(nbttagcompound.getBoolean("Chested"));
-        setArmorType(nbttagcompound.getInt("ArmorType"));
-        setSitting(nbttagcompound.getBoolean("isSitting"));
-        setIsGhost(nbttagcompound.getBoolean("isGhost"));
+        setRideable(nbttagcompound.getBooleanOr("Saddle", false));
+        setIsChested(nbttagcompound.getBooleanOr("Chested", false));
+        setArmorType(nbttagcompound.getIntOr("ArmorType", 0));
+        setSitting(nbttagcompound.getBooleanOr("isSitting", false));
+        setIsGhost(nbttagcompound.getBooleanOr("isGhost", false));
         if (getIsChested()) {
             ListTag nbttaglist = nbttagcompound.getList("Items", 10);
             this.localchest = new MoCAnimalChest("WyvernChest", MoCAnimalChest.Size.tiny);
@@ -955,7 +959,7 @@ public class MoCEntityWyvern extends MoCEntityTameableAnimal {
 
     // TODO: Remove this once wyvern eggs are overhauled
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
         int chance = MoCreatures.proxy.wyvernEggDropChance;
         if (getTypeMoC() == 5) { //mother wyverns drop eggs more frequently
             chance = MoCreatures.proxy.motherWyvernEggDropChance;

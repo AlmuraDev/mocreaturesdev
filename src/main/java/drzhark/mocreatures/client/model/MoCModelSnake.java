@@ -3,26 +3,27 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.hunter.MoCEntitySnake;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelSnake from 1.16.5 → 1.20.1.
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelSnake<T extends MoCEntitySnake> extends EntityModel<T> {
+public class MoCModelSnake<T extends MoCEntitySnake> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "snake"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "snake"), "main"
     );
 
     private static final int BODY_PARTS = 40;
@@ -62,6 +63,7 @@ public class MoCModelSnake<T extends MoCEntitySnake> extends EntityModel<T> {
     private float limbSwing;
 
     public MoCModelSnake(ModelPart root) {
+        super(root);
         // Grab each child from the baked root:
         for (int i = 0; i < BODY_PARTS; i++) {
             this.bodySnake[i] = root.getChild("bodySnake" + i);
@@ -504,25 +506,25 @@ public class MoCModelSnake<T extends MoCEntitySnake> extends EntityModel<T> {
             }
 
             // Render this body segment
-            this.bodySnake[i].render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.bodySnake[i].render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
             // i == 0 ⇒ also render head, nose, teeth, tongue - exact copy of 1.16.5
             if (i == 0) {
-                this.head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.nose.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.lNose.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.teethUR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.teethUL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.nose.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.lNose.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.teethUR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.teethUL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
                 // Tongue logic - exact copy of 1.16.5
                 if (this.tongueOff != 0.0F) {
                     if (this.mouthOff != 0.0F || this.tongueOff < 2.0F || this.tongueOff > 7.0F) {
-                        this.tongue1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                        this.tongue1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                     } else {
-                        this.tongue.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                        this.tongue.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                     }
                 } else {
-                    this.tongue0.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                    this.tongue0.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                 }
             }
 
@@ -530,29 +532,29 @@ public class MoCModelSnake<T extends MoCEntitySnake> extends EntityModel<T> {
             if (this.typeI == 6 && this.nearPlayer)//cobra
             {
                 if (i == 1) {
-                    this.wing1L.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                    this.wing1R.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                    this.wing1L.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                    this.wing1R.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                 }
                 if (i == 2) {
-                    this.wing2L.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                    this.wing2R.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                    this.wing2L.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                    this.wing2R.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                 }
                 if (i == 3) {
-                    this.wing3L.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                    this.wing3R.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                    this.wing3L.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                    this.wing3R.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                 }
                 if (i == 4) {
-                    this.wing4L.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                    this.wing4R.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                    this.wing4L.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                    this.wing4R.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                 }
                 if (i == 5) {
-                    this.wing5L.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                    this.wing5R.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                    this.wing5L.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                    this.wing5R.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
                 }
             }
 
             if (i == BODY_PARTS - 1 && this.typeI == 7) {
-                this.tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
 
             poseStack.popPose();

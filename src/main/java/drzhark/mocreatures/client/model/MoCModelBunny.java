@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.passive.MoCEntityBunny;
@@ -12,16 +13,16 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelBunny<T extends MoCEntityBunny> extends EntityModel<T> {
+public class MoCModelBunny<T extends MoCEntityBunny> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation("mocreatures", "bunny"), "main");
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath("mocreatures", "bunny"), "main");
 
     private final ModelPart part1;
     private final ModelPart part2;
@@ -36,6 +37,7 @@ public class MoCModelBunny<T extends MoCEntityBunny> extends EntityModel<T> {
     private final ModelPart part11;
 
     public MoCModelBunny(ModelPart root) {
+        super(root);
         this.part1  = root.getChild("part1");
         this.part8  = root.getChild("part8");
         this.part9  = root.getChild("part9");
@@ -148,17 +150,17 @@ public class MoCModelBunny<T extends MoCEntityBunny> extends EntityModel<T> {
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer,
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {
-        part1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part8.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part9.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part10.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part11.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part5.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part6.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        part7.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        part1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part8.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part9.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part10.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part11.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part5.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part6.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        part7.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 
     @Override

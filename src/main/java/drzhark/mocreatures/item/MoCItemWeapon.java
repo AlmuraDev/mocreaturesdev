@@ -19,8 +19,8 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -66,11 +66,11 @@ public class MoCItemWeapon extends MoCItem {
             int timer = 10; // seconds
             switch (this.specialWeaponType) {
                 case 1 -> target.addEffect(new MobEffectInstance(MobEffects.POISON, timer * 20, 1));
-                case 2 -> target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, timer * 20, 0));
-                case 3 -> target.setSecondsOnFire(timer);
+                case 2 -> target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, timer * 20, 0));
+                case 3 -> target.igniteForSeconds(timer);
                 case 4 -> {
                     if (target instanceof Player)
-                        target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, timer * 20, 0));
+                        target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, timer * 20, 0));
                     else
                         target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, timer * 20, 0));
                 }
@@ -107,7 +107,7 @@ public class MoCItemWeapon extends MoCItem {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level world, BlockState state, net.minecraft.core.BlockPos pos, LivingEntity entity) {
-        if (!world.isClientSide && state.getDestroySpeed(world, pos) != 0.0F) {
+        if (!world.isClientSide() && state.getDestroySpeed(world, pos) != 0.0F) {
             stack.hurtAndBreak(1, entity, (e) -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         }
         return true;

@@ -13,7 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraftforge.common.ForgeMod;
+import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.UUID;
 
@@ -50,7 +50,7 @@ public class MoCItemCrabClaw extends MoCItem {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
-        if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0.0F && entity.getOffhandItem().getItem() instanceof MoCItemCrabClaw) {
+        if (!level.isClientSide() && state.getDestroySpeed(level, pos) != 0.0F && entity.getOffhandItem().getItem() instanceof MoCItemCrabClaw) {
             stack.hurtAndBreak(1, entity, (e) -> {
                 e.broadcastBreakEvent(EquipmentSlot.MAINHAND);
             });
@@ -73,7 +73,7 @@ public class MoCItemCrabClaw extends MoCItem {
         if (attributeModifiers == null) {
             ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
             builder.put(Attributes.ARMOR, new AttributeModifier(TOUGHNESS_MODIFIER, "Crab claw armor", armor, AttributeModifier.Operation.ADDITION));
-            builder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(REACH_DISTANCE_MODIFIER, "Crab claw reach", reach, AttributeModifier.Operation.ADDITION));
+            builder.put(NeoForgeMod.ENTITY_REACH.get(), new AttributeModifier(REACH_DISTANCE_MODIFIER, "Crab claw reach", reach, AttributeModifier.Operation.ADDITION));
             builder.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(TOUGHNESS_MODIFIER, "Crab claw toughness", toughness, AttributeModifier.Operation.ADDITION));
             attributeModifiers = builder.build();
         }

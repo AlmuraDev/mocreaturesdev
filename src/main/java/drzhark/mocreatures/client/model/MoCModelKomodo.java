@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.hunter.MoCEntityKomodo;
@@ -11,21 +12,21 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.client.model.EntityModel;
 
 /**
  * Port of MoCModelKomodo (1.16.5) to Minecraft 1.20.1.
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelKomodo<T extends MoCEntityKomodo> extends EntityModel<T> {
+public class MoCModelKomodo<T extends MoCEntityKomodo> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "komodo"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "komodo"), "main"
     );
 
     private final float radianF = 57.29578F;
@@ -72,6 +73,7 @@ public class MoCModelKomodo<T extends MoCEntityKomodo> extends EntityModel<T> {
     private boolean isRideable;
 
     public MoCModelKomodo(ModelPart root) {
+        super(root);
         this.head            = root.getChild("Head");
         this.neck            = head.getChild("Neck");
         this.nose            = neck.getChild("Nose");
@@ -463,19 +465,19 @@ public class MoCModelKomodo<T extends MoCEntityKomodo> extends EntityModel<T> {
                                float green,
                                float blue,
                                float alpha) {
-        tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        chest.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        legFrontLeft.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        legBackLeft.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        legFrontRight.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        legBackRight.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        abdomen.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        chest.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        legFrontLeft.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        legBackLeft.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        legFrontRight.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        legBackRight.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        abdomen.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         if (isRideable) {
-            saddleA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            saddleC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            saddleB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            saddleA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            saddleC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            saddleB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
     }
 }

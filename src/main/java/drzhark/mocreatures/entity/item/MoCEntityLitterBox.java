@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.item;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.hostile.MoCEntityOgre;
@@ -30,7 +33,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
@@ -45,7 +48,7 @@ public class MoCEntityLitterBox extends Mob {
         setNoAi(true);
     }
 
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("litter_box.png");
     }
 
@@ -54,10 +57,10 @@ public class MoCEntityLitterBox extends Mob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(PICKED_UP, false);
-        this.entityData.define(USED_LITTER, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(PICKED_UP, false);
+        builder.define(USED_LITTER, false);
     }
 
     public boolean getPickedUp() {
@@ -92,7 +95,7 @@ public class MoCEntityLitterBox extends Mob {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -177,17 +180,17 @@ public class MoCEntityLitterBox extends Mob {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(ValueOutput compound) {
         compound.putBoolean("UsedLitter", getUsedLitter());
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        setUsedLitter(compound.getBoolean("UsedLitter"));
+    public void readAdditionalSaveData(ValueInput compound) {
+        setUsedLitter(compound.getBooleanOr("UsedLitter", false));
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         return false;
     }
 }

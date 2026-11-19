@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.hunter;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.entity.ai.EntityAIFleeFromPlayer;
 import drzhark.mocreatures.entity.ai.EntityAIHunt;
@@ -13,7 +14,7 @@ import drzhark.mocreatures.init.MoCSoundEvents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -46,7 +47,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
         setMoCAge(80);
         setTamed(false);
         this.xpReward = 5;
-        this.setMaxUpStep(1.0F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0F);
     }
 
     @Override
@@ -72,11 +73,11 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(IS_RESTING, Boolean.FALSE);
-        this.entityData.define(EATING_PREY, Boolean.FALSE);
-        this.entityData.define(IS_BITING, Boolean.FALSE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IS_RESTING, Boolean.FALSE);
+        builder.define(EATING_PREY, Boolean.FALSE);
+        builder.define(IS_BITING, Boolean.FALSE);
     }
 
     public boolean getIsBiting() {
@@ -104,7 +105,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return this.xpReward;
     }
 
@@ -181,7 +182,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
                     }
 
                     if (!this.level().isClientSide() && this.random.nextInt(50) == 0) {
-                        this.getFirstPassenger().hurt(this.damageSources().mobAttack(this), 2);
+                        this.getFirstPassenger().hurtOrSimulate(this.damageSources().mobAttack(this), 2);
                     }
                 }
             } else {
@@ -197,7 +198,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
                 }
                 if (this.spinInt > 80) {
                     this.spinInt = 0;
-                    this.getFirstPassenger().hurt(this.damageSources().mobAttack(this), 4); //TODO ADJUST
+                    this.getFirstPassenger().hurtOrSimulate(this.damageSources().mobAttack(this), 4); //TODO ADJUST
                 }
 
                 //TODO 4FIX
@@ -241,7 +242,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         if (getHasCaughtPrey()) {
             return false;
         }
@@ -254,7 +255,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
             return false;
         }*/
 
-        if (super.doHurtTarget(entityIn)) {
+        if (super.doHurtTarget(serverLevel, serverLevel, entityIn)) {
             if (!this.level().isClientSide() && !getHasCaughtPrey()) {
                 crocBite();
             }
@@ -265,7 +266,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         if (this.isVehicle()) {
             Entity entity = damagesource.getEntity();
             if (entity != null && this.getFirstPassenger() == entity) {
@@ -277,7 +278,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
             }
         }
         
-        if (super.hurt(damagesource, i)) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             Entity entity = damagesource.getEntity();
 
             if (this.isVehicle() && this.getFirstPassenger() == entity) {
@@ -344,7 +345,7 @@ public class MoCEntityCrocodile extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.CROCODILE;
     }
 

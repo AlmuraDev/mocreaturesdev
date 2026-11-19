@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelBunny;
 import drzhark.mocreatures.entity.passive.MoCEntityBunny;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
 
 public class MoCRenderBunny extends MoCRenderMoC<MoCEntityBunny, MoCModelBunny<MoCEntityBunny>> {
@@ -17,7 +17,7 @@ public class MoCRenderBunny extends MoCRenderMoC<MoCEntityBunny, MoCModelBunny<M
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityBunny entitybunny) {
+    public Identifier getTextureLocation(MoCEntityBunny entitybunny) {
         return entitybunny.getTexture();
     }
 
@@ -33,11 +33,11 @@ public class MoCRenderBunny extends MoCRenderMoC<MoCEntityBunny, MoCModelBunny<M
     protected void rotBunny(MoCEntityBunny entitybunny, PoseStack poseStack) {
         if (!entitybunny.onGround() && (entitybunny.getVehicle() == null)) {
             if (entitybunny.getDeltaMovement().y > 0.5D) {
-                poseStack.mulPose(Axis.XN.rotationDegrees(35F));
+                poseStack.rotate(Axis.XN.rotationDegrees(35F));
             } else if (entitybunny.getDeltaMovement().y < -0.5D) {
-                poseStack.mulPose(Axis.XN.rotationDegrees(-35F));
+                poseStack.rotate(Axis.XN.rotationDegrees(-35F));
             } else {
-                poseStack.mulPose(Axis.XN.rotationDegrees((float) (entitybunny.getDeltaMovement().y * 70D)));
+                poseStack.rotate(Axis.XN.rotationDegrees((float) (entitybunny.getDeltaMovement().y * 70D)));
             }
         }
     }

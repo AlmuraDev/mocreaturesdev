@@ -3,28 +3,29 @@
  */
 package drzhark.mocreatures.compat.datafixes;
 
+import net.minecraft.core.registries.Registries;
 import drzhark.mocreatures.MoCConstants;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.MissingMappingsEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.neoforged.neoforge.registries.MissingMappingsEvent;
 
 public class EntityIDFixer {
 
     public EntityIDFixer() {
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
     /**
      * Called manually when loading legacy entities to remap old IDs.
      */
     public CompoundTag fixTagCompound(CompoundTag compound) {
-        String entityId = compound.getString("id");
+        String entityId = compound.getStringOr("id", "");
         if (entityId.equals(MoCConstants.MOD_PREFIX + "scorpion")) {
-            int entityType = compound.getInt("TypeInt");
+            int entityType = compound.getIntOr("TypeInt", 0);
             switch (entityType) {
                 case 2:
                     compound.putString("id", MoCConstants.MOD_PREFIX + "cavescorpion");
@@ -42,7 +43,7 @@ public class EntityIDFixer {
         }
 
         if (entityId.equals(MoCConstants.MOD_PREFIX + "manticore")) {
-            int entityType = compound.getInt("TypeInt");
+            int entityType = compound.getIntOr("TypeInt", 0);
             switch (entityType) {
                 case 2:
                     compound.putString("id", MoCConstants.MOD_PREFIX + "darkmanticore");
@@ -65,10 +66,10 @@ public class EntityIDFixer {
     @SuppressWarnings("removal")
     @SubscribeEvent
     public void onMissingEntityMappings(MissingMappingsEvent event) {
-        ResourceLocation scorpion = new ResourceLocation(MoCConstants.MOD_ID, "scorpion");
-        ResourceLocation manticore = new ResourceLocation(MoCConstants.MOD_ID, "manticore");
+        Identifier scorpion = Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "scorpion");
+        Identifier manticore = Identifier.fromNamespaceAndPath(MoCConstants.MOD_ID, "manticore");
 
-        event.getMappings(ForgeRegistries.ENTITY_TYPES.getRegistryKey(), MoCConstants.MOD_ID).forEach(mapping -> {
+        event.getMappings(Registries.ENTITY_TYPE, MoCConstants.MOD_ID).forEach(mapping -> {
             if (mapping.getKey().equals(scorpion) || mapping.getKey().equals(manticore)) {
                 mapping.ignore(); // Ignore missing legacy IDs
             }

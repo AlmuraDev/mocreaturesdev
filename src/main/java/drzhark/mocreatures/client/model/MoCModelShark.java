@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.aquatic.MoCEntityShark;
@@ -11,21 +12,21 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 Forge → 1.20.1 Forge. All ModelRenderer → ModelPart;
  * setRotationAngles(...) → setupAnim(...); render(...) → renderToBuffer(...).
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelShark<T extends MoCEntityShark> extends EntityModel<T> {
+public class MoCModelShark<T extends MoCEntityShark> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "shark"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "shark"), "main"
     );
 
     private final ModelPart body;
@@ -68,6 +69,7 @@ public class MoCModelShark<T extends MoCEntityShark> extends EntityModel<T> {
     private final ModelPart caudal_fin_top_a_r1;
 
     public MoCModelShark(ModelPart root) {
+        super(root);
         this.body         = root.getChild("body");
         this.torso1       = body.getChild("torso1");
         this.neck         = torso1.getChild("neck");
@@ -385,6 +387,6 @@ public class MoCModelShark<T extends MoCEntityShark> extends EntityModel<T> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        this.body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

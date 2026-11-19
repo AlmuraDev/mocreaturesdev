@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.item;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import drzhark.mocreatures.MoCreatures;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -15,7 +16,7 @@ public class MoCEntityStolenEgg extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         // Implementation here
     }
 

@@ -22,7 +22,7 @@ import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -69,7 +69,7 @@ public class MoCEntityDeer extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
 
         switch (getTypeMoC()) {
             case 2:
@@ -83,7 +83,7 @@ public class MoCEntityDeer extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -112,7 +112,7 @@ public class MoCEntityDeer extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.DEER;
     }
 
@@ -137,7 +137,7 @@ public class MoCEntityDeer extends MoCEntityTameableAnimal {
 
     @Override
     public void setAdult(boolean flag) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             setTypeMoC(this.random.nextInt(1));
         }
         super.setAdult(flag);
@@ -152,7 +152,7 @@ public class MoCEntityDeer extends MoCEntityTameableAnimal {
     public void tick() {
         super.tick();
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
 
             if (this.onGround() && --this.readyToJumpTimer <= 0) {
                 if (MoCTools.getMyMovementSpeed(this) > 0.17F) {

@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -18,9 +19,9 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 → 1.20.1. This model has seven child parts:
@@ -28,11 +29,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * A public boolean `usedlitter` toggles which “litter” quad is rendered.
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelLitterBox<T extends MoCEntityLitterBox> extends EntityModel<T> {
+public class MoCModelLitterBox<T extends MoCEntityLitterBox> extends MoCEntityModel<T> {
         
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "litter_box"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "litter_box"), "main"
     );
 
     /** When true, render the “used” litter; otherwise render the clean one. */
@@ -48,6 +49,7 @@ public class MoCModelLitterBox<T extends MoCEntityLitterBox> extends EntityModel
     private final ModelPart LitterUsed;
 
     public MoCModelLitterBox(ModelPart root) {
+        super(root);
         this.Table1     = root.getChild("Table1");
         this.Table3     = root.getChild("Table3");
         this.Table2     = root.getChild("Table2");
@@ -185,16 +187,16 @@ public class MoCModelLitterBox<T extends MoCEntityLitterBox> extends EntityModel
             float            blue,
             float            alpha
     ) {
-        this.Table1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Table3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Table2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Table4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Bottom.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Table1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Table3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Table2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Table4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Bottom.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         if (this.usedlitter) {
-            this.LitterUsed.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.LitterUsed.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
-            this.Litter.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.Litter.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
     }
 }

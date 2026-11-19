@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.hunter.MoCEntityBear;
@@ -8,18 +9,18 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelBear<T extends MoCEntityBear> extends EntityModel<T> {
+public class MoCModelBear<T extends MoCEntityBear> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "bear"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "bear"), "main"
     );
 
     // All parts, named exactly as before (stand, biped, and sit variants mixed together)
@@ -83,6 +84,7 @@ public class MoCModelBear<T extends MoCEntityBear> extends EntityModel<T> {
     private MoCEntityBear entityBear;
 
     public MoCModelBear(ModelPart root) {
+        super(root);
         this.root = root;
 
         // "On all fours" children
@@ -977,7 +979,7 @@ public class MoCModelBear<T extends MoCEntityBear> extends EntityModel<T> {
             float alpha
     ) {
         // Simply render every child of root; invisible parts will skip themselves.
-        this.root.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.root.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 
     /**

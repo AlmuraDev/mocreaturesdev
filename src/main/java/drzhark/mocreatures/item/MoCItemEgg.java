@@ -14,8 +14,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -32,9 +32,9 @@ public class MoCItemEgg extends MoCItem {
             stack.shrink(1);
         }
 
-        if (!level.isClientSide && player.onGround()) {
+        if (!level.isClientSide() && player.onGround()) {
             CompoundTag tag = stack.getOrCreateTag();
-            int eggType = tag.getInt("EggType");
+            int eggType = tag.getIntOr("EggType", 0);
             if (eggType == 30) eggType = 31; // Ostrich => Stolen Ostrich
 
             MoCEntityEgg entityEgg = MoCEntities.EGG.get().create(level);
@@ -42,9 +42,9 @@ public class MoCItemEgg extends MoCItem {
                 entityEgg.setEggType(eggType);
                 entityEgg.setPos(player.getX(), player.getY(), player.getZ());
                 entityEgg.setDeltaMovement(
-                        (level.random.nextFloat() - level.random.nextFloat()) * 0.3F,
-                        level.random.nextFloat() * 0.05F,
-                        (level.random.nextFloat() - level.random.nextFloat()) * 0.3F
+                        (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.3F,
+                        level.getRandom().nextFloat() * 0.05F,
+                        (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.3F
                 );
                 level.addFreshEntity(entityEgg);
                 System.out.println("[DEBUG] Placing egg with type: " + eggType);

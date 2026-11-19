@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -11,17 +12,17 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class MoCModelAbstractHorse<T extends Entity> extends EntityModel<T> {
+public abstract class MoCModelAbstractHorse<T extends Entity> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "horse"), "main");
+            Identifier.fromNamespaceAndPath("mocreatures", "horse"), "main");
 
     // ModelPart fields (matching 1.16 names, snake_case)
     protected final ModelPart body;
@@ -51,6 +52,7 @@ public abstract class MoCModelAbstractHorse<T extends Entity> extends EntityMode
     protected boolean floating;
 
     public MoCModelAbstractHorse(ModelPart root) {
+        super(root);
         this.body              = root.getChild("body");
         this.tailA             = root.getChild("tailA");
         this.tailB             = root.getChild("tailB");
@@ -687,62 +689,62 @@ public abstract class MoCModelAbstractHorse<T extends Entity> extends EntityMode
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {
-        this.body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tailA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tailB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tailC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tailA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tailB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tailC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        this.leg1A.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg1B.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg1C.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg2A.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg2B.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg2C.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg3A.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg3B.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg3C.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg4A.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg4B.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg4C.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.leg1A.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg1B.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg1C.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg2A.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg2B.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg2C.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg3A.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg3B.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg3C.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg4A.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg4B.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg4C.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        this.head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.uMouth.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.lMouth.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.uMouth2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.lMouth2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.unicorn.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.ear1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.ear2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.muleEarL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.muleEarR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.neck.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.uMouth.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.lMouth.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.uMouth2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.lMouth2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.unicorn.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.ear1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.ear2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.muleEarL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.muleEarR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.neck.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        this.bag1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.bag2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.bag1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.bag2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        this.saddle.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleL2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleR2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleMouthL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleMouthR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleMouthLine.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.saddleMouthLineR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.headSaddle.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.saddle.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleL2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleR2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleMouthL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleMouthR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleMouthLine.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.saddleMouthLineR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.headSaddle.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        this.mane.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.mane.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        this.midWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.innerWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.outerWing.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.innerWingR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.midWingR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.outerWingR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.midWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.innerWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.outerWing.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.innerWingR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.midWingR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.outerWingR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        this.butterflyL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.butterflyR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.butterflyL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.butterflyR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

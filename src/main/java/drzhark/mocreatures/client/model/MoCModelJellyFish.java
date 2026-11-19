@@ -3,7 +3,8 @@
  */
 package drzhark.mocreatures.client.model;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.util.ARGB;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -14,19 +15,19 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 MoCModelJellyFish to Minecraft 1.20.1.
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelJellyFish<T extends MoCEntityJellyFish> extends EntityModel<T> implements IPartialTransparencyModel<T> {
+public class MoCModelJellyFish<T extends MoCEntityJellyFish> extends MoCEntityModel<T> implements IPartialTransparencyModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "jellyfish"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "jellyfish"), "main"
     );
 
     protected final ModelPart Top;
@@ -58,6 +59,7 @@ public class MoCModelJellyFish<T extends MoCEntityJellyFish> extends EntityModel
     private float limbSwingAmount;
 
     public MoCModelJellyFish(ModelPart root) {
+        super(root);
         this.Top         = root.getChild("Top");
         this.Head        = root.getChild("Head");
         this.HeadSmall   = root.getChild("HeadSmall");
@@ -261,7 +263,7 @@ public class MoCModelJellyFish<T extends MoCEntityJellyFish> extends EntityModel
         } else {
             // When in water, adjust for the renderer's transformations
             matrixStackIn.translate(0F, -0.2F, 0F);
-            matrixStackIn.mulPose(Axis.XP.rotationDegrees(this.limbSwingAmount * -60F));
+            matrixStackIn.rotate(Axis.XP.rotationDegrees(this.limbSwingAmount * -60F));
         }
         
         // Render opaque parts first (none for jellyfish)
@@ -283,29 +285,29 @@ public class MoCModelJellyFish<T extends MoCEntityJellyFish> extends EntityModel
     @Override
     public void renderTransparentParts(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         // Render all jellyfish parts with transparency
-        this.Top.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.HeadSmall.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.BodyCenter.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.BodyBottom.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Side1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Side2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Side3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Side4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LegSmall1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LegC1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LegC2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.LegC3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg5.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg6.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg7.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg8.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Leg9.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Top.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.HeadSmall.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.BodyCenter.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.BodyBottom.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Side1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Side2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Side3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Side4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LegSmall1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LegC1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LegC2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.LegC3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg1.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg2.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg3.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg4.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg5.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg6.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg7.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg8.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Leg9.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
     
     @Override

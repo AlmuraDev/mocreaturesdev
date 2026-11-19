@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.neutral.MoCEntityElephant;
@@ -8,20 +9,20 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * 1.20.1 port of the old MoCModelElephant (1.16) to ModelPart/LayerDefinition.
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelElephant<T extends MoCEntityElephant> extends EntityModel<T> {
+public class MoCModelElephant<T extends MoCEntityElephant> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "elephant"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "elephant"), "main"
     );
 
     private final ModelPart head;
@@ -129,6 +130,7 @@ public class MoCModelElephant<T extends MoCEntityElephant> extends EntityModel<T
     private int trunkCounter;
 
     public MoCModelElephant(ModelPart root) {
+        super(root);
         this.head                  = root.getChild("head");
         this.neck                  = root.getChild("neck");
         this.headBump              = root.getChild("headBump");
@@ -1008,152 +1010,152 @@ public class MoCModelElephant<T extends MoCEntityElephant> extends EntityModel<T
 
         // render tusks based on tusk type:
         if (tusks == 0) {
-            leftTuskB.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            rightTuskB.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            leftTuskB.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            rightTuskB.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             if (elephant.getIsAdult() || elephant.getMoCAge() > 70) {
-                leftTuskC.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                rightTuskC.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                leftTuskC.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                rightTuskC.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
             if (elephant.getIsAdult() || elephant.getMoCAge() > 90) {
-                leftTuskD.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                rightTuskD.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                leftTuskD.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                rightTuskD.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
         } else if (tusks == 1) {
-            tuskLW1.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLW2.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLW3.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLW4.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLW5.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRW1.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRW2.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRW3.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRW4.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRW5.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            tuskLW1.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLW2.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLW3.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLW4.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLW5.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRW1.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRW2.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRW3.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRW4.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRW5.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else if (tusks == 2) {
-            tuskLI1.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLI2.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLI3.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLI4.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLI5.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRI1.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRI2.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRI3.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRI4.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRI5.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            tuskLI1.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLI2.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLI3.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLI4.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLI5.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRI1.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRI2.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRI3.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRI4.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRI5.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else if (tusks == 3) {
-            tuskLD1.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLD2.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLD3.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLD4.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskLD5.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRD1.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRD2.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRD3.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRD4.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            tuskRD5.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            tuskLD1.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLD2.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLD3.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLD4.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskLD5.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRD1.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRD2.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRD3.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRD4.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            tuskRD5.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // ears: big if African (type=1), small otherwise
         if (type == 1) {
-            leftBigEar.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            rightBigEar.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            leftBigEar.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            rightBigEar.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
-            leftSmallEar.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            rightSmallEar.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            leftSmallEar.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            rightSmallEar.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // mammoths (type 3 or 4)
         if (type == 3 || type == 4) {
-            headBump.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            skirt.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            headBump.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            skirt.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // harness
         if (harness >= 1) {
-            harnessBlanket.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            harnessUpperBelt.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            harnessLowerBelt.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            harnessBlanket.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            harnessUpperBelt.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            harnessLowerBelt.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             if (type == 5) {
-                skirt.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                skirt.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
         }
 
         // cabin or fortress
         if (harness == 3) {
             if (type == 5) {
-                cabinPillow.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                cabinLeftRail.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                cabin.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                cabinRightRail.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                cabinBackRail.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                cabinRoof.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                cabinPillow.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                cabinLeftRail.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                cabin.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                cabinRightRail.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                cabinBackRail.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                cabinRoof.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
             if (type == 4) {
-                fortBackRightWall.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                fortBackLeftWall.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                fortBackWall.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                fortFloor1.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                fortFloor2.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                fortFloor3.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                fortNeckBeam.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                fortBackBeam.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                fortBackRightWall.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                fortBackLeftWall.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                fortBackWall.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                fortFloor1.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                fortFloor2.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                fortFloor3.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                fortNeckBeam.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                fortBackBeam.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
         }
 
         // storage chests + blankets
         if (storage >= 1) {
-            storageRightBedroll.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            storageFrontRightChest.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            storageBackRightChest.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            storageRightBlankets.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            storageRightBedroll.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            storageFrontRightChest.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            storageBackRightChest.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            storageRightBlankets.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
         if (storage >= 2) {
-            storageLeftBlankets.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            storageLeftBedroll.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            storageFrontLeftChest.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            storageBackLeftChest.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            storageLeftBlankets.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            storageLeftBedroll.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            storageFrontLeftChest.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            storageBackLeftChest.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
         if (storage >= 3) {
-            storageUpLeft.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            storageUpLeft.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
         if (storage >= 4) {
-            storageUpRight.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            storageUpRight.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // HEAD, NECK, CHIN, LOWER LIP, BACK, HUMP, BODY
-        head.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        neck.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        chin.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        lowerLip.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        back.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        hump.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        body.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        head.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        neck.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        chin.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        lowerLip.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        back.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        hump.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        body.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // TUSK A (always shown)
-        rightTuskA.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        leftTuskA.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        rightTuskA.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        leftTuskA.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // TRUNK segments
-        trunkA.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        trunkB.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        trunkC.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        trunkD.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        trunkE.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        trunkA.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        trunkB.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        trunkC.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        trunkD.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        trunkE.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // LEGS
-        frontRightUpperLeg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        frontRightLowerLeg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        frontLeftUpperLeg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        frontLeftLowerLeg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        backRightUpperLeg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        backRightLowerLeg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        backLeftUpperLeg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        backLeftLowerLeg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        frontRightUpperLeg.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        frontRightLowerLeg.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        frontLeftUpperLeg.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        frontLeftLowerLeg.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        backRightUpperLeg.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        backRightLowerLeg.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        backLeftUpperLeg.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        backLeftLowerLeg.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // TAIL
-        tailRoot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        tail.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        tailPlush.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        tailRoot.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        tail.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        tailPlush.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 
     /**

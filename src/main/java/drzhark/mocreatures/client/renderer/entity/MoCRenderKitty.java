@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.renderer.entity;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.MoCreatures;
@@ -11,11 +12,11 @@ import drzhark.mocreatures.entity.neutral.MoCEntityKitty;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import org.joml.Matrix4f;
 
@@ -30,7 +31,7 @@ public class MoCRenderKitty extends MoCRenderMoC<MoCEntityKitty, MoCModelKitty<M
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityKitty entitykitty) {
+    public Identifier getTextureLocation(MoCEntityKitty entitykitty) {
         return entitykitty.getTexture();
     }
 
@@ -51,7 +52,7 @@ public class MoCRenderKitty extends MoCRenderMoC<MoCEntityKitty, MoCModelKitty<M
 
                 poseStack.pushPose();
                 poseStack.translate(0.0F, f5, 0.0F);
-                poseStack.mulPose(Axis.YP.rotationDegrees(-this.entityRenderDispatcher.camera.getYRot()));
+                poseStack.rotate(Axis.YP.rotationDegrees(-this.entityRenderDispatcher.camera.getYRot()));
                 poseStack.scale(-f3, -f3, f3);
 
                 if (displayPetIcons && entitykitty.getShowEmoteIcon()) {
@@ -59,7 +60,7 @@ public class MoCRenderKitty extends MoCRenderMoC<MoCEntityKitty, MoCModelKitty<M
                     int k = 32;
                     int l = (k / 2) * -1;
                     Matrix4f matrix = poseStack.last().pose();
-                    VertexConsumer vc = buffer.getBuffer(RenderType.text(entitykitty.getEmoteIcon()));
+                    VertexConsumer vc = buffer.getBuffer(RenderTypes.text(entitykitty.getEmoteIcon()));
 
                     // white tint, no overlay, full bright
                     int packedLight = 0xF000F0;
@@ -104,7 +105,7 @@ public class MoCRenderKitty extends MoCRenderMoC<MoCEntityKitty, MoCModelKitty<M
     }
 
     protected void onMaBack(MoCEntityKitty entitykitty, PoseStack poseStack) {
-        poseStack.mulPose(Axis.ZN.rotationDegrees(90F));
+        poseStack.rotate(Axis.ZN.rotationDegrees(90F));
         if (!entitykitty.level().isClientSide() && (entitykitty.getVehicle() != null)) {
             poseStack.translate(-1.5F, 0.2F, -0.2F);
         } else {
@@ -113,7 +114,7 @@ public class MoCRenderKitty extends MoCRenderMoC<MoCEntityKitty, MoCModelKitty<M
     }
 
     protected void onTheSide(MoCEntityKitty entityliving, PoseStack poseStack) {
-        poseStack.mulPose(Axis.ZN.rotationDegrees(90F));
+        poseStack.rotate(Axis.ZN.rotationDegrees(90F));
         poseStack.translate(0.2F, 0.0F, -0.2F);
     }
 
@@ -143,7 +144,7 @@ public class MoCRenderKitty extends MoCRenderMoC<MoCEntityKitty, MoCModelKitty<M
     }
 
     protected void rotateAnimal(MoCEntityKitty entitykitty, PoseStack poseStack) {
-        poseStack.mulPose(Axis.XN.rotationDegrees(90F));
+        poseStack.rotate(Axis.XN.rotationDegrees(90F));
         poseStack.translate(0.0F, 0.5F, 0.0F);
     }
 
@@ -153,7 +154,7 @@ public class MoCRenderKitty extends MoCRenderMoC<MoCEntityKitty, MoCModelKitty<M
     }
 
     protected void upsideDown(MoCEntityKitty entitykitty, PoseStack poseStack) {
-        poseStack.mulPose(Axis.ZN.rotationDegrees(180F));
+        poseStack.rotate(Axis.ZN.rotationDegrees(180F));
         poseStack.translate(-0.35F, 0F, -0.55F);
     }
 }

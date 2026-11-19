@@ -12,8 +12,8 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 import drzhark.mocreatures.MoCTools;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.*;
 import java.nio.file.Files;

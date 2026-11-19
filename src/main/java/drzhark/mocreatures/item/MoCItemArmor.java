@@ -9,14 +9,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -31,7 +31,7 @@ public class MoCItemArmor extends ArmorItem {
     @SuppressWarnings("removal")
     @Override
     public void onArmorTick(ItemStack itemStack, Level world, Player player) {
-        if (!world.isClientSide && this.getEquipmentSlot() == EquipmentSlot.FEET && player.tickCount % 40 == 0) {
+        if (!world.isClientSide() && this.getEquipmentSlot() == EquipmentSlot.FEET && player.tickCount % 40 == 0) {
             MoCTools.updatePlayerArmorEffects(player);
         }
     }

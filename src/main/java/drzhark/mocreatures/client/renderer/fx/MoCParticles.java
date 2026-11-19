@@ -1,5 +1,7 @@
 package drzhark.mocreatures.client.renderer.fx;
 
+import net.minecraft.core.registries.Registries;
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.mojang.serialization.Codec;
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.client.renderer.fx.data.StarParticleData;
@@ -7,20 +9,19 @@ import drzhark.mocreatures.client.renderer.fx.data.VacuumParticleData;
 import drzhark.mocreatures.client.renderer.fx.data.VanishParticleData;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
-@Mod.EventBusSubscriber(modid = MoCConstants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MoCConstants.MOD_ID)
 public class MoCParticles {
     public static final DeferredRegister<ParticleType<?>> PARTICLES =
-            DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MoCConstants.MOD_ID);
+            DeferredRegister.create(Registries.PARTICLE_TYPE, MoCConstants.MOD_ID);
 
-    public static final RegistryObject<SimpleParticleType> UNDEAD_FX =
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> UNDEAD_FX =
             PARTICLES.register("undead_fx", () -> new SimpleParticleType(false));
 
-    public static final RegistryObject<ParticleType<VanishParticleData>> VANISH_FX =
+    public static final DeferredHolder<ParticleType<?>, ParticleType<VanishParticleData>> VANISH_FX =
             PARTICLES.register("vanish_fx", () -> new ParticleType<VanishParticleData>(false, VanishParticleData.DESERIALIZER) {
                 @Override
                 public Codec<VanishParticleData> codec() {
@@ -28,7 +29,7 @@ public class MoCParticles {
                 }
             });
 
-    public static final RegistryObject<ParticleType<StarParticleData>> STAR_FX =
+    public static final DeferredHolder<ParticleType<?>, ParticleType<StarParticleData>> STAR_FX =
             PARTICLES.register("star_fx", () -> new ParticleType<StarParticleData>(false, StarParticleData.DESERIALIZER) {
                 @Override
                 public Codec<StarParticleData> codec() {
@@ -36,7 +37,7 @@ public class MoCParticles {
                 }
             });
 
-    public static final RegistryObject<ParticleType<VacuumParticleData>> VACUUM_FX =
+    public static final DeferredHolder<ParticleType<?>, ParticleType<VacuumParticleData>> VACUUM_FX =
             PARTICLES.register("vacuum_fx", () -> new ParticleType<VacuumParticleData>(false, VacuumParticleData.DESERIALIZER) {
                 @Override
                 public Codec<VacuumParticleData> codec() {

@@ -6,16 +6,16 @@ import drzhark.mocreatures.entity.hunter.MoCEntityBigCat;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCModelBigCat<T extends MoCEntityBigCat> extends MoCModelAbstractBigCat<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation("mocreatures", "bigcat"), "main");
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath("mocreatures", "bigcat"), "main");
 
     public MoCModelBigCat(ModelPart root) {
         super(root);

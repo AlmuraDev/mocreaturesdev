@@ -1,5 +1,6 @@
 package drzhark.mocreatures.init;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import drzhark.mocreatures.MoCConstants;
 import drzhark.mocreatures.item.ItemHorseGuide;
 import drzhark.mocreatures.item.MoCItemEgg;
@@ -7,20 +8,19 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-@Mod.EventBusSubscriber(modid = MoCConstants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MoCConstants.MOD_ID)
 public class MoCCreativeTabs {
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MoCConstants.MOD_ID);
 
-    public static final RegistryObject<CreativeModeTab> MOC_TAB = CREATIVE_MODE_TABS.register("mocreatures_tab", () ->
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MOC_TAB = CREATIVE_MODE_TABS.register("mocreatures_tab", () ->
             CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.mocreatures_tab"))
                     .icon(() -> MoCItems.AMULET_FAIRY_FULL.get() != null ? 
@@ -28,7 +28,7 @@ public class MoCCreativeTabs {
                            ItemStack.EMPTY)
                     .displayItems((params, output) -> {
                         // Add block items first
-                        for (RegistryObject<Block> blockEntry : MoCBlocks.BLOCKS.getEntries()) {
+                        for (DeferredHolder<Block, Block> blockEntry : MoCBlocks.BLOCKS.getEntries()) {
                             try {
                                 if (blockEntry.isPresent()) {
                                     // Find the corresponding item for this block
@@ -44,7 +44,7 @@ public class MoCCreativeTabs {
                         }
                         
                         // Add standalone items (not block items)
-                        for (RegistryObject<Item> itemEntry : MoCItems.ITEMS.getEntries()) {
+                        for (DeferredHolder<Item, Item> itemEntry : MoCItems.ITEMS.getEntries()) {
                             try {
                                 if (itemEntry.isPresent()) {
                                     Item item = itemEntry.get();

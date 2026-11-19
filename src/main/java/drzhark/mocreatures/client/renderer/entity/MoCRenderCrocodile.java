@@ -10,15 +10,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderCrocodile extends MobRenderer<MoCEntityCrocodile, MoCModelCrocodile<MoCEntityCrocodile>> {
+public class MoCRenderCrocodile extends MoCLivingRenderer<MoCEntityCrocodile, MoCModelCrocodile<MoCEntityCrocodile>> {
 
     public MoCModelCrocodile croc;
 
@@ -28,7 +28,7 @@ public class MoCRenderCrocodile extends MobRenderer<MoCEntityCrocodile, MoCModel
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityCrocodile entitycrocodile) {
+    public Identifier getTextureLocation(MoCEntityCrocodile entitycrocodile) {
         return entitycrocodile.getTexture();
     }
 
@@ -61,7 +61,7 @@ public class MoCRenderCrocodile extends MobRenderer<MoCEntityCrocodile, MoCModel
 
         //float f = entitycrocodile.swingProgress *10F *entitycrocodile.getFlipDirection();
         //float f2 = entitycrocodile.swingProgress /30 *entitycrocodile.getFlipDirection();
-        //poseStack.mulPose(Axis.ZN.rotationDegrees(180F + f));
+        //poseStack.rotate(Axis.ZN.rotationDegrees(180F + f));
         //poseStack.translate(0.0F-f2, 0.5F, 0.0F);
     }
 
@@ -89,7 +89,7 @@ public class MoCRenderCrocodile extends MobRenderer<MoCEntityCrocodile, MoCModel
             f3 = 1.0F;
         }
         f3 *= direction;
-        poseStack.mulPose(Axis.ZP.rotationDegrees(f3 * 90F));
+        poseStack.rotate(Axis.ZP.rotationDegrees(f3 * 90F));
 
         if (prey != null) {
             prey.deathTime = intEndSpin;

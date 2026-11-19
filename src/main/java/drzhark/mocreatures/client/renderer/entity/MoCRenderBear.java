@@ -7,9 +7,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelBear;
 import drzhark.mocreatures.entity.hunter.MoCEntityBear;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderBear extends MoCRenderMoC<MoCEntityBear, MoCModelBear<MoCEntityBear>> {
@@ -35,7 +35,7 @@ public class MoCRenderBear extends MoCRenderMoC<MoCEntityBear, MoCModelBear<MoCE
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityBear entitybear) {
+    public Identifier getTextureLocation(MoCEntityBear entitybear) {
         return entitybear.getTexture();
     }
 }

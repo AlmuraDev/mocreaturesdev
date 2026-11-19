@@ -6,6 +6,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.neutral.MoCEntityGoat;
@@ -18,10 +19,10 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelGoat (1.16.5) to 1.20.1. Uses ModelPart instead of ModelRenderer,
@@ -30,11 +31,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * I think the goatee isn't attached to the chin, but I'm not sure.
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelGoat<T extends MoCEntityGoat> extends EntityModel<T> {
+public class MoCModelGoat<T extends MoCEntityGoat> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "goat"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "goat"), "main"
     );
 
     // Dynamic state fields (populated externally by entity before render)
@@ -79,6 +80,7 @@ public class MoCModelGoat<T extends MoCEntityGoat> extends EntityModel<T> {
     private final ModelPart tits;
 
     public MoCModelGoat(ModelPart root) {
+        super(root);
         this.leg1   = root.getChild("leg1");
         this.leg2   = root.getChild("leg2");
         this.leg3   = root.getChild("leg3");
@@ -218,17 +220,17 @@ public class MoCModelGoat<T extends MoCEntityGoat> extends EntityModel<T> {
             float alpha
     ) {
         // Draw legs and body
-        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.neck.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.neck.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Tits for certain goat types (1 < typeInt < 5)
         if (this.typeInt > 1 && this.typeInt < 5) {
-            this.tits.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.tits.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         poseStack.pushPose();
@@ -240,36 +242,36 @@ public class MoCModelGoat<T extends MoCEntityGoat> extends EntityModel<T> {
         }
 
         // Ears, head, nose
-        this.lEar.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rEar.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.nose.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.lEar.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rEar.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.nose.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         // Horns for typeInt > 1
         if (this.typeInt > 1) {
             if (this.age > 0.7F) {
-                this.rHorn1.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.lHorn1.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.rHorn1.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.lHorn1.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
             if (this.age > 0.8F) {
-                this.rHorn2.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.lHorn2.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.rHorn2.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.lHorn2.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
         }
 
         // Extra horns for typeInt > 4
         if (this.typeInt > 4) {
             if (this.age > 0.8F) {
-                this.rHorn3.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.lHorn3.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.rHorn3.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.lHorn3.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
             if (this.age > 0.85F) {
-                this.rHorn4.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.lHorn4.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.rHorn4.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.lHorn4.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
             if (this.age > 0.9F) {
-                this.rHorn5.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-                this.lHorn5.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+                this.rHorn5.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+                this.lHorn5.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
             }
         }
 
@@ -280,12 +282,12 @@ public class MoCModelGoat<T extends MoCEntityGoat> extends EntityModel<T> {
 
         // Goatie for highest horn types
         if (this.typeInt > 4 && this.age > 0.9F) {
-            this.goatie.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.goatie.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
 
         // Tongue and mouth
-        this.tongue.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.mouth.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.tongue.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.mouth.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         poseStack.popPose();
     }

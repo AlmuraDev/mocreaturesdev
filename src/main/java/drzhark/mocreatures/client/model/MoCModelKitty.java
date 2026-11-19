@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.neutral.MoCEntityKitty;
@@ -11,13 +12,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelKitty<T extends MoCEntityKitty> extends EntityModel<T> {
+public class MoCModelKitty<T extends MoCEntityKitty> extends MoCEntityModel<T> {
 
     private ModelPart body;
     public boolean isSitting;
@@ -36,7 +37,7 @@ public class MoCModelKitty<T extends MoCEntityKitty> extends EntityModel<T> {
     private static float yOffset = 15f;
 
     public static final ModelLayerLocation LAYER_LOCATION = 
-        new ModelLayerLocation(new ResourceLocation("mocreatures", "kitty"), "main");
+        new ModelLayerLocation(Identifier.fromNamespaceAndPath("mocreatures", "kitty"), "main");
 
     /**
      * Constructor matching original, delegates to createLayerDefinition
@@ -59,6 +60,7 @@ public class MoCModelKitty<T extends MoCEntityKitty> extends EntityModel<T> {
      * Constructor for use with EntityRendererProvider, loads from baked model
      */
     public MoCModelKitty(ModelPart root) {
+        super(root);
         setupParts(root);
     }
     
@@ -258,17 +260,17 @@ public class MoCModelKitty<T extends MoCEntityKitty> extends EntityModel<T> {
             this.tail.xRot = -2.3F;
         }
         for (int i = 0; i < 7; i++) {
-            this.headParts[i].render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.headParts[i].render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
         if (this.kittystate > 2) {
-            this.headParts[7].render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.headParts[7].render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
         if (this.kittystate == 12) {
-            this.headParts[8].render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.headParts[8].render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
-        this.headParts[9].render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.headParts[9].render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         if (this.isSitting) {
             poseStack.translate(0.0F, 0.0625F, 0.0625F);
             float f6 = -1.570796F;
@@ -279,10 +281,10 @@ public class MoCModelKitty<T extends MoCEntityKitty> extends EntityModel<T> {
             this.rightLeg.yRot = 0.1F;
             this.leftLeg.yRot = -0.1F;
         }
-        this.rightArm.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftArm.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.rightLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.leftLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.rightArm.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftArm.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.rightLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.leftLeg.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         poseStack.popPose();
     }
 }

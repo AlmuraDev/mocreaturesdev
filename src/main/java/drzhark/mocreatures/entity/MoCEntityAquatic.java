@@ -3,6 +3,10 @@
  */
 package drzhark.mocreatures.entity;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.ai.EntityAIMoverHelperMoC;
@@ -15,7 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -33,7 +37,7 @@ import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -45,10 +49,10 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -126,12 +130,12 @@ public boolean isPushedByFluid(FluidType type) {
 
     // === SYNCHED DATA DEFINITION ===
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ADULT, false);
-        this.entityData.define(TYPE, 0);
-        this.entityData.define(AGE, 45);
-        this.entityData.define(NAME_STR, "");
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ADULT, false);
+        builder.define(TYPE, 0);
+        builder.define(AGE, 45);
+        builder.define(NAME_STR, "");
     }
 
     // === NAMING / VERBOSE NAMES (CLIENT‐ONLY) ===
@@ -153,8 +157,7 @@ public boolean isPushedByFluid(FluidType type) {
     // === SPAWN / TYPE SELECTION ===
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag
-    ) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         this.selectType();
         return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
     }
@@ -270,9 +273,9 @@ public boolean isPushedByFluid(FluidType type) {
 
     // === BIOME & STEP SOUND OVERRIDES ===
     @Override
-    public boolean checkSpawnRules(LevelAccessor world, MobSpawnType reason) {
+    public boolean checkSpawnRules(LevelAccessor world, EntitySpawnReason reason) {
         // Always allow spawn eggs to work
-        if (reason == MobSpawnType.SPAWN_EGG) {
+        if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
             return true;
         }
         // Check if the entity is in water
@@ -286,7 +289,7 @@ public boolean isPushedByFluid(FluidType type) {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -308,7 +311,7 @@ public boolean isPushedByFluid(FluidType type) {
                 // Filter lambda: only keep those whose ItemStack is in the FISHES tag and that are in water
                 itemEntity -> {
                     ItemStack stack = itemEntity.getItem();
-                    return stack.is(ItemTags.FISHES) && itemEntity.isInFluidType(ForgeMod.WATER_TYPE.get());
+                    return stack.is(ItemTags.FISHES) && itemEntity.isInFluidType(NeoForgeMod.WATER_TYPE.get());
                 }
         );
 
@@ -413,7 +416,7 @@ public boolean isPushedByFluid(FluidType type) {
                 }
                 float dist = (float) this.distanceTo(ent);
                 if (dist < 2.0F && this.random.nextInt(10) == 0) {
-                    ent.hurt(
+                    ent.hurtOrSimulate(
                             ent.level().damageSources().mobAttack((LivingEntity) ent),
                             (float) ((Monster) ent).getAttributeValue(Attributes.ATTACK_DAMAGE)
                     );
@@ -427,7 +430,7 @@ public boolean isPushedByFluid(FluidType type) {
 
     @Override
     public void aiStep() {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.isVehicle() && this.getControllingPassenger() instanceof Player) {
                 riding();
                 this.mountCount = 1;
@@ -528,7 +531,7 @@ public boolean isPushedByFluid(FluidType type) {
                         (this.random.nextDouble() * 0.2D - 0.1D)
                 );
                 this.setDeltaMovement(randMotion);
-                this.hurt(this.damageSources().drown(), 1.0F);
+                this.hurtOrSimulate(this.damageSources().drown(), 1.0F);
             }
         }
 
@@ -553,7 +556,7 @@ public boolean isPushedByFluid(FluidType type) {
 
     // === NBT READ/WRITE (1.20.1) ===
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Adult", getIsAdult());
         compound.putInt("Edad", getMoCAge());
@@ -562,12 +565,12 @@ public boolean isPushedByFluid(FluidType type) {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
+    public void readAdditionalSaveData(ValueInput compound) {
         super.readAdditionalSaveData(compound);
-        setAdult(compound.getBoolean("Adult"));
-        setMoCAge(compound.getInt("Edad"));
-        setPetName(compound.getString("Name"));
-        setTypeMoC(compound.getInt("TypeInt"));
+        setAdult(compound.getBooleanOr("Adult", false));
+        setMoCAge(compound.getIntOr("Edad", 0));
+        setPetName(compound.getStringOr("Name", ""));
+        setTypeMoC(compound.getIntOr("TypeInt", 0));
     }
 
     public void setTypeInt(int i) {
@@ -635,9 +638,9 @@ public boolean isPushedByFluid(FluidType type) {
     /**
      * Vanilla-style aquatic spawn rules with light level check integration
      */
-    public static boolean checkSurfaceWaterAnimalSpawnRules(EntityType<MoCEntityAquatic> type, ServerLevelAccessor world, MobSpawnType reason, BlockPos pos, RandomSource random) {
+    public static boolean checkSurfaceWaterAnimalSpawnRules(EntityType<MoCEntityAquatic> type, ServerLevelAccessor world, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         // Always allow spawn eggs
-        if (reason == MobSpawnType.SPAWN_EGG) {
+        if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
             return true;
         }
         
@@ -663,18 +666,18 @@ public boolean isPushedByFluid(FluidType type) {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
         if (usesNewAI()) {
-            return super.hurt(source, amount);
+            return super.hurtServer(serverLevel, source, amount);
         }
 
         if (isNotScared()) {
             LivingEntity oldTarget = this.getTarget();
             setTarget(oldTarget);
-            return super.hurt(source, amount);
+            return super.hurtServer(serverLevel, source, amount);
         }
 
-        return super.hurt(source, amount);
+        return super.hurtServer(serverLevel, source, amount);
     }
 
     protected boolean canBeTrappedInNet() {
@@ -967,7 +970,7 @@ public boolean isPushedByFluid(FluidType type) {
             this.setAirSupply(air - 1);
             if (this.getAirSupply() == -30) {
                 this.setAirSupply(0);
-                this.hurt(this.damageSources().drown(), 1.0F);
+                this.hurtOrSimulate(this.damageSources().drown(), 1.0F);
                 Vec3 kick = this.getDeltaMovement().add(
                         this.random.nextDouble() / 10D,
                         0.0,
@@ -1046,14 +1049,14 @@ public boolean isPushedByFluid(FluidType type) {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity target) {
         if (!(target instanceof LivingEntity)) {
             return false;
         }
         if (!target.isInWater()) {
             return false;
         }
-        boolean flag = ((LivingEntity) target).hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        boolean flag = ((LivingEntity) target).hurtOrSimulate(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         if (flag) {
             this.doEnchantDamageEffects(this, target);
         }
@@ -1113,7 +1116,7 @@ public boolean isPushedByFluid(FluidType type) {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture(this.texture);
     }
 

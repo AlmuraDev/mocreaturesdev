@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -12,21 +13,21 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Ported from 1.16.5 Forge → 1.20.1 Forge.
  * All ModelRenderer → ModelPart; setRotationAngles(...) → setupAnim(...); render(...) → renderToBuffer(...).
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelSmallFish<T extends MoCEntitySmallFish> extends EntityModel<T> {
+public class MoCModelSmallFish<T extends MoCEntitySmallFish> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "small_fish"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "small_fish"), "main"
     );
 
     private final ModelPart bodyFlat;
@@ -44,6 +45,7 @@ public class MoCModelSmallFish<T extends MoCEntitySmallFish> extends EntityModel
     private MoCEntitySmallFish smallFish;
 
     public MoCModelSmallFish(ModelPart root) {
+        super(root);
         this.bodyFlat    = root.getChild("bodyFlat");
         this.bodyRomboid = root.getChild("bodyRomboid");
         this.midBodyFin  = root.getChild("midBodyFin");
@@ -183,18 +185,18 @@ public class MoCModelSmallFish<T extends MoCEntitySmallFish> extends EntityModel
         // Translate by the small fish's offsets:
         poseStack.translate(xOffset, yOffset, zOffset);
         // Rotate 90° around Y so that the fish's “front” faces sideways in world space:
-        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+        poseStack.rotate(Axis.YP.rotationDegrees(90.0F));
 
-        this.bodyFlat.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.bodyRomboid.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.midBodyFin.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.upperFinA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.upperFinB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.upperFinC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.lowerFinA.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.lowerFinB.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.lowerFinC.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.bodyFlat.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.bodyRomboid.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.midBodyFin.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.upperFinA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.upperFinB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.upperFinC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.lowerFinA.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.lowerFinB.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.lowerFinC.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         poseStack.popPose();
     }

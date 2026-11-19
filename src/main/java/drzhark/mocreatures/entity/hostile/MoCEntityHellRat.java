@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.hostile;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.init.MoCLootTables;
 import drzhark.mocreatures.init.MoCSoundEvents;
@@ -11,7 +12,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
 
@@ -47,7 +48,7 @@ public class MoCEntityHellRat extends MoCEntityRat {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (this.random.nextInt(2) == 0) {
             this.textCounter++;
         }
@@ -78,16 +79,16 @@ public class MoCEntityHellRat extends MoCEntityRat {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.HELL_RAT;
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
-        boolean flag = super.doHurtTarget(entityIn);
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
+        boolean flag = super.doHurtTarget(serverLevel, serverLevel, entityIn);
 
         if (flag && entityIn instanceof LivingEntity) {
-            entityIn.setSecondsOnFire(5);
+            entityIn.igniteForSeconds(5);
         }
 
         return flag;

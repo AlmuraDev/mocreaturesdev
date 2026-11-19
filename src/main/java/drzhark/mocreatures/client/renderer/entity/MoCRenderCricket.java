@@ -7,10 +7,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelCricket;
 import drzhark.mocreatures.entity.ambient.MoCEntityCricket;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderCricket extends MoCRenderMoC<MoCEntityCricket, MoCModelCricket<MoCEntityCricket>> {
@@ -27,17 +27,17 @@ public class MoCRenderCricket extends MoCRenderMoC<MoCEntityCricket, MoCModelCri
     protected void rotateCricket(MoCEntityCricket entitycricket, PoseStack poseStack) {
         if (!entitycricket.onGround()) {
             if (entitycricket.getDeltaMovement().y > 0.5D) {
-                poseStack.mulPose(Axis.XN.rotationDegrees(35F));
+                poseStack.rotate(Axis.XN.rotationDegrees(35F));
             } else if (entitycricket.getDeltaMovement().y < -0.5D) {
-                poseStack.mulPose(Axis.XN.rotationDegrees(-35F));
+                poseStack.rotate(Axis.XN.rotationDegrees(-35F));
             } else {
-                poseStack.mulPose(Axis.XN.rotationDegrees((float) (entitycricket.getDeltaMovement().y * 70D)));
+                poseStack.rotate(Axis.XN.rotationDegrees((float) (entitycricket.getDeltaMovement().y * 70D)));
             }
         }
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityCricket par1Entity) {
+    public Identifier getTextureLocation(MoCEntityCricket par1Entity) {
         return par1Entity.getTexture();
     }
 }

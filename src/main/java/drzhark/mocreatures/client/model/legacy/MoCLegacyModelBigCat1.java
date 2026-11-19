@@ -3,6 +3,8 @@
  */
 package drzhark.mocreatures.client.model.legacy;
 
+import net.minecraft.util.ARGB;
+import drzhark.mocreatures.client.model.MoCEntityModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.hunter.MoCEntityBigCat;
@@ -14,21 +16,22 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCLegacyModelBigCat1<T extends MoCEntityBigCat> extends EntityModel<T> {
+public class MoCLegacyModelBigCat1<T extends MoCEntityBigCat> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation("mocreatures", "legacy_big_cat1"), "main");
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath("mocreatures", "legacy_big_cat1"), "main");
 
     private final ModelPart head;
     private final ModelPart body;
 
     public MoCLegacyModelBigCat1(ModelPart root) {
+        super(root);
         // Grab the two children we defined in createBodyLayer():
         this.head = root.getChild("head");
         this.body = root.getChild("body");
@@ -98,7 +101,7 @@ public class MoCLegacyModelBigCat1<T extends MoCEntityBigCat> extends EntityMode
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {
         // Simply render head and body; no legs were defined:
-        this.head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 }

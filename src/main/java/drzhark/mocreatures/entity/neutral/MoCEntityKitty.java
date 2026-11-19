@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.neutral;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityAnimal;
@@ -24,11 +27,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -52,7 +54,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -111,7 +113,7 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         switch (getTypeMoC()) {
             case 2:
                 return MoCreatures.proxy.getModelTexture("kitty_gray.png");
@@ -139,18 +141,18 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(SITTING, Boolean.FALSE);
-        this.entityData.define(HUNGRY, Boolean.FALSE);
-        this.entityData.define(EMO, Boolean.FALSE);
-        this.entityData.define(CLIMBING, Boolean.FALSE);
-        this.entityData.define(KITTY_STATE, 0);
-        this.entityData.define(TEMPER, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SITTING, Boolean.FALSE);
+        builder.define(HUNGRY, Boolean.FALSE);
+        builder.define(EMO, Boolean.FALSE);
+        builder.define(CLIMBING, Boolean.FALSE);
+        builder.define(KITTY_STATE, 0);
+        builder.define(TEMPER, 0);
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, EntitySpawnReason reason, @Nullable SpawnGroupData spawnDataIn) {
         RandomSource random = worldIn.getRandom();
         switch (random.nextInt(3)) {
             case 0: // NEUTRAL
@@ -228,19 +230,19 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entityIn) {
         if (getKittyState() != 18 && getKittyState() != 10) {
             swingArm();
         }
         if ((getKittyState() == 13 && entityIn instanceof Player) || (getKittyState() == 8 && entityIn instanceof ItemEntity) || (getKittyState() == 18 && entityIn instanceof MoCEntityKitty) || getKittyState() == 10) {
             return false;
         }
-        return super.doHurtTarget(entityIn);
+        return super.doHurtTarget(serverLevel, serverLevel, entityIn);
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
-        if (super.hurt(damagesource, i)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
+        if (super.hurtServer(serverLevel, damagesource, i)) {
             Entity entity = damagesource.getEntity();
             if (entity != this && entity instanceof LivingEntity) {
                 LivingEntity entity1 = (LivingEntity) entity;
@@ -289,7 +291,7 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource source) {
         return false;
     }
 
@@ -302,7 +304,7 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
         }
     }
 
-    public ResourceLocation getEmoteIcon() {
+    public Identifier getEmoteIcon() {
         switch (getKittyState()) {
             case -1:
                 return MoCreatures.proxy.getMiscTexture("emoticon_blank.png"); // Blank
@@ -351,7 +353,7 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public ResourceLocation getDefaultLootTable() {
+    public Identifier getDefaultLootTable() {
         return getIsAdult() ? MoCLootTables.KITTY : null;
     }
 
@@ -716,7 +718,7 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
                         break;
                     }
                     // When nighttime
-                    if (!this.level().isDay() && this.random.nextInt(500) < 1) {
+                    if (!this.level().isBrightOutside() && this.random.nextInt(500) < 1) {
                         MoCEntityKittyBed kittyBed1 = (MoCEntityKittyBed) getKittyStuff(this, 18D, false);
                         if (kittyBed1 == null || kittyBed1.isVehicle()) {
                             changeKittyState(12);
@@ -858,7 +860,7 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
                     break;
                 case 12: // Lying down to sleep at night
                     this.kittyTimer++;
-                    if (this.level().isDay() || (this.kittyTimer > 500 && this.random.nextInt(500) < 1)) {
+                    if (this.level().isBrightOutside() || (this.kittyTimer > 500 && this.random.nextInt(500) < 1)) {
                         this.stopRiding();
                         changeKittyState(7);
                         break;
@@ -880,7 +882,7 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
                             swingArm();
                             if (this.random.nextInt(20) < 1) {
                                 this.madTimer--;
-                                getTarget().hurt(this.level().damageSources().mobAttack(this), 1);
+                                getTarget().hurtOrSimulate(this.level().damageSources().mobAttack(this), 1);
                                 if (this.madTimer < 1) {
                                     changeKittyState(7);
                                     this.madTimer = this.random.nextInt(5);
@@ -1138,7 +1140,7 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
         return getKittyState() != 13;
     }
 
-    public static boolean getCanSpawnHere(EntityType<MoCEntityAnimal> type, ServerLevel world, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean getCanSpawnHere(EntityType<MoCEntityAnimal> type, ServerLevel world, EntitySpawnReason reason, BlockPos pos, Random randomIn) {
         if (MoCreatures.proxy.kittyVillageChance <= 0)
             return MoCEntityAnimal.getCanSpawnHere(type, world, reason, pos, randomIn);
         BlockPos villagePos = world.findNearestMapStructure(net.minecraft.tags.StructureTags.VILLAGE, pos, 100, true);
@@ -1149,7 +1151,7 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("Sitting", getIsSitting());
         tag.putInt("KittyState", getKittyState());
@@ -1157,11 +1159,11 @@ public class MoCEntityKitty extends MoCEntityTameableAnimal {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        setSitting(tag.getBoolean("Sitting"));
-        setKittyState(tag.getInt("KittyState"));
-        setTemper(tag.getInt("Temper"));
+        setSitting(tag.getBooleanOr("Sitting", false));
+        setKittyState(tag.getIntOr("KittyState", 0));
+        setTemper(tag.getIntOr("Temper", 0));
     }
 
 

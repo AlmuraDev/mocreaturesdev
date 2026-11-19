@@ -1,5 +1,6 @@
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -7,16 +8,16 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class MoCModelAbstractScorpion<T extends net.minecraft.world.entity.Entity> extends EntityModel<T> {
+public abstract class MoCModelAbstractScorpion<T extends net.minecraft.world.entity.Entity> extends MoCEntityModel<T> {
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation("mocreatures", "scorpion"), "main");
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath("mocreatures", "scorpion"), "main");
 
     // Fields correspond to all the pieces from the old 1.16 ModelRenderer:
     private final ModelPart head;
@@ -77,6 +78,7 @@ public abstract class MoCModelAbstractScorpion<T extends net.minecraft.world.ent
     protected boolean sitting;
 
     public MoCModelAbstractScorpion(ModelPart root) {
+        super(root);
         this.head     = root.getChild("head");
         this.mouthL   = root.getChild("mouth_l");
         this.mouthR   = root.getChild("mouth_r");
@@ -815,56 +817,56 @@ public abstract class MoCModelAbstractScorpion<T extends net.minecraft.world.ent
 
     @Override
     public void renderToBuffer(PoseStack stack, VertexConsumer builder, int packedLight, int packedOverlay, float r, float g, float b, float a) {
-        this.head.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.mouthL.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.mouthR.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.body.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.tail1.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.tail2.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.tail3.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.tail4.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.tail5.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.sting1.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.sting2.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.lArm1.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.lArm2.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.lArm3.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.lArm4.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.rArm1.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.rArm2.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.rArm3.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.rArm4.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg1A.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg1B.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg1C.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg2A.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg2B.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg2C.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg3A.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg3B.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg3C.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg4A.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg4B.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg4C.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg5A.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg5B.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg5C.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg6A.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg6B.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg6C.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg7A.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg7B.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg7C.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg8A.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg8B.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-        this.leg8C.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
+        this.head.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.mouthL.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.mouthR.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.body.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.tail1.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.tail2.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.tail3.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.tail4.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.tail5.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.sting1.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.sting2.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.lArm1.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.lArm2.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.lArm3.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.lArm4.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.rArm1.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.rArm2.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.rArm3.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.rArm4.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg1A.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg1B.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg1C.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg2A.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg2B.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg2C.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg3A.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg3B.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg3C.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg4A.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg4B.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg4C.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg5A.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg5B.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg5C.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg6A.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg6B.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg6C.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg7A.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg7B.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg7C.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg8A.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg8B.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+        this.leg8C.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
 
         if (babies && isAdult) {
-            this.baby1.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-            this.baby2.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-            this.baby3.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-            this.baby4.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
-            this.baby5.render(stack, builder, packedLight, packedOverlay, r, g, b, a);
+            this.baby1.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+            this.baby2.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+            this.baby3.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+            this.baby4.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
+            this.baby5.render(stack, builder, packedLight, packedOverlay, ARGB.colorFromFloat(a, r, g, b));
         }
     }
 

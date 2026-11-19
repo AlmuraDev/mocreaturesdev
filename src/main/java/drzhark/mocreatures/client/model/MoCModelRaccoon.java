@@ -8,6 +8,7 @@
 
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.hunter.MoCEntityRaccoon;
@@ -16,17 +17,17 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelRaccoon<T extends MoCEntityRaccoon> extends EntityModel<T> {
+public class MoCModelRaccoon<T extends MoCEntityRaccoon> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "raccoon"),
+            Identifier.fromNamespaceAndPath("mocreatures", "raccoon"),
             "main"
     );
 
@@ -56,6 +57,7 @@ public class MoCModelRaccoon<T extends MoCEntityRaccoon> extends EntityModel<T> 
     private final float radianF = 57.29578F;
 
     public MoCModelRaccoon(ModelPart root) {
+        super(root);
         this.head             = root.getChild("head");
         this.snout            = root.getChild("snout");
         this.rightEar         = root.getChild("right_ear");
@@ -212,30 +214,30 @@ public class MoCModelRaccoon<T extends MoCEntityRaccoon> extends EntityModel<T> 
 
     @Override
     public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        head.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        snout.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rightEar.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        leftEar.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        neck.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        body.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        tailA.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        tailB.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        head.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        snout.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rightEar.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        leftEar.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        neck.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        body.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        tailA.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        tailB.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        rightFrontLegA.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rightFrontLegB.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rightFrontFoot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        rightFrontLegA.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rightFrontLegB.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rightFrontFoot.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        leftFrontLegA.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        leftFrontLegB.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        leftFrontFoot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        leftFrontLegA.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        leftFrontLegB.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        leftFrontFoot.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        rightRearLegA.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rightRearLegB.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rightRearFoot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        rightRearLegA.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rightRearLegB.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rightRearFoot.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
-        leftRearLegA.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        leftRearLegB.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        leftRearFoot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        leftRearLegA.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        leftRearLegB.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        leftRearFoot.render(matrixStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 
     /**

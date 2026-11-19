@@ -3,6 +3,9 @@
  */
 package drzhark.mocreatures.entity.hostile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.MoCEntityMob;
@@ -23,7 +26,7 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -34,7 +37,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -42,12 +45,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.NetworkHooks;
+import net.neoforged.neoforge.common.NeoForge;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -107,10 +110,10 @@ public class MoCEntityGolem extends MoCEntityMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
         this.initGolemCubes();
-        this.entityData.define(GOLEM_STATE, 0); // 0: spawned / 1: summoning rocks / 2: has enemy / 3: half life (harder) / 4: dying
+        builder.define(GOLEM_STATE, 0); // 0: spawned / 1: summoning rocks / 2: has enemy / 3: half life (harder) / 4: dying
     }
 
     public int getGolemState() {
@@ -275,9 +278,9 @@ public class MoCEntityGolem extends MoCEntityMob {
         Level level = this.level();
 
         for (int i = 0; i < l; i++) {
-            int x = (int) (this.getX() + level.random.nextInt((int) distance) - (distance / 2));
-            int y = (int) (this.getY() + level.random.nextInt((int) distance) - (distance / 2));
-            int z = (int) (this.getZ() + level.random.nextInt((int) distance) - (distance / 2));
+            int x = (int) (this.getX() + level.getRandom().nextInt((int) distance) - (distance / 2));
+            int y = (int) (this.getY() + level.getRandom().nextInt((int) distance) - (distance / 2));
+            int z = (int) (this.getZ() + level.getRandom().nextInt((int) distance) - (distance / 2));
             BlockPos pos = new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z));
             BlockState stateAbove = level.getBlockState(pos.above());
             BlockState stateTarget = level.getBlockState(pos);
@@ -289,7 +292,7 @@ public class MoCEntityGolem extends MoCEntityMob {
             if (!stateTarget.isAir() && stateTarget.getBlock() != Blocks.WATER && stateTarget.getBlock() != Blocks.BEDROCK && stateAbove.isAir()) {
                 if (MoCTools.mobGriefing(level)) {
                     BlockEvent.BreakEvent event = null;
-                    if (!level.isClientSide) {
+                    if (!level.isClientSide()) {
                         event = new BlockEvent.BreakEvent(level, pos, stateTarget, FakePlayerFactory.get((ServerLevel) level, MoCreatures.MOCFAKEPLAYER));
                     }
                     if (event != null && !event.isCanceled()) {
@@ -388,9 +391,9 @@ public class MoCEntityGolem extends MoCEntityMob {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         if (damagesource.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return super.hurt(damagesource, i);
+            return super.hurtServer(serverLevel, damagesource, i);
         }
         if (getGolemState() == 4) return false;
 
@@ -409,7 +412,7 @@ public class MoCEntityGolem extends MoCEntityMob {
         }
 
         if (i > 5) i = 5; //so you can't hit a Golem too hard
-        if (getGolemState() != 1 && super.hurt(damagesource, i)) {
+        if (getGolemState() != 1 && super.hurtServer(serverLevel, damagesource, i)) {
             Entity entity = damagesource.getEntity();
             if ((entity != this) && (this.level().getDifficulty().getId() > 0) && entity instanceof LivingEntity) {
                 this.setTarget((LivingEntity) entity);
@@ -482,7 +485,7 @@ public class MoCEntityGolem extends MoCEntityMob {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void addAdditionalSaveData(ValueOutput nbttagcompound) {
         super.addAdditionalSaveData(nbttagcompound);
         nbttagcompound.putInt("golemState", getGolemState());
         ListTag cubeLists = new ListTag();
@@ -496,9 +499,9 @@ public class MoCEntityGolem extends MoCEntityMob {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbttagcompound) {
+    public void readAdditionalSaveData(ValueInput nbttagcompound) {
         super.readAdditionalSaveData(nbttagcompound);
-        setGolemState(nbttagcompound.getInt("golemState"));
+        setGolemState(nbttagcompound.getIntOr("golemState", 0));
         ListTag nbttaglist = nbttagcompound.getList("GolemBlocks", 10);
         for (int i = 0; i < 23; i++) {
             CompoundTag var4 = nbttaglist.getCompound(i);
@@ -786,7 +789,7 @@ public class MoCEntityGolem extends MoCEntityMob {
     /**
      * Used for the power texture used on the golem
      */
-    public ResourceLocation getEffectTexture() {
+    public Identifier getEffectTexture() {
         switch (getGolemState()) {
             case 1:
                 return MoCreatures.proxy.getModelTexture("golem_effect_red.png");
@@ -838,11 +841,11 @@ public class MoCEntityGolem extends MoCEntityMob {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.BIG_GOLEM;
     }
 
-    public static boolean getCanSpawnHere(EntityType<? extends MoCEntityMob> type, ServerLevel world, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean getCanSpawnHere(EntityType<? extends MoCEntityMob> type, ServerLevel world, EntitySpawnReason reason, BlockPos pos, Random randomIn) {
         return MoCEntityMob.getCanSpawnHere(type, world, reason, pos, randomIn);
     }
 

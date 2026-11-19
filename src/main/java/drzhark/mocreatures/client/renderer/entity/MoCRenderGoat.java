@@ -3,12 +3,13 @@
  */
 package drzhark.mocreatures.client.renderer.entity;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.renderpearl.api.vertex.VertexFormat;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.client.model.MoCModelGoat;
 import drzhark.mocreatures.entity.neutral.MoCEntityGoat;
@@ -17,17 +18,17 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import org.joml.Matrix4f;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderGoat extends MobRenderer<MoCEntityGoat, MoCModelGoat<MoCEntityGoat>> {
+public class MoCRenderGoat extends MoCLivingRenderer<MoCEntityGoat, MoCModelGoat<MoCEntityGoat>> {
 
-    private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation("textures/misc/white.png");
+    private static final Identifier WHITE_TEXTURE = Identifier.parse("textures/misc/white.png");
     private final MoCModelGoat tempGoat;
     float depth = 0F;
 
@@ -37,7 +38,7 @@ public class MoCRenderGoat extends MobRenderer<MoCEntityGoat, MoCModelGoat<MoCEn
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityGoat entitygoat) {
+    public Identifier getTextureLocation(MoCEntityGoat entitygoat) {
         return entitygoat.getTexture();
     }
 
@@ -71,7 +72,7 @@ public class MoCRenderGoat extends MobRenderer<MoCEntityGoat, MoCModelGoat<MoCEn
                 
                 poseStack.pushPose();
                 poseStack.translate(0.0F, f5, 0.0F);
-                poseStack.mulPose(Axis.YP.rotationDegrees(-this.entityRenderDispatcher.camera.getYRot()));
+                poseStack.rotate(Axis.YP.rotationDegrees(-this.entityRenderDispatcher.camera.getYRot()));
                 poseStack.scale(-f3, -f3, f3);
 
                 byte byte0 = (byte) (-15 + (-40 * entitygoat.getMoCAge() * 0.01F));
@@ -88,14 +89,14 @@ public class MoCRenderGoat extends MobRenderer<MoCEntityGoat, MoCModelGoat<MoCEn
                     float f9 = 40F * f8;
                     
                     // Red background
-                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.text(WHITE_TEXTURE));
+                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderTypes.text(WHITE_TEXTURE));
                     vertexconsumer.vertex(matrix4f, -20F + f9, -10 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 0).overlayCoords(0).uv2(packedLightIn).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix4f, -20F + f9, -6 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(0, 1).overlayCoords(0).uv2(packedLightIn).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix4f, 20F, -6 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 1).overlayCoords(0).uv2(packedLightIn).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix4f, 20F, -10 + byte0, 0.0F).color(0.7F, 0.0F, 0.0F, 1.0F).uv(1, 0).overlayCoords(0).uv2(packedLightIn).normal(0, 1, 0).endVertex();
                     
                     // Green health
-                    vertexconsumer = buffer.getBuffer(RenderType.text(WHITE_TEXTURE));
+                    vertexconsumer = buffer.getBuffer(RenderTypes.text(WHITE_TEXTURE));
                     vertexconsumer.vertex(matrix4f, -20F, -10 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 0).overlayCoords(0).uv2(packedLightIn).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix4f, -20F, -6 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(0, 1).overlayCoords(0).uv2(packedLightIn).normal(0, 1, 0).endVertex();
                     vertexconsumer.vertex(matrix4f, f9 - 20F, -6 + byte0, 0.01F).color(0.0F, 0.7F, 0.0F, 1.0F).uv(1, 1).overlayCoords(0).uv2(packedLightIn).normal(0, 1, 0).endVertex();

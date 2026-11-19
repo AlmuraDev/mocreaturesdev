@@ -10,6 +10,7 @@
 
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.hostile.MoCEntityRat;
@@ -18,18 +19,18 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelRat<T extends MoCEntityRat> extends EntityModel<T> {
+public class MoCModelRat<T extends MoCEntityRat> extends MoCEntityModel<T> {
 
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "rat"),
+            Identifier.fromNamespaceAndPath("mocreatures", "rat"),
             "main"
     );
 
@@ -49,6 +50,7 @@ public class MoCModelRat<T extends MoCEntityRat> extends EntityModel<T> {
     private final float radianF = 57.29578F;
 
     public MoCModelRat(ModelPart root) {
+        super(root);
         // All child names must match exactly those defined in createBodyLayer()
         this.head      = root.getChild("head");
         this.earR      = root.getChild("ear_r");
@@ -149,18 +151,18 @@ public class MoCModelRat<T extends MoCEntityRat> extends EntityModel<T> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        earR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        earL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        whiskerR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        whiskerL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        frontL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        frontR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rearL.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rearR.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        bodyF.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        earR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        earL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        whiskerR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        whiskerL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        frontL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        frontR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rearL.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        rearR.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        bodyF.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
     }
 
     /**

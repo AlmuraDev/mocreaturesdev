@@ -7,10 +7,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import drzhark.mocreatures.client.model.MoCModelPetScorpion;
 import drzhark.mocreatures.entity.hunter.MoCEntityPetScorpion;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderPetScorpion extends MoCRenderMoC<MoCEntityPetScorpion, MoCModelPetScorpion<MoCEntityPetScorpion>> {
@@ -48,7 +48,7 @@ public class MoCRenderPetScorpion extends MoCRenderMoC<MoCEntityPetScorpion, MoC
     }
 
     protected void upsideDown(MoCEntityPetScorpion entityscorpion, PoseStack poseStack) {
-        poseStack.mulPose(Axis.XN.rotationDegrees(-90.0F));
+        poseStack.rotate(Axis.XN.rotationDegrees(-90.0F));
         poseStack.translate(-1.5F, -0.5F, -2.5F);
     }
 
@@ -57,7 +57,7 @@ public class MoCRenderPetScorpion extends MoCRenderMoC<MoCEntityPetScorpion, MoC
     }
 
     protected void rotateAnimal(MoCEntityPetScorpion entityscorpion, PoseStack poseStack) {
-        poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
+        poseStack.rotate(Axis.XN.rotationDegrees(90.0F));
         poseStack.translate(0.0F, 1.0F, 0.0F);
     }
 
@@ -71,7 +71,7 @@ public class MoCRenderPetScorpion extends MoCRenderMoC<MoCEntityPetScorpion, MoC
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityPetScorpion entityscorpion) {
+    public Identifier getTextureLocation(MoCEntityPetScorpion entityscorpion) {
         return entityscorpion.getTexture();
     }
 }

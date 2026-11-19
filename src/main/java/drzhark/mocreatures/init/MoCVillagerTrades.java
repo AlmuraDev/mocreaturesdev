@@ -1,15 +1,15 @@
 package drzhark.mocreatures.init;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import drzhark.mocreatures.MoCConstants;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraftforge.event.village.VillagerTradesEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.neoforged.neoforge.event.village.VillagerTradesEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
-@Mod.EventBusSubscriber(modid = MoCConstants.MOD_ID)
+@EventBusSubscriber(modid = MoCConstants.MOD_ID)
 public class MoCVillagerTrades {
 
     @SubscribeEvent

@@ -26,14 +26,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.event.level.BlockEvent;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.event.level.BlockEvent;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class MoCEntityEnt extends MoCEntityAnimal {
     public MoCEntityEnt(EntityType<? extends MoCEntityEnt> type, Level world) {
         super(type, world);
         //setSize(1.4F, 7F);
-        setMaxUpStep(2F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(2F);
         this.xpReward = 10;
     }
 
@@ -75,7 +75,7 @@ public class MoCEntityEnt extends MoCEntityAnimal {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (getTypeMoC() == 2) {
             return MoCreatures.proxy.getModelTexture("ent_birch.png");
         }
@@ -83,12 +83,12 @@ public class MoCEntityEnt extends MoCEntityAnimal {
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return 10;
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
         if (damagesource.getEntity() != null && damagesource.getEntity() instanceof Player) {
             Player ep = (Player) damagesource.getEntity();
             ItemStack currentItem = ep.getInventory().getSelected();
@@ -98,42 +98,42 @@ public class MoCEntityEnt extends MoCEntityAnimal {
                 if (super.shouldAttackPlayers()) {
                     setTarget(ep);
                 }
-                return super.hurt(damagesource, i);
+                return super.hurtServer(serverLevel, damagesource, i);
             }
         }
         // Check if this is fire damage
         if (damagesource == this.damageSources().inFire() || 
             damagesource == this.damageSources().onFire() || 
             damagesource == this.damageSources().lava()) {
-            return super.hurt(damagesource, i);
+            return super.hurtServer(serverLevel, damagesource, i);
         }
         return false;
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource source, boolean recentlyHitIn) {
         int i = this.random.nextInt(3);
         int qty = this.random.nextInt(12) + 4;
         if (getTypeMoC() == 2) {
             if (i == 0) {
-                spawnAtLocation(new ItemStack(Blocks.BIRCH_LOG, qty), 0.0F);
+                spawnAtLocation((ServerLevel) this.level(), new ItemStack(Blocks.BIRCH_LOG, qty), 0.0F);
                 return;
             }
             if (i == 1) {
-                spawnAtLocation(new ItemStack(Items.STICK, qty), 0.0F);
+                spawnAtLocation((ServerLevel) this.level(), new ItemStack(Items.STICK, qty), 0.0F);
                 return;
             }
-            spawnAtLocation(new ItemStack(Blocks.BIRCH_SAPLING, qty), 0.0F);
+            spawnAtLocation((ServerLevel) this.level(), new ItemStack(Blocks.BIRCH_SAPLING, qty), 0.0F);
         } else {
             if (i == 0) {
-                spawnAtLocation(new ItemStack(Blocks.OAK_LOG, qty), 0.0F);
+                spawnAtLocation((ServerLevel) this.level(), new ItemStack(Blocks.OAK_LOG, qty), 0.0F);
                 return;
             }
             if (i == 1) {
-                spawnAtLocation(new ItemStack(Items.STICK, qty), 0.0F);
+                spawnAtLocation((ServerLevel) this.level(), new ItemStack(Items.STICK, qty), 0.0F);
                 return;
             }
-            spawnAtLocation(new ItemStack(Blocks.OAK_SAPLING, qty), 0.0F);
+            spawnAtLocation((ServerLevel) this.level(), new ItemStack(Blocks.OAK_SAPLING, qty), 0.0F);
         }
     }
 

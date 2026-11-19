@@ -7,19 +7,19 @@ import drzhark.mocreatures.client.model.MoCModelWolf;
 import drzhark.mocreatures.entity.hostile.MoCEntityWWolf;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderWWolf extends MobRenderer<MoCEntityWWolf, MoCModelWolf<MoCEntityWWolf>> {
+public class MoCRenderWWolf extends MoCLivingRenderer<MoCEntityWWolf, MoCModelWolf<MoCEntityWWolf>> {
 
     public MoCRenderWWolf(EntityRendererProvider.Context renderManagerIn, MoCModelWolf modelbase, float f) {
         super(renderManagerIn, modelbase, f);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityWWolf par1Entity) {
+    public Identifier getTextureLocation(MoCEntityWWolf par1Entity) {
         return par1Entity.getTexture();
     }
 }

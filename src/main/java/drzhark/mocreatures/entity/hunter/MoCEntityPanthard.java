@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class MoCEntityPanthard extends MoCEntityBigCat {
@@ -38,7 +38,7 @@ public class MoCEntityPanthard extends MoCEntityBigCat {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (MoCreatures.proxy.legacyBigCatModels)
             return MoCreatures.proxy.getModelTexture("big_cat_panthard_legacy.png");
         return MoCreatures.proxy.getModelTexture("big_cat_panthard.png");
@@ -65,7 +65,7 @@ public class MoCEntityPanthard extends MoCEntityBigCat {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.PANTHARD;
     }
 

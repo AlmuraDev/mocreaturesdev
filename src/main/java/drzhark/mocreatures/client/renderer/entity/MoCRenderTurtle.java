@@ -8,10 +8,10 @@ import drzhark.mocreatures.client.model.MoCModelTurtle;
 import drzhark.mocreatures.entity.passive.MoCEntityTurtle;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.math.Axis;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MoCRenderTurtle extends MoCRenderMoC<MoCEntityTurtle, MoCModelTurtle<MoCEntityTurtle>> {
@@ -45,12 +45,12 @@ public class MoCRenderTurtle extends MoCRenderMoC<MoCEntityTurtle, MoCModelTurtl
     }
 
     protected void rotateAnimal(MoCEntityTurtle entityturtle, PoseStack poseStack) {
-        //poseStack.mulPose(Axis.XN.rotationDegrees(180F)); //head up 180
-        //poseStack.mulPose(Axis.YN.rotationDegrees(180F)); //head around 180
+        //poseStack.rotate(Axis.XN.rotationDegrees(180F)); //head up 180
+        //poseStack.rotate(Axis.YN.rotationDegrees(180F)); //head around 180
 
         float f = entityturtle.attackAnim * 10F * entityturtle.getFlipDirection();
         float f2 = entityturtle.attackAnim / 30 * entityturtle.getFlipDirection();
-        poseStack.mulPose(Axis.ZN.rotationDegrees(180F + f));
+        poseStack.rotate(Axis.ZN.rotationDegrees(180F + f));
         poseStack.translate(0.0F - f2, 0.5F * entityturtle.getMoCAge() * 0.01F, 0.0F);
     }
 
@@ -64,7 +64,7 @@ public class MoCRenderTurtle extends MoCRenderMoC<MoCEntityTurtle, MoCModelTurtl
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityTurtle entityturtle) {
+    public Identifier getTextureLocation(MoCEntityTurtle entityturtle) {
         return entityturtle.getTexture();
     }
 }

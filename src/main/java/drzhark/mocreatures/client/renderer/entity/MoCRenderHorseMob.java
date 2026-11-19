@@ -8,12 +8,12 @@ import drzhark.mocreatures.client.model.MoCModelHorseMob;
 import drzhark.mocreatures.entity.hostile.MoCEntityHorseMob;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCRenderHorseMob extends MobRenderer<MoCEntityHorseMob, MoCModelHorseMob<MoCEntityHorseMob>> {
+public class MoCRenderHorseMob extends MoCLivingRenderer<MoCEntityHorseMob, MoCModelHorseMob<MoCEntityHorseMob>> {
 
     public MoCRenderHorseMob(EntityRendererProvider.Context renderManagerIn, MoCModelHorseMob modelbase) {
         super(renderManagerIn, modelbase, 0.5F);
@@ -25,7 +25,7 @@ public class MoCRenderHorseMob extends MobRenderer<MoCEntityHorseMob, MoCModelHo
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MoCEntityHorseMob entityhorsemob) {
+    public Identifier getTextureLocation(MoCEntityHorseMob entityhorsemob) {
         return entityhorsemob.getTexture();
     }
 }

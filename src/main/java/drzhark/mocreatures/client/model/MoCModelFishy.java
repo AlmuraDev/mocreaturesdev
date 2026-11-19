@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.aquatic.MoCEntityFishy;
@@ -16,16 +17,16 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MoCModelFishy<T extends MoCEntityFishy> extends EntityModel<T> {
+public class MoCModelFishy<T extends MoCEntityFishy> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "fishy"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "fishy"), "main"
     );
 
     public final ModelPart Body;
@@ -38,6 +39,7 @@ public class MoCModelFishy<T extends MoCEntityFishy> extends EntityModel<T> {
     private MoCEntityFishy smallFish;
 
     public MoCModelFishy(ModelPart root) {
+        super(root);
         this.Body = root.getChild("body");
         this.Tail = root.getChild("tail");
         // These fields are declared but not used, to match 1.16 behavior
@@ -83,8 +85,8 @@ public class MoCModelFishy<T extends MoCEntityFishy> extends EntityModel<T> {
         poseStack.translate(xOffset, yOffset, zOffset);
 
         // Only render body and tail, to match the 1.16 behavior
-        this.Body.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.Tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.Body.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+        this.Tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
 
         poseStack.popPose();
     }

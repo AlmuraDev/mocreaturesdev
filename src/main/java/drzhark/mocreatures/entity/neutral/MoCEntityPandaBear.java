@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.entity.neutral;
 
+import net.minecraft.server.level.ServerLevel;
 import drzhark.mocreatures.MoCTools;
 import drzhark.mocreatures.MoCreatures;
 import drzhark.mocreatures.entity.hunter.MoCEntityBear;
@@ -21,7 +22,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class MoCEntityPandaBear extends MoCEntityBear {
@@ -47,7 +48,7 @@ public class MoCEntityPandaBear extends MoCEntityBear {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return MoCreatures.proxy.getModelTexture("bear_panda.png");
     }
 
@@ -67,8 +68,8 @@ public class MoCEntityPandaBear extends MoCEntityBear {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float i) {
-        return super.hurt(damagesource, i);
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float i) {
+        return super.hurtServer(serverLevel, damagesource, i);
     }
 
     @Override
@@ -131,7 +132,7 @@ public class MoCEntityPandaBear extends MoCEntityBear {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.PANDA_BEAR;
     }
 

@@ -3,6 +3,7 @@
  */
 package drzhark.mocreatures.client.model;
 
+import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import drzhark.mocreatures.entity.ambient.MoCEntitySnail;
@@ -11,20 +12,20 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Port of MoCModelSnail from 1.16.5 → 1.20.1.
  */
 @OnlyIn(Dist.CLIENT)
-public class MoCModelSnail<T extends MoCEntitySnail> extends EntityModel<T> {
+public class MoCModelSnail<T extends MoCEntitySnail> extends MoCEntityModel<T> {
 
     @SuppressWarnings("removal")
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("mocreatures", "snail"), "main"
+            Identifier.fromNamespaceAndPath("mocreatures", "snail"), "main"
     );
 
     private final ModelPart head;
@@ -39,6 +40,7 @@ public class MoCModelSnail<T extends MoCEntitySnail> extends EntityModel<T> {
     private int type;
 
     public MoCModelSnail(ModelPart root) {
+        super(root);
         this.head      = root.getChild("head");
         this.antenna   = root.getChild("antenna");
         this.body      = root.getChild("body");
@@ -130,13 +132,13 @@ public class MoCModelSnail<T extends MoCEntitySnail> extends EntityModel<T> {
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         if (this.isHiding && this.type < 5) {
-            this.shellDown.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.shellDown.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         } else {
-            this.head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.antenna.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.shellUp.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-            this.tail.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            this.head.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.antenna.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.body.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.shellUp.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
+            this.tail.render(poseStack, buffer, packedLight, packedOverlay, ARGB.colorFromFloat(alpha, red, green, blue));
         }
     }
 }

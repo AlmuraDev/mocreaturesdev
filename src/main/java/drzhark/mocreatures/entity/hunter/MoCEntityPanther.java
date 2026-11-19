@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class MoCEntityPanther extends MoCEntityBigCat {
@@ -33,7 +33,7 @@ public class MoCEntityPanther extends MoCEntityBigCat {
     }
 
     @Override
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         if (MoCreatures.proxy.legacyBigCatModels)
             return MoCreatures.proxy.getModelTexture("big_cat_panther_legacy.png");
         return MoCreatures.proxy.getModelTexture("big_cat_panther.png");
@@ -84,7 +84,7 @@ public class MoCEntityPanther extends MoCEntityBigCat {
     }
 
     @Override
-    protected ResourceLocation getDefaultLootTable() {
+    protected Identifier getDefaultLootTable() {
         return MoCLootTables.PANTHER;
     }
 

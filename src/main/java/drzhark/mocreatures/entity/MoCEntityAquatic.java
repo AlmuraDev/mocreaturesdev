@@ -638,28 +638,39 @@ public boolean isPushedByFluid(FluidType type) {
     }
 
     /**
-     * Vanilla-style aquatic spawn rules with light level check integration
+     * Spawn rule for all Mo' Creatures water mobs, with the light level check. Named apart from WaterAnimal's
+     * checkSurfaceWaterAnimalSpawnRules on purpose: with the same name, MoCEntities' method references resolved to
+     * the vanilla one, so the vanilla sea-level rule ran instead of this one.
      */
-    public static boolean checkSurfaceWaterAnimalSpawnRules(EntityType<MoCEntityAquatic> type, ServerLevelAccessor world, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
+    public static boolean checkMoCWaterSpawnRules(EntityType<? extends MoCEntityAquatic> type, ServerLevelAccessor world, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         // Always allow spawn eggs
         if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
             return true;
         }
         
-        // Use vanilla surface water animal spawn rules
-        boolean willSpawn = net.minecraft.world.entity.animal.fish.WaterAnimal.checkSurfaceWaterAnimalSpawnRules(type, world, reason, pos, random);
-        
+        // Any water at any height and depth, as in 1.12.2 (the IN_WATER placement already keeps solid blocks off the spot
+        // above). Vanilla's rule also needs the spot to be within 13 blocks below sea level with water above and below it,
+        // which keeps fish out of lakes above sea level and out of lakes less than 3 deep (both common in TerrainControl worlds).
+        boolean inWater = world.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER);
+        boolean waterBelow = world.getFluidState(pos.below()).is(net.minecraft.tags.FluidTags.WATER);
+        boolean waterAbove = world.getBlockState(pos.above()).is(net.minecraft.world.level.block.Blocks.WATER);
+        boolean willSpawn = inWater;
+        boolean lightOk = true;
+
         // Add light level check from BiomeSpawnConfig if this is a Level (not just LevelAccessor)
         if (willSpawn && world.getLevel() instanceof Level) {
-            willSpawn = drzhark.mocreatures.config.biome.BiomeSpawnConfig.checkLightLevelForEntity((Level) world.getLevel(), pos, type);
+            lightOk = drzhark.mocreatures.config.biome.BiomeSpawnConfig.checkLightLevelForEntity((Level) world.getLevel(), pos, type);
+            willSpawn = lightOk;
         }
-        
+
         if (MoCreatures.proxy.debug && willSpawn) {
             MoCreatures.LOGGER.info(
-                    "Aquatic: {} at {} State: {} biome: {}",
-                    type.getDescription(),
+                    "Aquatic: {} at {} ({}) {} - in water {}, water below {}, water above {}, light ok {}, biome: {}",
+                    type.getDescription().getString(),
                     pos,
-                    world.getBlockState(pos),
+                    reason,
+                    willSpawn ? "ALLOWED" : "refused",
+                    inWater, waterBelow, waterAbove, lightOk,
                     MoCTools.biomeName((Level) world.getLevel(), pos)
             );
         }

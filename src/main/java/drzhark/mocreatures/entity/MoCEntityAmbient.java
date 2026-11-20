@@ -266,7 +266,7 @@ public abstract class MoCEntityAmbient extends PathfinderMob implements IMoCEnti
     /**
      * Vanilla-style ambient spawn rules with light level check integration
      */
-    public static boolean checkMobSpawnRules(EntityType<MoCEntityAmbient> type, ServerLevelAccessor world, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
+    public static boolean checkMoCAmbientSpawnRules(EntityType<? extends MoCEntityAmbient> type, ServerLevelAccessor world, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         // Always allow spawn eggs
         if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
             return true;

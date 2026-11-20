@@ -119,7 +119,9 @@ public abstract class MoCEntityAnimal extends Animal implements IMoCEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // 26.3's TemptGoal reads tempt_range; vanilla animals get 10 from Animal.createAnimalAttributes
         return Mob.createMobAttributes()
+                .add(Attributes.TEMPT_RANGE, 10.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.MAX_HEALTH, 20.0D);
     }

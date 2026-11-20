@@ -212,7 +212,7 @@ public class MoCEntities {
             MoCEntityTurtle::new, MobCategory.CREATURE, 0.6F, 0.425F, MoCEntityTurtle::createAttributes, 6505237,
             10524955);
     public static final DeferredHolder<EntityType<?>, EntityType<MoCEntityTurkey>> TURKEY = registerEntity("turkey",
-            MoCEntityTurkey::new, MobCategory.CREATURE, 0.6F, 0.9F, MoCEntityTurkey::createAttributes, 12268098,
+            MoCEntityTurkey::new, MobCategory.CREATURE, 0.6F, 0.9F, MoCEntityTurkey::registerAttributes, 12268098,
             6991322);
     public static final DeferredHolder<EntityType<?>, EntityType<MoCEntityHorse>> WILDHORSE = registerEntity("wildhorse",
             MoCEntityHorse::new, MobCategory.CREATURE, 1.3964844F, 1.6F, MoCEntityHorse::createAttributes, 9204829,

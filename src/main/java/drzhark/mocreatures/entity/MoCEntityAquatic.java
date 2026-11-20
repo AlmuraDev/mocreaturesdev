@@ -651,26 +651,19 @@ public boolean isPushedByFluid(FluidType type) {
         // Any water at any height and depth, as in 1.12.2 (the IN_WATER placement already keeps solid blocks off the spot
         // above). Vanilla's rule also needs the spot to be within 13 blocks below sea level with water above and below it,
         // which keeps fish out of lakes above sea level and out of lakes less than 3 deep (both common in TerrainControl worlds).
-        boolean inWater = world.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER);
-        boolean waterBelow = world.getFluidState(pos.below()).is(net.minecraft.tags.FluidTags.WATER);
-        boolean waterAbove = world.getBlockState(pos.above()).is(net.minecraft.world.level.block.Blocks.WATER);
-        boolean willSpawn = inWater;
-        boolean lightOk = true;
+        boolean willSpawn = world.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER);
 
         // Add light level check from BiomeSpawnConfig if this is a Level (not just LevelAccessor)
         if (willSpawn && world.getLevel() instanceof Level) {
-            lightOk = drzhark.mocreatures.config.biome.BiomeSpawnConfig.checkLightLevelForEntity((Level) world.getLevel(), pos, type);
-            willSpawn = lightOk;
+            willSpawn = drzhark.mocreatures.config.biome.BiomeSpawnConfig.checkLightLevelForEntity((Level) world.getLevel(), pos, type);
         }
 
         if (MoCreatures.proxy.debug && willSpawn) {
             MoCreatures.LOGGER.info(
-                    "Aquatic: {} at {} ({}) {} - in water {}, water below {}, water above {}, light ok {}, biome: {}",
-                    type.getDescription().getString(),
+                    "Aquatic: {} at {} State: {} biome: {}",
+                    type.getDescription(),
                     pos,
-                    reason,
-                    willSpawn ? "ALLOWED" : "refused",
-                    inWater, waterBelow, waterAbove, lightOk,
+                    world.getBlockState(pos),
                     MoCTools.biomeName((Level) world.getLevel(), pos)
             );
         }

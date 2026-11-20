@@ -77,7 +77,6 @@ public class MoCreatures {
 
         // Register the Wyvern dimension handler
         NeoForge.EVENT_BUS.register(MoCWyvernDimensionHandler.class);
-        NeoForge.EVENT_BUS.register(drzhark.mocreatures.event.MoCSpawnDebug.class);
         NeoForge.EVENT_BUS.register(drzhark.mocreatures.network.command.MoCCommandPermissions.class);
         
         CompatHandler.preInit();

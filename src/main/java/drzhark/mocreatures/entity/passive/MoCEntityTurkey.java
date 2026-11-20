@@ -158,9 +158,13 @@ public class MoCEntityTurkey extends MoCEntityTameableAnimal {
         ItemStack itemstack = player.getItemInHand(hand);
 
         if (!itemstack.isEmpty()) {
-            if (this.isFood(itemstack) && this.getIsAdult() && !this.getHasEaten()) {
-                this.usePlayerItem(player, hand, itemstack);
-                this.setHasEaten(true); // Ready to breed using doBreeding() system
+            if (this.isFood(itemstack) && this.getIsAdult()) {
+                if (!this.getHasEaten()) {
+                    this.usePlayerItem(player, hand, itemstack);
+                    this.setHasEaten(true); // Ready to breed, tamed or wild, as in Almura 3.5
+                    this.level().broadcastEntityEvent(this, (byte) 18); // love hearts
+                }
+                // Already fed: don't fall through to vanilla's love mode, which has no breeding goal here
                 return InteractionResult.SUCCESS;
             }
 
@@ -285,32 +289,37 @@ public class MoCEntityTurkey extends MoCEntityTameableAnimal {
         }
     }
 
+    /** Fed adults breed whether tamed or wild (the base class also needs them tamed). */
+    @Override
+    public boolean readytoBreed() {
+        return !this.isVehicle() && this.getVehicle() == null && this.getHasEaten() && this.getIsAdult();
+    }
+
     /**
      * Custom breeding system for turkeys based on the horse breeding system
      */
     private void doTurkeyBreeding() {
-        // Check for too many turkeys nearby
-        int nearbyTurkeys = 0;
-        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(8D, 3D, 8D), 
+        // Look for a fed turkey of the other sex nearby. Unlike the 1.20.1 base there is no crowding limit and no
+        // taming needed: wild turkeys breed once fed, as in Almura 3.5.
+        List<Entity> nearbyMates = this.level().getEntities(this, this.getBoundingBox().inflate(8D, 3D, 8D),
             entity -> entity != this && entity instanceof MoCEntityTurkey);
-        nearbyTurkeys = list.size();
-        
-        if (nearbyTurkeys > 1) return;
 
-        // Look for nearby compatible mate
-        List<Entity> nearbyMates = this.level().getEntities(this, this.getBoundingBox().inflate(4D, 2D, 4D),
-            entity -> entity != this && entity instanceof MoCEntityTurkey);
-        
         for (Entity potentialMate : nearbyMates) {
             if (!(potentialMate instanceof MoCEntityTurkey) || potentialMate == this) continue;
-            
+
             MoCEntityTurkey mate = (MoCEntityTurkey) potentialMate;
-            
+
             // Check if both are ready to breed
             if (!this.readytoBreed() || !mate.readytoBreed()) continue;
-            
+
             // Check compatibility (different genders)
             if (!this.compatibleMate(mate)) continue;
+
+            // Walk to the mate first, as 1.12's mate AI did
+            if (this.distanceToSqr(mate) > 2.5D * 2.5D) {
+                this.getNavigation().moveTo(mate, 1.0D);
+                break;
+            }
 
             this.gestationTime++;
 
@@ -328,12 +337,19 @@ public class MoCEntityTurkey extends MoCEntityTameableAnimal {
                 baby.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(baby);
                 MoCTools.playCustomSound(this, SoundEvents.CHICKEN_EGG);
+                // Breeding XP, as vanilla animals and 1.12's mate AI give (1-7, only with mob drops on)
+                if (this.level() instanceof ServerLevel serverLevel
+                        && serverLevel.getGameRules().get(net.minecraft.world.level.gamerules.GameRules.MOB_DROPS)) {
+                    serverLevel.addFreshEntity(new net.minecraft.world.entity.ExperienceOrb(serverLevel, this.getX(), this.getY(), this.getZ(),
+                            this.random.nextInt(7) + 1));
+                }
                 
                 // Set baby properties
                 baby.setAdult(false);
                 baby.setMoCAge(1);
-                baby.setTamed(true);
-                baby.setOwnerId(this.getOwnerId());
+                // Tamed parents give a tamed baby with their owner; wild parents a wild one
+                baby.setTamed(this.getIsTamed());
+                baby.setOwnerId(this.getIsTamed() ? this.getOwnerId() : null);
                 baby.setTypeMoC(this.getOffspringTypeInt(mate));
 
                 // Set owner if available

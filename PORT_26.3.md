@@ -235,7 +235,7 @@ has been run in a game yet. The resources are converted to the 26.3 layout (see 
 - **Turkey feed:** turkeys are tempted by, breed on and grow up on Almura's `almura:food/food/soybean` and
   `almura:food/food/corn` as well as seeds (`MoCEntityTurkey.TEMPTATION_ITEMS`). They are matched by id, so without
   Almura nothing changes. The 1.12.2 fixes for baby sexes (random male or female) and the male texture (adult males
-  only) are already how the 1.20.1 turkey works; still to check in game.
+  only) are already how the 1.20.1 turkey works; confirmed in game 2026-11-19. Wild turkeys breed once fed, as in 3.5 (no taming or crowding limit; the 1.20.1 base needed tamed turkeys), walk to a fed mate of the other sex, and drop 1-7 XP like vanilla breeding.
 - **Fish always drop an item:** no change needed. Every fish loot table rolls its fish pool unconditionally, and the
   aquatic base class always rolls the loot table (1.12.2 only dropped the fish on 70% of kills).
 

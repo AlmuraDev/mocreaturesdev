@@ -43,10 +43,14 @@ public class FirestoneClusterFeature implements Feature {
 
         // Try multiple clusters per call
         for (int attempt = 0; attempt < 5; ++attempt) {
-            BlockPos base = origin.offset(
-                    random.nextInt(16),
-                    random.nextInt(50) + 20,  // Y range: 20-70 (avoid surface level)
-                    random.nextInt(16)
+            // A spot in the chunk being decorated. The placement's in_square already spreads the origin over the chunk, so
+            // adding 0-15 to the origin itself reached up to two chunks away; 26.3 only lets a feature touch the chunk and
+            // its neighbours, and the wall/ceiling checks (3) and the blob (2) stay inside that from here.
+            net.minecraft.world.level.ChunkPos chunk = net.minecraft.world.level.ChunkPos.containing(origin);
+            BlockPos base = new BlockPos(
+                    chunk.getMinBlockX() + random.nextInt(16),
+                    origin.getY() + random.nextInt(50) + 20,  // 20-70 above the origin, as before (avoid surface level)
+                    chunk.getMinBlockZ() + random.nextInt(16)
             );
             
             if (MoCreatures.proxy.debug) {

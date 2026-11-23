@@ -69,7 +69,7 @@ public class MoCEntityFlameWraith extends MoCEntityWraith implements Enemy {
 
     @Override
     public void doEnchantDamageEffects(LivingEntity attacker, Entity target) {
-        if (!this.level().isClientSide() && !this.level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) {
+        if (!this.level().isClientSide() && !this.level().environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, this.blockPosition())) {
             target.igniteForSeconds(this.burningTime);
         }
         super.doEnchantDamageEffects(attacker, target);

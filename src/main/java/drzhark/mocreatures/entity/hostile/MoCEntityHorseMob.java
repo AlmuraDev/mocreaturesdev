@@ -72,7 +72,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
 
     @Override
     public void selectType() {
-        if (this.level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) {
+        if (this.level().environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, this.blockPosition())) {
             setTypeMoC(38);
             this.isImmuneToFire = true;
         } else {
@@ -314,7 +314,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
             drop = MoCItems.UNICORNHORN.get();
         }
 
-        if (this.getTypeMoC() == 38 && flag && this.level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) //nightmare
+        if (this.getTypeMoC() == 38 && flag && this.level().environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, this.blockPosition())) //nightmare
         {
             drop = MoCItems.HEARTFIRE.get();
         }
@@ -377,7 +377,7 @@ public class MoCEntityHorseMob extends MoCEntityMob {
     }
 
     public boolean checkSpawnRules(LevelAccessor worldIn, EntitySpawnReason spawnReasonIn) {
-        if (this.getY() < 50D && !level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) {
+        if (this.getY() < 50D && !level().environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, this.blockPosition())) {
             setTypeMoC(32);
         }
         return super.checkSpawnRules(worldIn, spawnReasonIn);

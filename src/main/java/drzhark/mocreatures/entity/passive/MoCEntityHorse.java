@@ -549,7 +549,7 @@ public class MoCEntityHorse extends MoCEntityTameableAnimal {
         {
             drop = Items.FEATHER;
         }
-        if (this.getTypeMoC() == 38 && flag && this.level().environmentAttributes().getDimensionValue(EnvironmentAttributes.WATER_EVAPORATES)) // nightmare
+        if (this.getTypeMoC() == 38 && flag && this.level().environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, this.blockPosition())) // nightmare
         {
             drop = MoCItems.HEARTFIRE.get();
         }
